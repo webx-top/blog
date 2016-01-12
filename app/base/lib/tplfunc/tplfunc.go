@@ -223,3 +223,14 @@ func (s *Static) ImgTag(staticFile string, attrs ...string) template.HTML {
 	r := `<img src="` + s.ImgUrl(staticFile) + `"` + attr + ` />`
 	return template.HTML(r)
 }
+
+func (s *Static) Register(funcMap template.FuncMap) template.FuncMap {
+	funcMap["StaticUrl"] = s.StaticUrl
+	funcMap["JsUrl"] = s.JsUrl
+	funcMap["CssUrl"] = s.CssUrl
+	funcMap["ImgUrl"] = s.ImgUrl
+	funcMap["JsTag"] = s.JsTag
+	funcMap["CssTag"] = s.CssTag
+	funcMap["ImgTag"] = s.ImgTag
+	return funcMap
+}

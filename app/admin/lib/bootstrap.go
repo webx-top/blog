@@ -21,14 +21,7 @@ func init() {
 	tp := base.ThemePath(`admin`)
 	te := tplex.New(tp)
 	te.InitMgr(true, true)
-
-	FuncMap["StaticUrl"] = Static.StaticUrl
-	FuncMap["JsUrl"] = Static.JsUrl
-	FuncMap["CssUrl"] = Static.CssUrl
-	FuncMap["ImgUrl"] = Static.ImgUrl
-	FuncMap["JsTag"] = Static.JsTag
-	FuncMap["CssTag"] = Static.CssTag
-	FuncMap["ImgTag"] = Static.ImgTag
+	FuncMap = Static.Register(FuncMap)
 	te.FuncMapFn = func() template.FuncMap {
 		return FuncMap
 	}
