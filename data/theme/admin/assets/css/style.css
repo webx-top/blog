@@ -57,7 +57,25 @@
 		clear: both;
 	}
 
-	@media screen and (min-width: 1025px) {
+    @media screen and (min-width: 1920px) {
+        .wrapper {
+			width: 1875px;
+		}
+		div.contents {
+			width: 92.4%;	
+		}
+	}
+
+    @media screen and (max-width: 1280px) {
+        .wrapper {
+			width: 98%;
+		}
+		div.contents {
+			width: 88.6%;	
+		}
+	}
+
+	@media screen and (max-width: 1025px) {
 		.wrapper {
 			width: 1015px;
 		}
