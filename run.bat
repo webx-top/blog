@@ -1,0 +1,2 @@
+bee run blog
+pause

@@ -1,0 +1,18 @@
+@font-face {
+  font-family: 'Droid Sans';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Droid Sans'), local('DroidSans'), url(../font/s-BiyweUPV0v-yRb-cjciPk_vArhqVIZ0nv9q090hN8.woff2) format('woff2');
+}
+@font-face {
+  font-family: 'Droid Sans';
+  font-style: normal;
+  font-weight: 700;
+  src: local('Droid Sans Bold'), local('DroidSans-Bold'), url(../font/EFpQQyG9GqCrobXxL-KRMYWiMMZ7xLd792ULpGE4W_Y.woff2) format('woff2');
+}
+@font-face {
+  font-family: 'Oswald';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Oswald Regular'), local('Oswald-Regular'), url(../font/pEobIV_lL25TKBpqVI_a2w.woff2) format('woff2');
+}

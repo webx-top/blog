@@ -3,7 +3,7 @@ package lib
 import (
 	"html/template"
 
-	X "bitbucket.org/admpub/webx"
+	//X "bitbucket.org/admpub/webx"
 	"bitbucket.org/admpub/webx/lib/tplex"
 	"github.com/webx-top/blog/app/base"
 	"github.com/webx-top/blog/app/base/lib/tplfunc"
@@ -11,7 +11,7 @@ import (
 
 var (
 	Name       = `admin`
-	App        = X.Serv().NewApp(Name, base.Language.Store(), base.SessionMW)
+	App        = base.Server.NewApp(Name, base.Language.Store(), base.SessionMW)
 	FuncMap    = tplfunc.TplFuncMap
 	StaticPath = `/assets`
 	Static     = tplfunc.NewStatic(`/` + Name + StaticPath)
@@ -22,6 +22,21 @@ func init() {
 	te := tplex.New(tp)
 	te.InitMgr(true, true)
 	FuncMap = Static.Register(FuncMap)
+	FuncMap["Lang"] = func() string {
+		return `zh-cn`
+	}
+	FuncMap["AppUrl"] = func(p ...string) string {
+		if len(p) > 0 {
+			return App.Url + p[0]
+		}
+		return App.Url
+	}
+	FuncMap["RootUrl"] = func(p ...string) string {
+		if len(p) > 0 {
+			return base.Server.Url + p[0]
+		}
+		return base.Server.Url
+	}
 	te.FuncMapFn = func() template.FuncMap {
 		return FuncMap
 	}
