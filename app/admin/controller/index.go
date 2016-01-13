@@ -5,7 +5,7 @@ import (
 	"github.com/webx-top/echo"
 )
 
-var indexCtrl = &Index{}
+var indexCtrl = &Index{Base: &Base{}}
 
 func init() {
 	c := lib.App.RC(indexCtrl)
@@ -13,6 +13,11 @@ func init() {
 }
 
 type Index struct {
+	*Base
+}
+
+func (a *Index) Before(c *echo.Context) error {
+	return a.Base.Before(c)
 }
 
 func (a *Index) Index(c *echo.Context) error {
