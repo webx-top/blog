@@ -56,7 +56,7 @@ webx.scrollTo=function(element,time){
 	if(!time) time = 1000;
 	$('html,body').animate({scrollTop:$(element).offset().top},time);
 };
-webx.addCalls=function (func){
+webx.addCalls=function(func){
 	webx.calls.push(func);
 };
 webx.doCalls=function(){
