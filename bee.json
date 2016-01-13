@@ -10,7 +10,7 @@
 		"watch_all": true,
 		"controllers": "",
 		"models": "",
-		"others": ["../../../github.com/admpub/echo","../../../bitbucket.org/admpub/webx","../../../bitbucket.org/admpub/webx/lib/tplex","../../../github.com/coscms/xorm","../../../github.com/coscms/forms"]
+		"others": ["../../../github.com/webx-top/echo","../../../github.com/webx-top/webx","../../../github.com/webx-top/webx/lib/tplex","../../../github.com/coscms/xorm","../../../github.com/coscms/forms"]
 	},
 	"cmd_args": [],
 	"envs": []

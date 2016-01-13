@@ -1,9 +1,9 @@
 package main
 
 import (
-	X "bitbucket.org/admpub/webx"
 	_ "github.com/webx-top/blog/app/admin"
 	_ "github.com/webx-top/blog/app/blog"
+	X "github.com/webx-top/webx"
 )
 
 func main() {

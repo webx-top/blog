@@ -3,10 +3,10 @@ package lib
 import (
 	"html/template"
 
-	//X "bitbucket.org/admpub/webx"
-	"bitbucket.org/admpub/webx/lib/tplex"
+	//X "github.com/webx-top/webx"
 	"github.com/webx-top/blog/app/base"
 	"github.com/webx-top/blog/app/base/lib/tplfunc"
+	"github.com/webx-top/webx/lib/tplex"
 )
 
 var (

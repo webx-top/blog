@@ -1,8 +1,8 @@
 package lib
 
 import (
-	X "bitbucket.org/admpub/webx"
 	"github.com/webx-top/blog/app/base"
+	X "github.com/webx-top/webx"
 )
 
 var App = X.Serv().NewApp("", base.Language.Store(), base.SessionMW, base.HtmlCacheMW)

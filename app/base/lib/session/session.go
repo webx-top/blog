@@ -3,8 +3,8 @@ package session
 import (
 	"strconv"
 
-	"bitbucket.org/admpub/webx/lib/middleware/session"
-	"github.com/admpub/echo"
+	"github.com/webx-top/echo"
+	"github.com/webx-top/webx/lib/middleware/session"
 )
 
 func Middleware(engine string, setting interface{}) echo.MiddlewareFunc {

@@ -1,10 +1,10 @@
 package base
 
 import (
-	X "bitbucket.org/admpub/webx"
-	"bitbucket.org/admpub/webx/lib/htmlcache"
-	mw "bitbucket.org/admpub/webx/lib/middleware"
 	"github.com/webx-top/blog/app/base/lib/session"
+	X "github.com/webx-top/webx"
+	"github.com/webx-top/webx/lib/htmlcache"
+	mw "github.com/webx-top/webx/lib/middleware"
 )
 
 var (

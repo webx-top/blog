@@ -1,8 +1,8 @@
 package controller
 
 import (
-	"github.com/admpub/echo"
 	"github.com/webx-top/blog/app/admin/lib"
+	"github.com/webx-top/echo"
 )
 
 var indexCtrl = &Index{}
