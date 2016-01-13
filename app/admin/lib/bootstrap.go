@@ -5,8 +5,8 @@ import (
 
 	//X "github.com/webx-top/webx"
 	"github.com/webx-top/blog/app/base"
-	"github.com/webx-top/blog/app/base/lib/tplfunc"
 	"github.com/webx-top/webx/lib/tplex"
+	"github.com/webx-top/webx/lib/tplfunc"
 )
 
 var (
