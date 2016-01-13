@@ -1,8 +1,6 @@
 package controller
 
 import (
-	"strings"
-
 	"github.com/webx-top/blog/app/admin/lib"
 	"github.com/webx-top/echo"
 	"github.com/webx-top/webx/lib/middleware/session"
@@ -16,7 +14,7 @@ type Base struct {
 func (a *Base) Before(c *echo.Context) error {
 	a.Session = session.Default(c)
 	a.Uid, _ = a.Session.Get(`uid`).(int64)
-	if a.Uid < 1 && strings.TrimPrefix(c.Path(), lib.App.Path) != `login` {
+	if a.Uid < 1 {
 		c.Redirect(301, lib.App.Url+`login`)
 		c.Set(`web:exit`, true)
 	}
