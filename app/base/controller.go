@@ -75,3 +75,7 @@ func (a *Controller) Render(c *echo.Context) error {
 func (a *Controller) Before(c *echo.Context) error {
 	return nil
 }
+
+func (a *Controller) After(c *echo.Context) error {
+	return a.Render(c)
+}
