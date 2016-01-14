@@ -13,19 +13,6 @@ func NewController() *Controller {
 	}
 }
 
-type V map[string]interface{}
-
-func (a V) Get(key string) interface{} {
-	if v, ok := a[key]; ok {
-		return v
-	}
-	return nil
-}
-
-func (a V) Set(key string, val interface{}) {
-	a[key] = val
-}
-
 type Controller struct {
 	tmplField string //模板名称字段名称
 	dataField string //模板数据字段名称
@@ -52,16 +39,22 @@ func (a *Controller) Tmpl(tmpl string, c *echo.Context) error {
 }
 
 //模板数据赋值
-func (a *Controller) Assign(data map[string]interface{}, c *echo.Context) {
-	v, ok := c.Get(a.dataField).(V)
-	if ok {
-		for key, val := range data {
-			v[key] = val
+func (a *Controller) Assign(data interface{}, c *echo.Context) {
+	switch data.(type) {
+	case map[string]interface{}:
+		d := data.(map[string]interface{})
+		v, ok := c.Get(a.dataField).(map[string]interface{})
+		if ok {
+			for key, val := range d {
+				v[key] = val
+			}
+		} else {
+			v = d
 		}
-	} else {
-		v = V(data)
+		c.Set(a.dataField, v)
+	default:
+		c.Set(a.dataField, data)
 	}
-	c.Set(a.dataField, v)
 }
 
 //渲染模板
