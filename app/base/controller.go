@@ -19,7 +19,7 @@ type Controller struct {
 }
 
 //设置退出标记
-func (a *Controller) Exit(c *echo.Context) error {
+func (a *Controller) Exit(c *echo.Context) {
 	c.Set(`web:exit`, true)
 }
 
@@ -34,7 +34,7 @@ func (a *Controller) DataField() string {
 }
 
 //指定模板
-func (a *Controller) Tmpl(tmpl string, c *echo.Context) error {
+func (a *Controller) Tmpl(tmpl string, c *echo.Context) {
 	c.Set(a.tmplField, tmpl)
 }
 

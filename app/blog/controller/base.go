@@ -28,3 +28,7 @@ func (a *Base) Before(c *echo.Context) error {
 	}
 	return a.Controller.Before(c)
 }
+
+func (a *Base) After(c *echo.Context) error {
+	return nil
+}

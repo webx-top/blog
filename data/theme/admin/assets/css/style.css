@@ -1,10 +1,4 @@
-/* 
-	Kanrisha: A Premium HTML5 Responsive Admin Template
-	COPYRIGHT Â© 2012 Mahieddine Abd-kader (@mitgux)
-*/
-
 /* Import Some CSS Files */
-
 @import "normalize.css";
 @import "tipsy.css";
 @import "colorpicker.css";
@@ -13,7 +7,6 @@
 @import "colorbox.css";
 
 /* Table of Contents  ======================================================= */
-	
 	/* Initiations & Media Query */
 	/* Pattern */
 	/* Top Panel */
@@ -35,11 +28,10 @@
 	/* Message */
 	/* Pages */
 	/* Change Pattern -- For Demonstration only */
-
 /* ========================================================================== */
 
 /* Initiations & Media Query */
-	
+
 	a {
 		text-decoration: none;
 		outline: none;

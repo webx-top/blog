@@ -23,6 +23,7 @@ var (
 	}
 	HtmlCacheMW = HtmlCache.Middleware(Server.TemplateEngine)
 	BaseCtrl    = NewController()
+	I18n        = com.NewI18n(RootDir+`/data/lang/rules`, RootDir+`/data/lang/messages`, `zh-cn`, `zh-cn`)
 )
 
 func init() {
