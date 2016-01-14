@@ -2,19 +2,21 @@ package base
 
 import (
 	X "github.com/webx-top/webx"
+	"github.com/webx-top/webx/lib/com"
 	"github.com/webx-top/webx/lib/htmlcache"
 	mw "github.com/webx-top/webx/lib/middleware"
 	"github.com/webx-top/webx/lib/middleware/session"
 )
 
 var (
+	RootDir     = com.SelfDir()
 	Language    = mw.NewLanguage()
 	SessionMW   = session.Middleware(`cookie`, `webx.top`)
 	theme       = `default`
-	templateDir = `data/theme/`
+	templateDir = RootDir + `/data/theme/`
 	Server      = X.Serv().InitTmpl(ThemePath()).Pprof().Debug(true)
 	HtmlCache   = &htmlcache.Config{
-		HtmlCacheDir:   `data/html`,
+		HtmlCacheDir:   RootDir + `/data/html`,
 		HtmlCacheOn:    true,
 		HtmlCacheRules: make(map[string]interface{}),
 		HtmlCacheTime:  86400,
