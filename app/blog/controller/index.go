@@ -16,7 +16,6 @@ type Index struct {
 }
 
 func (a *Index) Index(c *echo.Context) error {
-	c.Set(`Tmpl`, `index`)
-	c.Set(`Data`, `test`)
+	a.Tmpl(`index`, c)
 	return nil
 }

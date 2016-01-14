@@ -3,9 +3,7 @@ package base
 import (
 	"net/http"
 
-	"github.com/webx-top/blog/app/admin/lib"
 	"github.com/webx-top/echo"
-	"github.com/webx-top/webx/lib/middleware/session"
 )
 
 func NewController() *Controller {
@@ -39,12 +37,12 @@ func (a *Controller) Exit(c *echo.Context) error {
 }
 
 //获取模板名称字段名
-func (a *Controller) TmplField(tmpl string) string {
+func (a *Controller) TmplField() string {
 	return a.tmplField
 }
 
 //获取模板数据字段名
-func (a *Controller) DataField(tmpl string, c *echo.Context) string {
+func (a *Controller) DataField() string {
 	return a.dataField
 }
 
@@ -55,7 +53,7 @@ func (a *Controller) Tmpl(tmpl string, c *echo.Context) error {
 
 //模板数据赋值
 func (a *Controller) Assign(data map[string]interface{}, c *echo.Context) {
-	v, ok := c.Get(a.dataField, data).(V)
+	v, ok := c.Get(a.dataField).(V)
 	if ok {
 		for key, val := range data {
 			v[key] = val

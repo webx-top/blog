@@ -2,10 +2,11 @@ package controller
 
 import (
 	"github.com/webx-top/blog/app/admin/lib"
+	"github.com/webx-top/blog/app/base"
 	"github.com/webx-top/echo"
 )
 
-var publicCtrl = &Public{}
+var publicCtrl = &Public{Controller: base.BaseCtrl}
 
 func init() {
 	c := lib.App.RC(publicCtrl)
@@ -13,8 +14,10 @@ func init() {
 }
 
 type Public struct {
+	*base.Controller
 }
 
 func (a *Public) Login(c *echo.Context) error {
-	return c.Render(200, `login`, `test`)
+	a.Tmpl(`login`, c)
+	return nil
 }

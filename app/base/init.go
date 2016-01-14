@@ -22,6 +22,7 @@ var (
 		HtmlCacheTime:  86400,
 	}
 	HtmlCacheMW = HtmlCache.Middleware(Server.TemplateEngine)
+	BaseCtrl    = NewController()
 )
 
 func init() {

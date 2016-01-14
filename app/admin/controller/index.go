@@ -5,7 +5,7 @@ import (
 	"github.com/webx-top/echo"
 )
 
-var indexCtrl = &Index{Base: &Base{}}
+var indexCtrl = &Index{Base: New()}
 
 func init() {
 	c := lib.App.RC(indexCtrl)
@@ -21,5 +21,6 @@ func (a *Index) Before(c *echo.Context) error {
 }
 
 func (a *Index) Index(c *echo.Context) error {
-	return c.Render(200, `index`, `test`)
+	a.Tmpl(`index`, c)
+	return nil
 }
