@@ -68,5 +68,8 @@ func (a *Controller) Before(c *echo.Context) error {
 }
 
 func (a *Controller) After(c *echo.Context) error {
+	if sv, ok := c.Get(`webx:saveHtmlFile`).(string); ok && sv != `` {
+		return nil
+	}
 	return a.Render(c)
 }
