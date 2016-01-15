@@ -14,7 +14,7 @@ var (
 	SessionMW   = session.Middleware(`cookie`, `webx.top`)
 	theme       = `default`
 	templateDir = RootDir + `/data/theme/`
-	Server      = X.Serv().InitTmpl(ThemePath()).Pprof().Debug(true)
+	Server      = X.Serv().InitTmpl(ThemePath())
 	HtmlCache   = &htmlcache.Config{
 		HtmlCacheDir:   RootDir + `/data/html`,
 		HtmlCacheOn:    true,
