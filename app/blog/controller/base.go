@@ -9,7 +9,7 @@ import (
 
 func New() *Base {
 	return &Base{
-		Controller: base.BaseCtrl,
+		Controller: base.BaseCtl,
 	}
 }
 

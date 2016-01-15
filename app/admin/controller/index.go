@@ -5,11 +5,11 @@ import (
 	"github.com/webx-top/echo"
 )
 
-var indexCtrl = &Index{Base: New()}
+var indexCtl = &Index{Base: New()}
 
 func init() {
-	c := lib.App.RC(indexCtrl)
-	c.R(`/`, indexCtrl.Index)
+	c := lib.App.RC(indexCtl)
+	c.R(`/`, indexCtl.Index)
 }
 
 type Index struct {

@@ -6,11 +6,11 @@ import (
 	"github.com/webx-top/echo"
 )
 
-var publicCtrl = &Public{Controller: base.BaseCtrl}
+var publicCtl = &Public{Controller: base.BaseCtl}
 
 func init() {
-	c := lib.App.RC(publicCtrl)
-	c.R(`/login`, publicCtrl.Login)
+	c := lib.App.RC(publicCtl)
+	c.R(`/login`, publicCtl.Login)
 }
 
 type Public struct {

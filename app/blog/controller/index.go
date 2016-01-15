@@ -6,11 +6,11 @@ import (
 	"github.com/webx-top/echo"
 )
 
-var indexCtrl = &Index{Controller: base.NewController()}
+var indexCtl = &Index{Controller: base.NewController()}
 
 func init() {
-	c := lib.App.RC(indexCtrl)
-	c.R(`/`, indexCtrl.Index)
+	c := lib.App.RC(indexCtl)
+	c.R(`/`, indexCtl.Index)
 }
 
 type Index struct {
