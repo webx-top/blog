@@ -10,11 +10,13 @@ import (
 	"github.com/webx-top/webx/lib/com"
 	"github.com/webx-top/webx/lib/tplex"
 	"github.com/webx-top/webx/lib/tplfunc"
+	"github.com/webx-top/webx/lib/xsrf"
 )
 
 var (
 	Name       = `admin`
-	App        = base.Server.NewApp(Name, base.Language.Store(), base.SessionMW)
+	Xsrf       = xsrf.New()
+	App        = base.Server.NewApp(Name, base.Language.Store(), base.SessionMW, Xsrf.Middleware())
 	FuncMap    = tplfunc.TplFuncMap
 	StaticPath = `/assets`
 	Static     *tplfunc.Static

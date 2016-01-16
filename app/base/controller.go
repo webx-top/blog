@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/webx-top/echo"
+	"github.com/webx-top/webx/lib/htmlcache"
 )
 
 func NewController() *Controller {
@@ -59,11 +60,11 @@ func (a *Controller) Assign(data interface{}, c *echo.Context) {
 
 //渲染模板
 func (a *Controller) Render(c *echo.Context) error {
-	tmpl := c.Get(a.tmplField).(string)
-	return c.Render(http.StatusOK, tmpl, c.Get(a.dataField))
+	return htmlcache.Render(c, http.StatusOK)
 }
 
 func (a *Controller) Before(c *echo.Context) error {
+	a.Assign(map[string]interface{}{"Status": 1, "Message": "", "Path": c.Path()}, c)
 	return nil
 }
 

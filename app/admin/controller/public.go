@@ -10,7 +10,8 @@ var publicCtl = &Public{Controller: base.BaseCtl}
 
 func init() {
 	c := lib.App.RC(publicCtl)
-	c.R(`/login`, publicCtl.Login)
+	c.R(`/login`, publicCtl.Login, `GET`, `POST`)
+
 }
 
 type Public struct {
@@ -18,6 +19,7 @@ type Public struct {
 }
 
 func (a *Public) Login(c *echo.Context) error {
+	c.Funcs = lib.Xsrf.Register(c.Funcs, c)
 	a.Tmpl(`login`, c)
 	return nil
 }

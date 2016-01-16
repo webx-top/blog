@@ -1,7 +1,5 @@
 (function(){
-window.webx={
-lang:'zh-cn',staticUrl:'',siteUrl:'',appName:'',ctlName:'',actName:'',
-cachedData:{},pageJs:null,libs:{},calls:[],
+window.webx={lang:'zh-cn',staticUrl:'',siteUrl:'',route:'',cachedData:{},pageJs:null,libs:{},calls:[],
 include:function(file,location){
 	if(location==null)location="head";
 	if(location=="head" && typeof(webx.cachedData["include"])=="undefined"){
@@ -226,13 +224,13 @@ initPage:function(){
 	webx.doCalls();
 	if(!webx.pageJs)return;
 	switch(typeof(webx.pageJs)) {
-		case 'string':webx.include(webx.staticUrl+'/js/'+webx.pageJs);return;
+		case 'string':webx.include(webx.staticUrl+'js/'+webx.pageJs);return;
 		case 'boolean':
-			webx.include(webx.staticUrl+'/js/pages/'+appName+'/'+ctlName+'/'+actName+'.js');return;
+			webx.include(webx.staticUrl+'js/pages'+webx.route.replace('*','').split(':')[0]+'.js');return;
 		default:
 		if(typeof(webx.pageJs.length)=='undefined')return;
 		for (var i = 0; i < webx.pageJs.length; i++) {
-			webx.pageJs[i]=webx.staticUrl+'/js/'+webx.pageJs[i];
+			webx.pageJs[i]=webx.staticUrl+'js/'+webx.pageJs[i];
 		}
 		webx.include(webx.pageJs);
 	}

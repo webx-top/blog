@@ -15,6 +15,7 @@
 	webx.staticUrl='{{StaticUrl ""}}';
 	webx.lang='{{Lang}}';
 	webx.siteUrl='{{AppUrl}}';
+	webx.route='{{.Path}}';
 	</script>
 </head>
 <body>
@@ -43,7 +44,7 @@
 	{{/Block}}
 	<!-- jQuery -->
     {{JsTag "jQuery/jquery-1.7.2.min.js"}}
-	{{/*<!-- Flot -->
+	<!-- Flot -->
 	 {{JsTag "Flot/jquery.flot.js" "Flot/jquery.flot.resize.js" "Flot/jquery.flot.pie.js"}}
 	<!-- DataTables -->
 	{{JsTag "DataTables/jquery.dataTables.min.js"}}
@@ -73,7 +74,7 @@
 	{{JsTag "ColorBox/jquery.colorbox.js"}}
 	<!-- Kanrisha Script -->
 	{{JsTag "kanrisha.js"}}
-	*/}}
+	
 	{{JsTag "footer.js"}}
 </body>
 </html>

@@ -3,6 +3,7 @@ package controller
 import (
 	"github.com/webx-top/blog/app/admin/lib"
 	"github.com/webx-top/echo"
+	//"github.com/webx-top/webx/lib/com"
 )
 
 var indexCtl = &Index{Base: New()}
