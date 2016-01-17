@@ -11,7 +11,7 @@ import (
 
 var (
 	Name       = `admin`
-	App        = base.Server.NewApp(Name, base.Language.Store(), base.SessionMW, base.Xsrf.Middleware())
+	App        = base.Server.NewApp(Name, base.Language.Store(), base.SessionMW, base.Xsrf.Middleware() /*, base.Jwt.Validate()*/)
 	FuncMap    = base.Server.FuncMap()
 	StaticPath = `/assets`
 	Static     *tplfunc.Static
@@ -22,9 +22,6 @@ func init() {
 	te := tplex.New(tp)
 	te.InitMgr(true, true)
 	Static = base.Server.Static(`/`+Name+StaticPath, tp+StaticPath, &FuncMap)
-	FuncMap["Lang"] = func() string {
-		return `zh-cn`
-	}
 	FuncMap["AppUrl"] = func(p ...string) string {
 		if len(p) > 0 {
 			return App.Url + p[0]

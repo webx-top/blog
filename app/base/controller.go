@@ -5,6 +5,7 @@ import (
 
 	"github.com/webx-top/echo"
 	"github.com/webx-top/webx/lib/htmlcache"
+	"github.com/webx-top/webx/lib/i18n"
 )
 
 func NewController() *Controller {
@@ -76,4 +77,17 @@ func (a *Controller) After(c *echo.Context) error {
 		return nil
 	}
 	return a.Render(c)
+}
+
+func (a *Controller) Lang(c *echo.Context) string {
+	lang, _ := c.Get(`webx:language`).(string)
+	if lang == `` {
+		lang = DefaultLang
+	}
+	return lang
+}
+
+//TODO: 移到echo.Context中
+func (a *Controller) T(c *echo.Context, key string, args ...interface{}) string {
+	return i18n.T(a.Lang(c), key, args...)
 }

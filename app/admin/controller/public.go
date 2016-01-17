@@ -11,7 +11,7 @@ var publicCtl = &Public{Controller: base.BaseCtl}
 func init() {
 	c := lib.App.RC(publicCtl)
 	c.R(`/login`, publicCtl.Login, `GET`, `POST`)
-
+	c.R(`/logout/:next`, publicCtl.Logout, `GET`, `POST`)
 }
 
 type Public struct {
@@ -19,6 +19,11 @@ type Public struct {
 }
 
 func (a *Public) Login(c *echo.Context) error {
+	a.Tmpl(`login`, c)
+	return nil
+}
+
+func (a *Public) Logout(c *echo.Context) error {
 	a.Tmpl(`login`, c)
 	return nil
 }
