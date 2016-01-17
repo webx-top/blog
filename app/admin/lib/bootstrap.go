@@ -2,22 +2,17 @@ package lib
 
 import (
 	"html/template"
-	"path"
-	"strings"
 
 	//X "github.com/webx-top/webx"
 	"github.com/webx-top/blog/app/base"
-	"github.com/webx-top/webx/lib/com"
 	"github.com/webx-top/webx/lib/tplex"
 	"github.com/webx-top/webx/lib/tplfunc"
-	"github.com/webx-top/webx/lib/xsrf"
 )
 
 var (
 	Name       = `admin`
-	Xsrf       = xsrf.New()
-	App        = base.Server.NewApp(Name, base.Language.Store(), base.SessionMW, Xsrf.Middleware())
-	FuncMap    = tplfunc.TplFuncMap
+	App        = base.Server.NewApp(Name, base.Language.Store(), base.SessionMW, base.Xsrf.Middleware())
+	FuncMap    = base.Server.FuncMap()
 	StaticPath = `/assets`
 	Static     *tplfunc.Static
 )
@@ -26,8 +21,7 @@ func init() {
 	tp := base.ThemePath(`admin`)
 	te := tplex.New(tp)
 	te.InitMgr(true, true)
-	Static = tplfunc.NewStatic(`/`+Name+StaticPath, tp+StaticPath)
-	FuncMap = Static.Register(FuncMap)
+	Static = base.Server.Static(`/`+Name+StaticPath, tp+StaticPath, &FuncMap)
 	FuncMap["Lang"] = func() string {
 		return `zh-cn`
 	}
@@ -37,21 +31,10 @@ func init() {
 		}
 		return App.Url
 	}
-	FuncMap["RootUrl"] = func(p ...string) string {
-		if len(p) > 0 {
-			return base.Server.Url + p[0]
-		}
-		return base.Server.Url
-	}
 	te.FuncMapFn = func() template.FuncMap {
 		return FuncMap
 	}
-	te.FileChangeEvent = func(name string) {
-		name = path.Join(te.TemplateDir, name)
-		name = strings.TrimPrefix(com.FixDirSeparator(name), com.FixDirSeparator(Static.RootPath)+`/`)
-		//base.Server.Echo.Logger().Info(`file change: %v`, name)
-		Static.DeleteCombined(name)
-	}
+	te.FileChangeEvent = Static.OnUpdate(te.TemplateDir)
 	x := App.Webx()
 	x.SetRenderer(te)
 	x.Static(StaticPath, tp+StaticPath)

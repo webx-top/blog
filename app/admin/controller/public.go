@@ -19,7 +19,6 @@ type Public struct {
 }
 
 func (a *Public) Login(c *echo.Context) error {
-	c.Funcs = lib.Xsrf.Register(c.Funcs, c)
 	a.Tmpl(`login`, c)
 	return nil
 }

@@ -6,15 +6,17 @@ import (
 	"github.com/webx-top/webx/lib/htmlcache"
 	mw "github.com/webx-top/webx/lib/middleware"
 	"github.com/webx-top/webx/lib/middleware/session"
+	"github.com/webx-top/webx/lib/xsrf"
 )
 
 var (
+	Project     = `blog`
 	RootDir     = com.SelfDir()
 	Language    = mw.NewLanguage()
 	SessionMW   = session.Middleware(`cookie`, `webx.top`)
 	theme       = `default`
 	templateDir = RootDir + `/data/theme/`
-	Server      = X.Serv().InitTmpl(ThemePath())
+	Server      = X.Serv(Project).InitTmpl(ThemePath())
 	HtmlCache   = &htmlcache.Config{
 		HtmlCacheDir:   RootDir + `/data/html`,
 		HtmlCacheOn:    true,
@@ -24,6 +26,7 @@ var (
 	HtmlCacheMW = HtmlCache.Middleware(Server.TemplateEngine)
 	BaseCtl     = NewController()
 	I18n        = com.NewI18n(RootDir+`/data/lang/rules`, RootDir+`/data/lang/messages`, `zh-cn`, `zh-cn`)
+	Xsrf        = xsrf.New()
 )
 
 func init() {
@@ -49,5 +52,5 @@ func SetTheme(args ...string) {
 	if len(args) > 1 && args[0] == `admin` {
 		return
 	}
-	X.Serv().InitTmpl(ThemePath(args...))
+	Server.InitTmpl(ThemePath(args...))
 }

@@ -3,9 +3,10 @@ package main
 import (
 	_ "github.com/webx-top/blog/app/admin"
 	_ "github.com/webx-top/blog/app/blog"
-	X "github.com/webx-top/webx"
+
+	"github.com/webx-top/blog/app/base"
 )
 
 func main() {
-	X.Serv().Run("127.0.0.1", "8080")
+	base.Server.Run("127.0.0.1", "8080")
 }

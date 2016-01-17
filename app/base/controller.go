@@ -64,6 +64,9 @@ func (a *Controller) Render(c *echo.Context) error {
 }
 
 func (a *Controller) Before(c *echo.Context) error {
+	c.Funcs = Xsrf.Register(c.Funcs, c)
+	c.Funcs["Query"] = c.Query
+	c.Funcs["Form"] = c.Form
 	a.Assign(map[string]interface{}{"Status": 1, "Message": "", "Path": c.Path()}, c)
 	return nil
 }
