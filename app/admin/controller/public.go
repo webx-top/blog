@@ -18,12 +18,12 @@ type Public struct {
 	*base.Controller
 }
 
-func (a *Public) Login(c *echo.Context) error {
+func (a *Public) Login(c echo.Context) error {
 	a.Tmpl(`login`, c)
 	return nil
 }
 
-func (a *Public) Logout(c *echo.Context) error {
+func (a *Public) Logout(c echo.Context) error {
 	a.Tmpl(`login`, c)
 	return nil
 }

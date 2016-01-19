@@ -18,7 +18,7 @@ type Base struct {
 	*base.Controller
 }
 
-func (a *Base) Before(c *echo.Context) error {
+func (a *Base) Before(c echo.Context) error {
 	a.Session = session.Default(c)
 	if uid, ok := a.Session.Get(`uid`).(int64); !ok || uid < 1 {
 		c.Redirect(301, lib.App.Url+`login`)
@@ -27,6 +27,6 @@ func (a *Base) Before(c *echo.Context) error {
 	return a.Controller.Before(c)
 }
 
-func (a *Base) After(c *echo.Context) error {
+func (a *Base) After(c echo.Context) error {
 	return nil
 }

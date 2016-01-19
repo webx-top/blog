@@ -17,11 +17,11 @@ type Index struct {
 	*base.Controller
 }
 
-func (a *Index) Index(c *echo.Context) error {
+func (a *Index) Index(c echo.Context) error {
 	a.Tmpl(`index`, c)
 	return nil
 }
 
-func (a *Index) After(c *echo.Context) error {
+func (a *Index) After(c echo.Context) error {
 	return nil
 }

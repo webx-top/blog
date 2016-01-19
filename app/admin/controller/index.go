@@ -17,11 +17,11 @@ type Index struct {
 	*Base
 }
 
-func (a *Index) Before(c *echo.Context) error {
+func (a *Index) Before(c echo.Context) error {
 	return a.Base.Before(c)
 }
 
-func (a *Index) Index(c *echo.Context) error {
+func (a *Index) Index(c echo.Context) error {
 	a.Tmpl(`index`, c)
 	return nil
 }
