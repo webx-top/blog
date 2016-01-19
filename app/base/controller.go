@@ -61,6 +61,9 @@ func (a *Controller) Assign(data interface{}, c echo.Context) {
 
 //渲染模板
 func (a *Controller) Render(c echo.Context) error {
+	if ignore, _ := c.Get(`webx:ignoreRender`).(bool); ignore {
+		return nil
+	}
 	return htmlcache.Render(c, http.StatusOK)
 }
 
@@ -73,9 +76,6 @@ func (a *Controller) Before(c echo.Context) error {
 }
 
 func (a *Controller) After(c echo.Context) error {
-	if sv, ok := c.Get(`webx:saveHtmlFile`).(string); ok && sv != `` {
-		return nil
-	}
 	return a.Render(c)
 }
 

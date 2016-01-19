@@ -23,5 +23,5 @@ func (a *Index) Index(c echo.Context) error {
 }
 
 func (a *Index) After(c echo.Context) error {
-	return nil
+	return a.Controller.After(c)
 }
