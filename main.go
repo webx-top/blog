@@ -1,6 +1,8 @@
 package main
 
 import (
+	"flag"
+
 	_ "github.com/webx-top/blog/app/admin"
 	_ "github.com/webx-top/blog/app/blog"
 
@@ -8,5 +10,8 @@ import (
 )
 
 func main() {
-	base.Server.Run("127.0.0.1", "5000")
+	port := flag.String("p", "5000", "port of your app.")
+	flag.Parse()
+
+	base.Server.Run("127.0.0.1", *port)
 }
