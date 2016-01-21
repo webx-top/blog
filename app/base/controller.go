@@ -4,6 +4,8 @@ import (
 	"net/http"
 
 	"github.com/webx-top/echo"
+	X "github.com/webx-top/webx"
+	"github.com/webx-top/webx/lib/codec"
 	"github.com/webx-top/webx/lib/htmlcache"
 	"github.com/webx-top/webx/lib/i18n"
 )
@@ -12,12 +14,19 @@ func NewController() *Controller {
 	return &Controller{
 		tmplField: `Tmpl`,
 		dataField: `Data`,
+		Codec:     codec.Default,
 	}
 }
 
 type Controller struct {
-	tmplField string //模板名称字段名称
-	dataField string //模板数据字段名称
+	tmplField     string //模板名称字段名称
+	dataField     string //模板数据字段名称
+	CookiePrefix  string
+	CookieSecret  bool
+	CookieAuthkey string
+	CookieExpires int64
+	CookieDomain  string
+	codec.Codec
 }
 
 //设置退出标记
@@ -90,4 +99,8 @@ func (a *Controller) Lang(c echo.Context) string {
 //TODO: 移到echo.Context中
 func (a *Controller) T(c echo.Context, key string, args ...interface{}) string {
 	return i18n.T(a.Lang(c), key, args...)
+}
+
+func (a *Controller) X(c echo.Context) *X.Context {
+	return c.(*X.Context)
 }
