@@ -5,7 +5,6 @@ import (
 
 	"github.com/webx-top/echo"
 	X "github.com/webx-top/webx"
-	"github.com/webx-top/webx/lib/codec"
 	"github.com/webx-top/webx/lib/htmlcache"
 	"github.com/webx-top/webx/lib/i18n"
 )
@@ -14,19 +13,12 @@ func NewController() *Controller {
 	return &Controller{
 		tmplField: `Tmpl`,
 		dataField: `Data`,
-		Codec:     codec.Default,
 	}
 }
 
 type Controller struct {
-	tmplField     string //模板名称字段名称
-	dataField     string //模板数据字段名称
-	CookiePrefix  string
-	CookieSecret  bool
-	CookieAuthkey string
-	CookieExpires int64
-	CookieDomain  string
-	codec.Codec
+	tmplField string //模板名称字段名称
+	dataField string //模板数据字段名称
 }
 
 //设置退出标记
