@@ -94,5 +94,5 @@ func (a *Controller) T(c echo.Context, key string, args ...interface{}) string {
 }
 
 func (a *Controller) X(c echo.Context) *X.Context {
-	return c.(*X.Context)
+	return X.X(c)
 }
