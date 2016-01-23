@@ -1,0 +1,10 @@
+DB : {
+  Engine    : "mysql",
+  DbUser    : "root",
+  DbPass    : "root",
+  DbName    : "blog",
+  DbHost    : "localhost",
+  DbPort    : "3306",
+  DbCharset : "utf8"
+}
+

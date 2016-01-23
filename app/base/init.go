@@ -1,8 +1,11 @@
 package base
 
 import (
+	//"fmt"
+	"io/ioutil"
 	"strings"
 
+	"github.com/webx-top/blog/app/base/lib/database"
 	X "github.com/webx-top/webx"
 	"github.com/webx-top/webx/lib/com"
 	"github.com/webx-top/webx/lib/htmlcache"
@@ -11,6 +14,10 @@ import (
 	"github.com/webx-top/webx/lib/middleware/language"
 	"github.com/webx-top/webx/lib/middleware/session"
 	"github.com/webx-top/webx/lib/xsrf"
+
+	"github.com/webx-top/blog/app/base/lib/config"
+
+	"github.com/admpub/confl"
 )
 
 var (
@@ -34,9 +41,13 @@ var (
 	I18n        = i18n.New(RootDir+`/data/lang/rules`, RootDir+`/data/lang/messages`, DefaultLang, DefaultLang)
 	Xsrf        = xsrf.New()
 	Jwt         = jwt.New(SecretKey)
+	Config      = &config.Config{}
+	configFile  = RootDir + `/data/config/config.yaml`
+	DB          *database.Orm
 )
 
 func init() {
+	LoadConfig(configFile)
 
 	// ======================
 	// 初始化默认Server
@@ -51,6 +62,11 @@ func init() {
 	// 监控语言文件更改
 	// ======================
 	moniterLanguageResource()
+
+	// ======================
+	// 连接数据库
+	// ======================
+	DB, _ = database.NewOrm(Config.DB.Engine, Config.DB.Dsn())
 }
 
 func moniterLanguageResource() {
@@ -77,4 +93,16 @@ func SetTheme(args ...string) {
 		return
 	}
 	Server.InitTmpl(ThemePath(args...))
+}
+
+func LoadConfig(file string) {
+	content, err := ioutil.ReadFile(file)
+	if err != nil {
+		panic(err)
+	} else {
+		err = confl.Unmarshal(content, Config)
+		if err != nil {
+			panic(err)
+		}
+	}
 }
