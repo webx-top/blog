@@ -3,7 +3,7 @@ package controller
 import (
 	"github.com/webx-top/blog/app/base"
 	"github.com/webx-top/blog/app/blog/lib"
-	"github.com/webx-top/echo"
+	X "github.com/webx-top/webx"
 )
 
 func New() *Base {
@@ -16,14 +16,14 @@ type Base struct {
 	*base.Controller
 }
 
-func (a *Base) Before(c echo.Context) error {
-	if uid, ok := a.X(c).GetSession(`uid`).(int64); !ok || uid < 1 {
+func (a *Base) Before(c *X.Context) error {
+	if uid, ok := c.GetSession(`uid`).(int64); !ok || uid < 1 {
 		c.Redirect(301, lib.App.Url+`login`)
-		a.Exit(c)
+		c.Exit = true
 	}
 	return a.Controller.Before(c)
 }
 
-func (a *Base) After(c echo.Context) error {
+func (a *Base) After(c *X.Context) error {
 	return nil
 }
