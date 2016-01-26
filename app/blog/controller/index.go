@@ -1,44 +1,28 @@
 package controller
 
 import (
-	"github.com/webx-top/blog/app/base"
+	//"github.com/webx-top/blog/app/base"
 	"github.com/webx-top/blog/app/blog/lib"
 	X "github.com/webx-top/webx"
 )
 
-var indexCtl = &Index{Controller: base.NewController()}
-
 func init() {
-	c := lib.App.RC(indexCtl)
-	c.R(`/`, indexCtl.Index)
-	c2 := &Test{}
-	lib.App.RC(c2).AutoRoute()
+	lib.App.RC(&Index{}).Auto()
 }
 
 type Index struct {
-	*base.Controller
+	index X.Mapper
+	*Base
 }
 
-func (a *Index) Index(c *X.Context) error {
-	a.Tmpl(`index`, c)
+func (a *Index) Init(c *X.Context) {
+	a.Base = New(c)
+}
+
+func (a *Index) Index() error {
 	return nil
 }
 
-func (a *Index) After(c *X.Context) error {
-	return a.Controller.After(c)
-}
-
-type Test struct {
-	*X.Context
-	*X.App
-}
-
-func (a *Test) Init(c *X.Context, app *X.App) {
-	a.Context = c
-	a.App = app
-}
-
-func (a *Test) Index_GET_POST() error {
-	a.Assign(`path`, a.Context.Path())
-	return a.Display()
+func (a *Index) After() error {
+	return a.Controller.After()
 }

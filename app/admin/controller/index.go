@@ -6,22 +6,23 @@ import (
 	//"github.com/webx-top/webx/lib/com"
 )
 
-var indexCtl = &Index{Base: New()}
-
 func init() {
-	c := lib.App.RC(indexCtl)
-	c.R(`/`, indexCtl.Index)
+	lib.App.RC(&Index{}).Auto()
 }
 
 type Index struct {
+	index X.Mapper
 	*Base
 }
 
-func (a *Index) Before(c *X.Context) error {
-	return a.Base.Before(c)
+func (a *Index) Init(c *X.Context) {
+	a.Base = New(c)
 }
 
-func (a *Index) Index(c *X.Context) error {
-	a.Tmpl(`index`, c)
+func (a *Index) Before() error {
+	return a.Base.Before()
+}
+
+func (a *Index) Index() error {
 	return nil
 }

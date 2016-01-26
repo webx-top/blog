@@ -37,7 +37,6 @@ var (
 		HtmlCacheTime:  86400,
 	}
 	HtmlCacheMW = HtmlCache.Middleware()
-	BaseCtl     = NewController()
 	I18n        = i18n.New(RootDir+`/data/lang/rules`, RootDir+`/data/lang/messages`, DefaultLang, DefaultLang)
 	Xsrf        = xsrf.New()
 	Jwt         = jwt.New(SecretKey)

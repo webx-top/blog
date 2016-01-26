@@ -6,24 +6,23 @@ import (
 	X "github.com/webx-top/webx"
 )
 
-var publicCtl = &Public{Controller: base.BaseCtl}
-
 func init() {
-	c := lib.App.RC(publicCtl)
-	c.R(`/login`, publicCtl.Login, `GET`, `POST`)
-	c.R(`/logout/:next`, publicCtl.Logout, `GET`, `POST`)
+	lib.App.RC(&Public{}).Auto()
 }
 
 type Public struct {
+	login X.Mapper
 	*base.Controller
 }
 
-func (a *Public) Login(c *X.Context) error {
-	a.Tmpl(`login`, c)
+func (a *Public) Init(c *X.Context) {
+	a.Controller = base.NewController(c)
+}
+
+func (a *Public) Login() error {
 	return nil
 }
 
 func (a *Public) Logout(c *X.Context) error {
-	a.Tmpl(`login`, c)
 	return nil
 }

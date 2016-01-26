@@ -2,13 +2,13 @@ package controller
 
 import (
 	"github.com/webx-top/blog/app/base"
-	"github.com/webx-top/blog/app/blog/lib"
+	//"github.com/webx-top/blog/app/blog/lib"
 	X "github.com/webx-top/webx"
 )
 
-func New() *Base {
+func New(c *X.Context) *Base {
 	return &Base{
-		Controller: base.BaseCtl,
+		Controller: base.NewController(c),
 	}
 }
 
@@ -16,14 +16,14 @@ type Base struct {
 	*base.Controller
 }
 
-func (a *Base) Before(c *X.Context) error {
-	if uid, ok := c.GetSession(`uid`).(int64); !ok || uid < 1 {
-		c.Redirect(301, lib.App.Url+`login`)
-		c.Exit = true
+func (a *Base) Before() error {
+	if uid, ok := a.GetSession(`uid`).(int64); !ok || uid < 1 {
+		a.Redirect(301, a.App.Url+`login`)
+		a.Exit = true
 	}
-	return a.Controller.Before(c)
+	return a.Controller.Before()
 }
 
-func (a *Base) After(c *X.Context) error {
-	return nil
+func (a *Base) After() error {
+	return a.Controller.After()
 }
