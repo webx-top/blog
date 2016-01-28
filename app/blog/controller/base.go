@@ -19,7 +19,7 @@ type Base struct {
 func (a *Base) Before() error {
 	/*
 		if uid, ok := a.GetSession(`uid`).(int64); !ok || uid < 1 {
-			a.Redirect(301, a.App.Url+`login`)
+			a.Redirect(a.App.Url+`login`)
 			a.Exit = true
 		}
 	*/
