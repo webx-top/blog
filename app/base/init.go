@@ -88,7 +88,7 @@ func init() {
 func moniterLanguageResource() {
 	var callback = com.MoniterEventFunc{
 		Modify: func(file string) {
-			Server.Echo.Logger().Info("reload language: %v", file)
+			Server.Core.Logger().Info("reload language: %v", file)
 			I18n.Reload(file)
 		},
 	}
