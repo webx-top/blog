@@ -6,7 +6,7 @@
 		route: '',
 		data: {},
 		pageJs: null,
-		libs: {layer:['Dialog/layer/layer.js']},
+		libs: {layer:['Dialog/layer/min.js']},
 		calls: [],
 		include: function(file, location) {
 			if (location == null) location = "head";
