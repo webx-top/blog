@@ -46,7 +46,7 @@ func (a *Public) Login() error {
 		return a.SetErr(err)
 	}
 	a.SetSession(`uid`, u.Id)
-	a.Redirect(a.Url(`admin`, `index`, `index`))
+	a.Redirect(a.Url(`Index`, `Index`))
 	return a.SetSuc(a.T(`登录成功`))
 }
 
