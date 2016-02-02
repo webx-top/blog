@@ -24,7 +24,7 @@ import (
 )
 
 func init() {
-	lib.App.RC(&Index{}).Auto()
+	lib.App.Reg(&Index{}).Auto()
 }
 
 type Index struct {

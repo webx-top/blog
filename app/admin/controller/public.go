@@ -25,7 +25,7 @@ import (
 )
 
 func init() {
-	lib.App.RC(&Public{}).Auto()
+	lib.App.Reg(&Public{}).Auto()
 }
 
 type Public struct {
