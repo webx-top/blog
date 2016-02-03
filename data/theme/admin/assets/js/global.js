@@ -6,7 +6,7 @@
 		route: '',
 		data: {},
 		pageJs: null,
-		libs: {layer:['Dialog/layer/min.js']},
+		libs: {layer:['Dialog/layer/min.js'],noty:['Dialog/noty/min.js']},
 		msgs: {
 			err:null,
 			suc:null,
@@ -19,8 +19,8 @@
 				var jsAfter = $("#js-lazyload-begin"),
 					cssAfter = $("#css-lazyload-begin");
 				webx.data.include = {
-					before: {},
-					after: {}
+					before:{},
+					after:{}
 				};
 				if (jsAfter.length) {
 					webx.data.include.after.script = jsAfter;
@@ -35,35 +35,33 @@
 					if (cssBefore.length) webx.data.include.before.link = cssBefore;
 				}
 			}
+			$.ajaxSetup({cache:true});
 			var files = typeof(file) == "string" ? [file] : file;
 			for (var i = 0; i < files.length; i++) {
-				var name = files[i].replace(/^\s|\s$/g, ""),
-					att = name.split('.');
-				var ext = att[att.length - 1].toLowerCase(),
-					isCSS = ext == "css";
+				var name = files[i].replace(/^\s|\s$/g, ""), att = name.split('.');
+				var ext = att[att.length - 1].toLowerCase(), isCSS = ext == "css";
 				var tag = isCSS ? "link" : "script";
 				var attr = isCSS ? ' type="text/css" rel="stylesheet"' : ' type="text/javascript"';
 				attr += ' charset="utf-8" ';
 				var link = (isCSS ? "href" : "src") + "='" + name + "'";
-				if ($(tag + "[" + link + "]").length == 0) {
-					var ej = $("<" + tag + attr + link + "></" + tag + ">");
-					if (location == "head") {
-						if (typeof(webx.data.include.after[tag]) != 'undefined') {
-							webx.data.include.after[tag].after(ej);
-						} else if (typeof(webx.data.include.before[tag]) != 'undefined') {
-							webx.data.include.before[tag].before(ej);
-						} else {
-							$(location).append(ej);
-						}
-					} else {
-						$(location).append(ej);
-					}
+				if ($(tag + "[" + link + "]").length > 0) continue;
+				var ej = $("<" + tag + attr + link + "></" + tag + ">");
+				if (location == "head") {
+					if (typeof(webx.data.include.after[tag]) != 'undefined') {
+						webx.data.include.after[tag].after(ej);
+						continue;
+					} else if (typeof(webx.data.include.before[tag]) != 'undefined') {
+						webx.data.include.before[tag].before(ej);
+						continue;
+					} 
 				}
+				$(location).append(ej);
 			}
+			$.ajaxSetup({cache:false});
 		},
 		defined: function(vType, key, callback) {
 			if (vType != 'undefined' || key == null) {
-				if (key != null) return callback();
+				if (key != null && callback != null) return callback();
 				return;
 			}
 			if (typeof(key) == 'string' && typeof(webx.libs[key]) != 'undefined') key = webx.libs[key];
@@ -308,6 +306,40 @@
 				});
 			}
 			return layer;
+        },
+        noty: function(option){//webx.noty({text:'webx'});
+        	var defaults={
+                text        : 'text',
+                type        : 'information',//warning/error/information/success/notification
+                layout      : 'topRight',
+                theme       : 'relax',
+                maxVisible  : 5,
+        		closeWith   : ['click'],
+                timeout     : false,
+                animation   : {
+                    open  : 'animated bounceInRight',
+                    close : 'animated bounceOutRight',
+                    easing: 'swing',
+                    speed : 500
+                },
+                tmpl:'<div class="activity-item"><i class="fa fa-{%icon%}"></i><div class="activity">{%content%}</div></div>'
+            };
+            option=$.extend({},defaults,option||{})
+            webx.defined(typeof(noty),'noty');
+            if (option.tmpl) {
+            	if (typeof(option.text)!='object') option.text={content:option.text};
+            	if (!option.text.icon) {
+            		switch(option.type){
+            			case 'success':option.text.icon='ok';break;//smile-o
+            			case 'warning':option.text.icon='warning';break;
+            			case 'information':option.text.icon='info';break;
+            			case 'error':option.text.icon='ban';break;//meh-o
+            			case 'notification':option.text.icon='bullhorn';break;
+            		}
+            	}
+            	option.text=webx.parseTmpl(option.tmpl,option.text);
+            }
+            return noty(option);
         }
 	};
 })();
