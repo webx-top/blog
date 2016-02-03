@@ -49,7 +49,7 @@ func (a *Public) Login() error {
 		if err != nil {
 			return a.SetErr(err)
 		}
-		a.SetSession(`uid`, u.Id)
+		a.SetSession(`uid`, u.Id).Save()
 		return a.Redirect(a.Url(`Index`, `Index`))
 		//a.SetSuc(a.T(`登录成功`))
 	}
@@ -68,7 +68,7 @@ func (a *Public) Register() error {
 			return a.SetErr(err)
 		}
 		if active {
-			a.SetSession(`uid`, u.Id)
+			a.SetSession(`uid`, u.Id).Save()
 		}
 		return a.Redirect(a.Url(`Index`, `Index`))
 	}

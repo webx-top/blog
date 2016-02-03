@@ -35,7 +35,7 @@ type Base struct {
 
 func (a *Base) Before() error {
 	if uid, ok := a.GetSession(`uid`).(int); !ok || uid < 1 {
-		a.AddFlash(`errMsg`, a.T(`请先登录`))
+		a.AddFlash(`errMsg`, a.T(`请先登录`)).Save()
 		return a.Redirect(a.App.Url + `public/login`)
 	}
 	return a.Controller.Before()
