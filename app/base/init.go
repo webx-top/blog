@@ -82,7 +82,11 @@ func init() {
 	// ======================
 	// 连接数据库
 	// ======================
-	DB, _ = database.NewOrm(Config.DB.Engine, Config.DB.Dsn())
+	var err error
+	DB, err = database.NewOrm(Config.DB.Engine, Config.DB.Dsn())
+	if err == nil {
+		DB.SetPrefix(Config.DB.Prefix)
+	}
 }
 
 func moniterLanguageResource() {

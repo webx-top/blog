@@ -7,6 +7,11 @@
 		data: {},
 		pageJs: null,
 		libs: {layer:['Dialog/layer/min.js']},
+		msgs: {
+			err:null,
+			suc:null,
+			code:null //-2:no permission; -1:no auth; 0:failure; 1:success
+		},
 		calls: [],
 		include: function(file, location) {
 			if (location == null) location = "head";
@@ -258,6 +263,39 @@
 			if(js==null)js=webx.pageJs;
 			webx.doCalls();
 			webx.includes(js);
+			webx.showMsgs(true);
+		},
+		showMsgs:function(once){
+			if(once==null)once=false;
+			if(webx.msgs.err&&webx.msgs.suc){
+				webx.dialog().msg('<div>'+webx.msgs.err+'</div><div>'+webx.msgs.suc+'</div>',{offset:'10px',shift:6,icon:0,time:10000});
+				if (once) webx.resetMsgs();
+			}else if(webx.msgs.err){
+				webx.dialog().msg(webx.msgs.err,{offset:'10px',shift:6,icon:5,time:8000});
+				if (once) webx.resetMsgs();
+			}else if(webx.msgs.suc){
+				webx.dialog().msg(webx.msgs.suc,{offset:'10px',icon:6,time:5000});
+				if (once) webx.resetMsgs();
+			}
+		},
+		resetMsgs:function(){
+			webx.msgs={err:null,suc:null,code:null};
+		},
+		asMsgs:function(obj){
+			webx.msgs.code=obj.Status;
+			if (obj.Status==1) {
+				webx.msgs.suc=obj.Message;
+			}else{
+				webx.msgs.err=obj.Message;
+			}
+		},
+		setMsgs:function(code,msg){
+			webx.msgs.code=code;
+			if (code==1) {
+				webx.msgs.suc=msg;
+			}else{
+				webx.msgs.err=msg;
+			}
 		},
 		dialog: function() {
 			var type=typeof(layer);

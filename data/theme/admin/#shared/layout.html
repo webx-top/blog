@@ -16,6 +16,7 @@
 	webx.lang='{{Lang}}';
 	webx.siteUrl='{{AppUrl}}';
 	webx.route='{{.Path}}';
+	{{if Message}}webx.setMsgs({{Status}},'{{Message}}');{{end}}
 	</script>
 </head>
 <body>

@@ -1,10 +1,11 @@
 DB : {
   Engine    : "mysql",
-  DbUser    : "root",
-  DbPass    : "root",
-  DbName    : "blog",
-  DbHost    : "localhost",
-  DbPort    : "3306",
-  DbCharset : "utf8"
+  User      : "root",
+  Pass      : "root",
+  Name      : "blog",
+  Host      : "localhost",
+  Port      : "3306",
+  Charset   : "utf8",
+  Prefix    : "webx_"
 }
 

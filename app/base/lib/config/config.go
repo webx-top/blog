@@ -24,13 +24,14 @@ import (
 )
 
 type DB struct {
-	Engine    string
-	DbUser    string
-	DbPass    string
-	DbName    string
-	DbHost    string
-	DbPort    string
-	DbCharset string
+	Engine  string
+	User    string
+	Pass    string
+	Name    string
+	Host    string
+	Port    string
+	Charset string
+	Prefix  string
 }
 
 func (a *DB) Dsn() string {
@@ -38,26 +39,26 @@ func (a *DB) Dsn() string {
 	switch a.Engine {
 	case `mysql`:
 		var host string
-		if strings.HasPrefix(a.DbHost, `unix:`) {
-			host = "unix(" + strings.TrimPrefix(a.DbHost, `unix:`) + ")"
+		if strings.HasPrefix(a.Host, `unix:`) {
+			host = "unix(" + strings.TrimPrefix(a.Host, `unix:`) + ")"
 		} else {
-			if a.DbPort == `` {
-				a.DbPort = "3306"
+			if a.Port == `` {
+				a.Port = "3306"
 			}
-			host = "tcp(" + a.DbHost + ":" + a.DbPort + ")"
+			host = "tcp(" + a.Host + ":" + a.Port + ")"
 		}
-		dsn = com.UrlEncode(a.DbUser) + ":" + com.UrlEncode(a.DbPass) + "@" + host + "/" + a.DbName + "?charset=" + a.DbCharset
+		dsn = com.UrlEncode(a.User) + ":" + com.UrlEncode(a.Pass) + "@" + host + "/" + a.Name + "?charset=" + a.Charset
 	case `mymysql`: //tcp:localhost:3306*gotest/root/root
 		var host string
-		if strings.HasPrefix(a.DbHost, `unix:`) {
-			host = "unix:" + strings.TrimPrefix(a.DbHost, `unix:`)
+		if strings.HasPrefix(a.Host, `unix:`) {
+			host = "unix:" + strings.TrimPrefix(a.Host, `unix:`)
 		} else {
-			if a.DbPort == `` {
-				a.DbPort = "3306"
+			if a.Port == `` {
+				a.Port = "3306"
 			}
-			host = "tcp:" + a.DbHost + ":" + a.DbPort
+			host = "tcp:" + a.Host + ":" + a.Port
 		}
-		dsn = host + "*" + a.DbName + "/" + com.UrlEncode(a.DbUser) + "/" + com.UrlEncode(a.DbPass)
+		dsn = host + "*" + a.Name + "/" + com.UrlEncode(a.User) + "/" + com.UrlEncode(a.Pass)
 	default:
 		panic(a.Engine + ` is not supported.`)
 	}

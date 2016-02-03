@@ -18,6 +18,8 @@
 package controller
 
 import (
+	//"fmt"
+
 	"github.com/webx-top/blog/app/admin/lib"
 	"github.com/webx-top/blog/app/base"
 	"github.com/webx-top/blog/app/base/model"
@@ -40,14 +42,17 @@ func (a *Public) Init(c *X.Context) {
 }
 
 func (a *Public) Login() error {
-	var uname, passwd = a.Form(`uname`), a.Form(`passwd`)
-	u, err := a.user.Login(uname, passwd)
-	if err != nil {
-		return a.SetErr(err)
+	if a.IsPost() {
+		var uname, passwd = a.Form(`uname`), a.Form(`passwd`)
+		u, err := a.user.Login(uname, passwd)
+		if err != nil {
+			return a.SetErr(err)
+		}
+		a.SetSession(`uid`, u.Id)
+		return a.Redirect(a.Url(`Index`, `Index`))
+		//a.SetSuc(a.T(`登录成功`))
 	}
-	a.SetSession(`uid`, u.Id)
-	a.Redirect(a.Url(`Index`, `Index`))
-	return a.SetSuc(a.T(`登录成功`))
+	return nil
 }
 
 func (a *Public) Logout() error {

@@ -57,18 +57,20 @@ type Orm struct {
 	PrefixMapper core.PrefixMapper
 }
 
-func (this *Orm) SetTimezone(timezone string) {
+func (this *Orm) SetTimezone(timezone string) *Orm {
 	switch timezone {
 	case "UTC", "U":
 		this.TZLocation = time.UTC
 	default:
 		this.TZLocation = time.Local
 	}
+	return this
 }
 
-func (this *Orm) SetPrefix(prefix string) {
+func (this *Orm) SetPrefix(prefix string) *Orm {
 	this.PrefixMapper = core.NewPrefixMapper(core.SnakeMapper{}, prefix)
 	this.SetTableMapper(this.PrefixMapper)
+	return this
 }
 
 //取得完整的表名
@@ -76,11 +78,12 @@ func (this *Orm) T(noPrefixTableName string) string {
 	return this.PrefixMapper.Prefix + noPrefixTableName
 }
 
-func (this *Orm) SetLogger(out io.Writer) {
+func (this *Orm) SetLogger(out io.Writer) *Orm {
 	this.Logger = xorm.NewSimpleLogger(out)
+	return this
 }
 
-func (this *Orm) SetCacher(cs core.CacheStore) {
+func (this *Orm) SetCacher(cs core.CacheStore) *Orm {
 	this.CacheStore = cs
 	if this.CacheStore != nil {
 		var (
@@ -92,6 +95,7 @@ func (this *Orm) SetCacher(cs core.CacheStore) {
 		cacher.Expired = time.Duration(lifeTime) * time.Second
 		this.SetDefaultCacher(cacher)
 	}
+	return this
 }
 
 func (this *Orm) Close() {
@@ -139,12 +143,13 @@ func (this *Orm) TSess() *xorm.Session { // TransSession
 	return this.TransSession
 }
 
-func (this *Orm) Trans(fn func() error) {
+func (this *Orm) Trans(fn func() error) *Orm {
 	begun := this.HasBegun()
 	result := fn()
 	if !begun {
 		this.End(result == nil)
 	}
+	return this
 }
 
 func (this *Orm) Sess() *xorm.Session { // TransSession or Session
