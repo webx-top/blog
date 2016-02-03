@@ -53,17 +53,23 @@ func (a *Public) Login() error {
 		return a.Redirect(a.Url(`Index`, `Index`))
 		//a.SetSuc(a.T(`登录成功`))
 	}
+	if err := a.Flash(`errMsg`); err != nil {
+		a.SetErr(err)
+	}
 	return nil
 }
 
 func (a *Public) Register() error {
 	if a.IsPost() {
 		var uname, passwd = a.Form(`uname`), a.Form(`passwd`)
-		u, err := a.user.Register(uname, passwd, false)
+		var active = false
+		u, err := a.user.Register(uname, passwd, active)
 		if err != nil {
 			return a.SetErr(err)
 		}
-		a.SetSession(`uid`, u.Id)
+		if active {
+			a.SetSession(`uid`, u.Id)
+		}
 		return a.Redirect(a.Url(`Index`, `Index`))
 	}
 	return nil
