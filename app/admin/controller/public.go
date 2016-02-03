@@ -31,7 +31,8 @@ func init() {
 }
 
 type Public struct {
-	login X.Mapper
+	login    X.Mapper
+	register X.Mapper
 	*base.Controller
 	user *model.User
 }
@@ -51,6 +52,19 @@ func (a *Public) Login() error {
 		a.SetSession(`uid`, u.Id)
 		return a.Redirect(a.Url(`Index`, `Index`))
 		//a.SetSuc(a.T(`登录成功`))
+	}
+	return nil
+}
+
+func (a *Public) Register() error {
+	if a.IsPost() {
+		var uname, passwd = a.Form(`uname`), a.Form(`passwd`)
+		u, err := a.user.Register(uname, passwd, false)
+		if err != nil {
+			return a.SetErr(err)
+		}
+		a.SetSession(`uid`, u.Id)
+		return a.Redirect(a.Url(`Index`, `Index`))
 	}
 	return nil
 }

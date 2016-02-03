@@ -34,9 +34,8 @@ type Base struct {
 }
 
 func (a *Base) Before() error {
-	if uid, ok := a.GetSession(`uid`).(int64); !ok || uid < 1 {
-		a.Redirect(a.App.Url + `public/login`)
-		a.Exit = true
+	if uid, ok := a.GetSession(`uid`).(int); !ok || uid < 1 {
+		return a.Redirect(a.App.Url + `public/login`)
 	}
 	return a.Controller.Before()
 }
