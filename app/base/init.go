@@ -38,15 +38,14 @@ import (
 )
 
 var (
-	SecretKey   = `webx.top`
 	DefaultLang = `zh-cn`
 	Project     = `blog`
 	RootDir     = com.SelfDir()
 	Language    = language.NewLanguage()
-	SessionMW   = session.Middleware(`cookie`, SecretKey)
 	theme       = `default`
 	templateDir = RootDir + `/data/theme/`
 	Server      = X.Serv(Project).InitTmpl(ThemePath())
+	SessionMW   = session.Middleware(Server.SessionStoreEngine, Server.SessionStoreConfig)
 	HtmlCache   = &htmlcache.Config{
 		HtmlCacheDir:   RootDir + `/data/html`,
 		HtmlCacheOn:    true,
@@ -56,7 +55,7 @@ var (
 	HtmlCacheMW = HtmlCache.Middleware()
 	I18n        = i18n.New(RootDir+`/data/lang/rules`, RootDir+`/data/lang/messages`, DefaultLang, DefaultLang)
 	Xsrf        = xsrf.New()
-	Jwt         = jwt.New(SecretKey)
+	Jwt         = jwt.New(Server.CookieAuthKey)
 	Config      = &config.Config{}
 	configFile  = RootDir + `/data/config/config.yaml`
 	DB          *database.Orm

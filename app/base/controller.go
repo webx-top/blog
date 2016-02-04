@@ -33,7 +33,8 @@ type Controller struct {
 	*X.Controller
 }
 
-func (a *Controller) Init(c *X.Context) {
+func (a *Controller) Init(c *X.Context) error {
+	return nil
 }
 
 func (a *Controller) Before() error {

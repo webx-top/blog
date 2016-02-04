@@ -32,8 +32,9 @@ type Index struct {
 	*Base
 }
 
-func (a *Index) Init(c *X.Context) {
+func (a *Index) Init(c *X.Context) error {
 	a.Base = New(c)
+	return nil
 }
 
 func (a *Index) Index() error {

@@ -37,23 +37,26 @@ type Public struct {
 	user *model.User
 }
 
-func (a *Public) Init(c *X.Context) {
+func (a *Public) Init(c *X.Context) error {
 	a.Controller = base.NewController(c)
 	a.user = model.NewUser(a.Lang())
+	return nil
 }
 
 func (a *Public) Login() error {
+	ss := a.Session()
 	if a.IsPost() {
 		var uname, passwd = a.Form(`uname`), a.Form(`passwd`)
 		u, err := a.user.Login(uname, passwd)
 		if err != nil {
 			return a.SetErr(err)
 		}
-		a.SetSession(`uid`, u.Id).Save()
+		ss.Set(`uid`, u.Id).Save()
 		return a.Redirect(a.Url(`Index`, `Index`))
 		//a.SetSuc(a.T(`登录成功`))
 	}
 	if err := a.Flash(`errMsg`); err != nil {
+		ss.Save()
 		a.SetErr(err)
 	}
 	return nil
@@ -68,7 +71,7 @@ func (a *Public) Register() error {
 			return a.SetErr(err)
 		}
 		if active {
-			a.SetSession(`uid`, u.Id).Save()
+			a.Session().Set(`uid`, u.Id).Save()
 		}
 		return a.Redirect(a.Url(`Index`, `Index`))
 	}
