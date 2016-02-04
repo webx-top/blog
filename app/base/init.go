@@ -30,6 +30,7 @@ import (
 	"github.com/webx-top/webx/lib/middleware/jwt"
 	"github.com/webx-top/webx/lib/middleware/language"
 	"github.com/webx-top/webx/lib/middleware/session"
+	"github.com/webx-top/webx/lib/session/ssi"
 	"github.com/webx-top/webx/lib/xsrf"
 
 	"github.com/webx-top/blog/app/base/lib/config"
@@ -45,8 +46,21 @@ var (
 	theme       = `default`
 	templateDir = RootDir + `/data/theme/`
 	Server      = X.Serv(Project).InitTmpl(ThemePath())
-	SessionMW   = session.Middleware(Server.SessionStoreEngine, Server.SessionStoreConfig)
-	HtmlCache   = &htmlcache.Config{
+	SessionMW   = session.Middleware(&ssi.Options{
+		Engine:   `bolt`, //Server.SessionStoreEngine,
+		Path:     `/`,
+		Domain:   Server.CookieDomain,
+		MaxAge:   int(Server.CookieExpires),
+		Secure:   false,
+		HttpOnly: Server.CookieHttpOnly,
+	},
+		//Server.SessionStoreConfig)
+		map[string]string{
+			"file": RootDir + `/data/bolt/session.db`,
+			"key":  Server.CookieAuthKey,
+			"name": Server.Name,
+		})
+	HtmlCache = &htmlcache.Config{
 		HtmlCacheDir:   RootDir + `/data/html`,
 		HtmlCacheOn:    true,
 		HtmlCacheRules: make(map[string]interface{}),
