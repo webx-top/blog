@@ -19,6 +19,7 @@ package base
 
 import (
 	X "github.com/webx-top/webx"
+	C "github.com/webx-top/webx/lib/captcha"
 	"github.com/webx-top/webx/lib/i18n"
 )
 
@@ -54,4 +55,13 @@ func (a *Controller) Lang() string {
 
 func (a *Controller) T(key string, args ...interface{}) string {
 	return i18n.T(a.Lang(), key, args...)
+}
+
+// 验证码验证
+func (a *Controller) VerifyCaptcha(captchaSolution string) bool {
+	captchaId := a.Form("captchaId")
+	if !C.VerifyString(captchaId, captchaSolution) {
+		return false
+	}
+	return true
 }

@@ -47,6 +47,9 @@ func (a *Public) Login() error {
 	ss := a.Session()
 	if a.IsPost() {
 		var uname, passwd = a.Form(`uname`), a.Form(`passwd`)
+		if !a.VerifyCaptcha(a.Form(`captcha`)) {
+			return a.SetErr(a.T(`验证码错误`))
+		}
 		u, err := a.user.Login(uname, passwd)
 		if err != nil {
 			return a.SetErr(err)
@@ -65,6 +68,9 @@ func (a *Public) Login() error {
 func (a *Public) Register() error {
 	if a.IsPost() {
 		var uname, passwd = a.Form(`uname`), a.Form(`passwd`)
+		if !a.VerifyCaptcha(a.Form(`captcha`)) {
+			return a.SetErr(a.T(`验证码错误`))
+		}
 		var active = false
 		u, err := a.user.Register(uname, passwd, active)
 		if err != nil {
