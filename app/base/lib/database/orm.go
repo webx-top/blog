@@ -109,9 +109,8 @@ func (this *Orm) Close() {
 	}
 
 	//重置缓存对象
-	switch this.CacheStore.(type) {
-	case *cachestore.LevelDBStore:
-		this.CacheStore.(*cachestore.LevelDBStore).Close()
+	if closer, ok := this.CacheStore.(cachestore.Closer); ok {
+		closer.Close()
 	}
 	this.CacheStore = nil
 }

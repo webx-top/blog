@@ -3,6 +3,7 @@
 		lang: 'zh-cn',
 		staticUrl: '',
 		siteUrl: '',
+		appUrl: '',
 		route: '',
 		data: {},
 		pageJs: null,
@@ -340,6 +341,48 @@
             	option.text=webx.parseTmpl(option.tmpl,option.text);
             }
             return noty(option);
+        },
+        captcha:{
+        	show:function(element,app,ident){
+				if(ident==null)ident='captcha';
+				if($('#'+ident+'Image').length>0)return;
+				$.get(webx.siteUrl+'captcha/reload',{format:'json',app:app,v:Math.random()},function(r){
+					if(typeof(r)!='object')return;
+					var id=r.Data.Id;
+					var rel=$(element).attr('rel');
+					var style='';
+					if(rel!='nostyle')style='border-radius:5px;border:1px solid #DDD;box-shadow:0 0 5px #EEE;';
+					var captcha=$('<img id="'+ident+'Image" src="'+webx.siteUrl+'captcha/'+id+'.png" alt="Captcha image" title="'+webx.t("点击这里刷新验证码")+'" onclick="webx.captcha.click(this,\''+app+'\');" onerror="webx.captcha.action(this,\''+app+'\');" style="'+style+'cursor:pointer" /><input type="hidden" name="captchaId" id="'+ident+'Id" value="'+id+'" />');
+					$(element).html(captcha);
+				},'json');
+			},
+        	click:function(element,app){
+				var spt = $(element).attr('src').split('?');
+				webx.data.captchaErrorTimes = 0;
+				$(element).attr('src',spt[0]+'?app='+app+'&reload='+Math.random());
+        	},
+        	monitor:function(element,app){
+				$(element).error(function(){
+					webx.captcha.action(this,app);
+				});
+			},
+			action:function(element,app){
+				if (webx.data.captchaErrorTimes > 1) {
+					if (webx.data.captchaErrorTimes < 9){
+						alert(webx.t("验证码图片已经失效，请刷新页面重试。"));
+						webx.data.captchaErrorTimes = 9;
+					}
+					return;
+				}
+				var obj=$(element);
+				$.get(webx.siteUrl+'captcha/reload',{format:'json',app:app,v:Math.random()},function(r){
+					if(typeof(r)!='object')return;
+					var id=r.Data.Id;
+					webx.data.captchaErrorTimes++;
+					obj.attr('src',webx.siteUrl+'captcha\/'+id+'.png');
+					obj.next('input[type=hidden]').val(id);
+				},'json');
+			}
         }
 	};
 })();

@@ -14,7 +14,8 @@
 	<script type="text/javascript">
 	webx.staticUrl='{{StaticUrl ""}}';
 	webx.lang='{{Lang}}';
-	webx.siteUrl='{{AppUrl}}';
+	webx.siteUrl='{{RootUrl}}';
+	webx.appUrl='{{AppUrl}}';
 	webx.route='{{.Path}}';
 	{{if Message}}webx.setMsgs({{Status}},'{{Message}}');{{end}}
 	</script>
