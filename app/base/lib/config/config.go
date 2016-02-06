@@ -65,6 +65,28 @@ func (a *DB) Dsn() string {
 	return dsn
 }
 
+type Cookie struct {
+	Prefix   string
+	HttpOnly bool
+	AuthKey  string
+	BlockKey string
+	Expires  int64
+	Domain   string
+}
+
+type Session struct {
+	StoreEngine string
+	StoreConfig interface{}
+}
+
+type Language struct {
+	Default string
+	AllList []string
+}
+
 type Config struct {
-	DB `json:"DB"`
+	DB       `json:"DB"`
+	Cookie   `json:"Cookie"`
+	Session  `json:"Session"`
+	Language `json:"Language"`
 }

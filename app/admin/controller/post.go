@@ -15,20 +15,28 @@
    limitations under the License.
 
 */
-package main
+package controller
 
 import (
-	"flag"
-
-	_ "github.com/webx-top/blog/app/admin"
-	_ "github.com/webx-top/blog/app/blog"
-
-	"github.com/webx-top/blog/app/base"
+	"github.com/webx-top/blog/app/admin/lib"
+	X "github.com/webx-top/webx"
+	//"github.com/webx-top/webx/lib/com"
 )
 
-func main() {
-	port := flag.String("p", "5000", "port of your blog.")
-	flag.Parse()
+func init() {
+	lib.App.Reg(&Post{}).Auto()
+}
 
-	base.Server.Run("127.0.0.1", *port)
+type Post struct {
+	index X.Mapper
+	*Base
+}
+
+func (a *Post) Init(c *X.Context) error {
+	a.Base = New(c)
+	return nil
+}
+
+func (a *Post) Index() error {
+	return nil
 }

@@ -1,16 +1,16 @@
 
 		<aside class="sidebar">
 			<ul class="tab_nav">
-				<li class="active_tab i_32_dashboard">
-					<a href="index.html" title="General Info">
-						<span class="tab_label">Dashboard</span>
-						<span class="tab_info">General Info</span>
+				<li class="{{if eq ControllerName "Index"}}active_tab {{end}}i_32_dashboard">
+					<a href="{{Url "Index" "Index"}}" title="{{"全局信息"|T}}">
+						<span class="tab_label">{{"首页"|T}}</span>
+						<span class="tab_info">{{"全局信息"|T}}</span>
 					</a>
 				</li>
-				<li class="i_32_inbox">
-					<a href="inbox.html" title="Your Messages">
-						<span class="tab_label">Inbox</span>
-						<span class="tab_info">Your Messages</span>
+				<li class="{{if eq ControllerName "Post"}}active_tab {{end}}i_32_inbox">
+					<a href="{{Url "Post" "Index"}}" title="{{"我的博文"|T}}">
+						<span class="tab_label">{{"文章"|T}}</span>
+						<span class="tab_info">{{"我的博文"|T}}</span>
 					</a>
 				</li>
 				<li class="i_32_charts">

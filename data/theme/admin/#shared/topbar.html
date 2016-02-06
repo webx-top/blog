@@ -3,7 +3,7 @@
 		<div class="wrapper">
 			<div class="user">
 				<img src="{{"user_avatar.png"|ImgUrl}}" alt="user_avatar" class="user_avatar" />
-				<span class="label">John Alex</span>
+				<span class="label">{{.User.Uname}}</span>
 				<!-- Top Tooltip -->
 				<div class="top_tooltip">
 					<div>
@@ -12,7 +12,7 @@
 							<li class="i_16_tasks"><a href="#" title="Tasks"></a></li>
 							<li class="i_16_notes"><a href="#" title="Notes"></a></li>
 							<li class="i_16_options"><a href="#" title="Options"></a></li>
-							<li class="i_16_logout"><a href="#" title="Log-Out"></a></li>
+							<li class="i_16_logout"><a href="{{Url "Public" "Logout"}}" title="Log-Out"></a></li>
 						</ul>
 					</div>
 				</div>

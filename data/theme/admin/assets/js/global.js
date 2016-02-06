@@ -4,24 +4,42 @@
 		staticUrl: '',
 		siteUrl: '',
 		appUrl: '',
-		route: '',
+		appName: '',
+	    controllerName: '',
+	 	actionName: '',
 		data: {},
 		pageJs: null,
-		libs: {layer:['Dialog/layer/min.js'],noty:['Dialog/noty/min.js']},
+		libs: {
+			layer: ['dialog/layer/min.js'],
+			noty: ['dialog/noty/min.js'],
+			validate: ['validate/min.js'],
+			table:['dataTables/min.js']
+		},
 		msgs: {
-			err:null,
-			suc:null,
-			code:null //-2:no permission; -1:no auth; 0:failure; 1:success
+			err: null,
+			suc: null,
+			code: null //-2:no permission; -1:no auth; 0:failure; 1:success
 		},
 		calls: [],
+		getLang: function(){
+			if(webx.data.lang!=null)return webx.data.lang;
+			var part=webx.lang.split('-');
+			if(part.length>1){
+				part[1]=part[1].toUpperCase();
+				webx.data.lang=part.join('-');
+			}else{
+				webx.data.lang=lang;
+			}
+			return webx.data.lang;
+		},
 		include: function(file, location) {
 			if (location == null) location = "head";
 			if (location == "head" && typeof(webx.data["include"]) == "undefined") {
 				var jsAfter = $("#js-lazyload-begin"),
 					cssAfter = $("#css-lazyload-begin");
 				webx.data.include = {
-					before:{},
-					after:{}
+					before: {},
+					after: {}
 				};
 				if (jsAfter.length) {
 					webx.data.include.after.script = jsAfter;
@@ -36,11 +54,13 @@
 					if (cssBefore.length) webx.data.include.before.link = cssBefore;
 				}
 			}
-			$.ajaxSetup({cache:true});
+			$.ajaxSetup({cache: true});
 			var files = typeof(file) == "string" ? [file] : file;
 			for (var i = 0; i < files.length; i++) {
-				var name = files[i].replace(/^\s|\s$/g, ""), att = name.split('.');
-				var ext = att[att.length - 1].toLowerCase(), isCSS = ext == "css";
+				var name = files[i].replace(/^\s|\s$/g, ""),
+					att = name.split('.');
+				var ext = att[att.length - 1].toLowerCase(),
+					isCSS = ext == "css";
 				var tag = isCSS ? "link" : "script";
 				var attr = isCSS ? ' type="text/css" rel="stylesheet"' : ' type="text/javascript"';
 				attr += ' charset="utf-8" ';
@@ -54,11 +74,11 @@
 					} else if (typeof(webx.data.include.before[tag]) != 'undefined') {
 						webx.data.include.before[tag].before(ej);
 						continue;
-					} 
+					}
 				}
 				$(location).append(ej);
 			}
-			$.ajaxSetup({cache:false});
+			$.ajaxSetup({cache: false});
 		},
 		defined: function(vType, key, callback) {
 			if (vType != 'undefined' || key == null) {
@@ -69,14 +89,14 @@
 			webx.includes(key);
 			if (callback != null) return callback();
 		},
-		includes: function(js){
+		includes: function(js) {
 			if (!js) return;
 			switch (typeof(js)) {
 			case 'string':
 				webx.include(webx.staticUrl + 'js/' + js);
 				return;
 			case 'boolean':
-				webx.include(webx.staticUrl + 'js/pages' + webx.route.replace('*', '').split(':')[0] + '.js');
+				webx.include(webx.staticUrl + 'js/pages/' + webx.appName + '/' + webx.controllerName + '/' + webx.actionName + '.js');
 				return;
 			default:
 				if (typeof(js.length) == 'undefined') return;
@@ -223,8 +243,10 @@
 				'user-select': 'none'
 			}).bind('selectstart', fn).bind('contextmenu', fn).bind('dragstart', fn).bind('selectstart', fn).bind('beforecopy', fn);
 		},
-		/* 级联选择(使用前请确保第一个下拉框已有选中项)
-		使用方法：nestedSelect(["country_id","province_id","city_id"]) */
+		/** 
+		 * 级联选择(使用前请确保第一个下拉框已有选中项)
+		 * 使用方法：nestedSelect(["country_id","province_id","city_id"]) 
+		 **/
 		nestedSelect: function(ids, initVal, attrName, timeout) {
 			if (typeof(ids) == 'object') {
 				var obj = ids;
@@ -259,136 +281,473 @@
 			return true;
 		},
 		initPage: function(js) {
-			if(js==null)js=webx.pageJs;
+			if (js == null) js = webx.pageJs;
 			webx.doCalls();
 			webx.includes(js);
 			webx.showMsgs(true);
+			webx.autoValidateForm();
 		},
-		showMsgs:function(once){
-			if(once==null)once=false;
-			if(webx.msgs.err&&webx.msgs.suc){
-				webx.dialog().msg('<div>'+webx.msgs.err+'</div><div>'+webx.msgs.suc+'</div>',{offset:'10px',shift:6,icon:0,time:10000});
+		autoValidateForm: function() {
+			$('form[data-validate="true"]').each(function() {
+				var sucFn = $(this).attr('data-validate-callback'),
+					option = $(this).attr('data-validate-option');
+				if (sucFn == undefined) sucFn = null;
+				if (option == undefined) option = null;
+				if (option) {
+					option = $.parseJSON(option);
+					var t = typeof(option.validate);
+					if (t != 'undefined' && option.validate && t != 'function') {
+						try {
+							option.validate = eval(option.validate);
+						} catch (e) {
+							console.log(e);
+						}
+						if (typeof(option.validate) != 'function') {
+							option.validate = function() {
+								return true;
+							}
+						}
+					}
+				}
+				if (sucFn) {
+					try {
+						sucFn = eval(sucFn);
+					} catch (e) {
+						console.log(e);
+					}
+					if (typeof(sucFn) != 'function') {
+						sucFn = null;
+					}
+				}
+				webx.validate($(this), sucFn, option);
+			});
+		},
+		showMsgs: function(once) {
+			if (once == null) once = false;
+			if (webx.msgs.err && webx.msgs.suc) {
+				webx.dialog().msg('<div>' + webx.msgs.err + '</div><div>' + webx.msgs.suc + '</div>', {
+					offset: '10px',
+					shift: 6,
+					icon: 0,
+					time: 10000
+				});
 				if (once) webx.resetMsgs();
-			}else if(webx.msgs.err){
-				webx.dialog().msg(webx.msgs.err,{offset:'10px',shift:6,icon:5,time:8000});
+			} else if (webx.msgs.err) {
+				webx.dialog().msg(webx.msgs.err, {
+					offset: '10px',
+					shift: 6,
+					icon: 5,
+					time: 8000
+				});
 				if (once) webx.resetMsgs();
-			}else if(webx.msgs.suc){
-				webx.dialog().msg(webx.msgs.suc,{offset:'10px',icon:6,time:5000});
+			} else if (webx.msgs.suc) {
+				webx.dialog().msg(webx.msgs.suc, {
+					offset: '10px',
+					icon: 6,
+					time: 5000
+				});
 				if (once) webx.resetMsgs();
 			}
 		},
-		resetMsgs:function(){
-			webx.msgs={err:null,suc:null,code:null};
+		resetMsgs: function() {
+			webx.msgs = {
+				err: null,
+				suc: null,
+				code: null
+			};
 		},
-		asMsgs:function(obj){
-			webx.msgs.code=obj.Status;
-			if (obj.Status==1) {
-				webx.msgs.suc=obj.Message;
-			}else{
-				webx.msgs.err=obj.Message;
+		asMsgs: function(obj) {
+			webx.msgs.code = obj.Status;
+			if (obj.Status == 1) {
+				webx.msgs.suc = obj.Message;
+			} else {
+				webx.msgs.err = obj.Message;
 			}
 		},
-		setMsgs:function(code,msg){
-			webx.msgs.code=code;
-			if (code==1) {
-				webx.msgs.suc=msg;
-			}else{
-				webx.msgs.err=msg;
+		setMsgs: function(code, msg) {
+			webx.msgs.code = code;
+			if (code == 1) {
+				webx.msgs.suc = msg;
+			} else {
+				webx.msgs.err = msg;
 			}
 		},
 		dialog: function() {
-			var type=typeof(layer);
-			if (type=='undefined') {
-				window.LAYER_PATH=webx.staticUrl+'js/Dialog/layer/';
+			var type = typeof(layer);
+			if (type == 'undefined') {
+				window.LAYER_PATH = webx.staticUrl + 'js/Dialog/layer/';
 				webx.defined(type, 'layer');
 				layer.config({
-    				extend: ['extend/layer.ext.js','skin/moon/style.css'],
-    				skin: 'layer-ext-moon'
+					extend: ['extend/layer.ext.js', 'skin/moon/style.css'],
+					skin: 'layer-ext-moon'
 				});
 			}
 			return layer;
-        },
-        noty: function(option){//webx.noty({text:'webx'});
-        	var defaults={
-                text        : 'text',
-                type        : 'information',//warning/error/information/success/notification
-                layout      : 'topRight',
-                theme       : 'relax',
-                maxVisible  : 5,
-        		closeWith   : ['click'],
-                timeout     : false,
-                animation   : {
-                    open  : 'animated bounceInRight',
-                    close : 'animated bounceOutRight',
-                    easing: 'swing',
-                    speed : 500
-                },
-                tmpl:'<div class="activity-item"><i class="fa fa-{%icon%}"></i><div class="activity">{%content%}</div></div>'
-            };
-            option=$.extend({},defaults,option||{})
-            webx.defined(typeof(noty),'noty');
-            if (option.tmpl) {
-            	if (typeof(option.text)!='object') option.text={content:option.text};
-            	if (!option.text.icon) {
-            		switch(option.type){
-            			case 'success':option.text.icon='ok';break;//smile-o
-            			case 'warning':option.text.icon='warning';break;
-            			case 'information':option.text.icon='info';break;
-            			case 'error':option.text.icon='ban';break;//meh-o
-            			case 'notification':option.text.icon='bullhorn';break;
-            		}
-            	}
-            	option.text=webx.parseTmpl(option.tmpl,option.text);
-            }
-            return noty(option);
-        },
-        captcha:{
-        	show:function(element,app,ident){
-				if(ident==null)ident='captcha';
-				if($('#'+ident+'Image').length>0)return;
-				$.get(webx.siteUrl+'captcha/reload',{format:'json',app:app,v:Math.random()},function(r){
-					if(typeof(r)!='object')return;
-					var id=r.Data.Id;
-					var rel=$(element).attr('rel');
-					var style='';
-					if(rel!='nostyle')style='border-radius:5px;border:1px solid #DDD;box-shadow:0 0 5px #EEE;';
-					var captcha=$('<img id="'+ident+'Image" src="'+webx.siteUrl+'captcha/'+id+'.png" alt="Captcha image" title="'+webx.t("点击这里刷新验证码")+'" onclick="webx.captcha.click(this,\''+app+'\');" onerror="webx.captcha.action(this,\''+app+'\');" style="'+style+'cursor:pointer" /><input type="hidden" name="captchaId" id="'+ident+'Id" value="'+id+'" />');
+		},
+		noty: function(option, timeout, maxVisible) { //webx.noty({text:'webx'});
+			if (timeout == null) timeout = 3000;
+			if (maxVisible == null) maxVisible = 5;
+			if (typeof(option) != 'object') option = {
+				text: option
+			};
+			var defaults = {
+				text: 'text',
+				//type: warning/error/information/success/notification
+				type: 'information',
+				layout: 'topRight',
+				theme: 'relax',
+				maxVisible: maxVisible,
+				closeWith: ['click'],
+				//timeout: false
+				timeout: timeout,
+				animation: {
+					open: 'animated bounceInRight',
+					close: 'animated bounceOutRight',
+					easing: 'swing',
+					speed: 500
+				},
+				tmpl: '<div class="activity-item"><i class="fa fa-{%icon%}"></i><div class="activity">{%content%}</div></div>'
+			};
+			option = $.extend({}, defaults, option || {})
+			webx.defined(typeof(noty), 'noty');
+			if (option.tmpl) {
+				if (typeof(option.text) != 'object') option.text = {
+					content: option.text
+				};
+				if (!option.text.icon) {
+					switch (option.type) {
+					case 'success':
+						option.text.icon = 'ok';
+						break; //smile-o
+					case 'warning':
+						option.text.icon = 'warning';
+						break;
+					case 'information':
+						option.text.icon = 'info';
+						break;
+					case 'error':
+						option.text.icon = 'ban';
+						break; //meh-o
+					case 'notification':
+						option.text.icon = 'bullhorn';
+						break;
+					}
+				}
+				option.text = webx.parseTmpl(option.tmpl, option.text);
+			}
+			return noty(option);
+		},
+		captcha: {
+			show: function(element, app, ident) {
+				if (ident == null) ident = 'captcha';
+				if ($('#' + ident + 'Image').length > 0) return;
+				$.get(webx.siteUrl + 'captcha/reload', {
+					format: 'json',
+					app: app,
+					v: Math.random()
+				}, function(r) {
+					if (typeof(r) != 'object') return;
+					var id = r.Data.Id;
+					var rel = $(element).attr('rel');
+					var style = '';
+					if (rel != 'nostyle') style = 'border-radius:5px;border:1px solid #DDD;box-shadow:0 0 5px #EEE;';
+					var captcha = $('<img id="' + ident + 'Image" src="' + webx.siteUrl + 'captcha/' + id + '.png" alt="Captcha image" title="' + webx.t("点击这里刷新验证码") + '" onclick="webx.captcha.click(this,\'' + app + '\');" onerror="webx.captcha.action(this,\'' + app + '\');" style="' + style + 'cursor:pointer" /><input type="hidden" name="captchaId" id="' + ident + 'Id" value="' + id + '" />');
 					$(element).html(captcha);
-				},'json');
+				}, 'json');
 			},
-        	click:function(element,app){
+			click: function(element, app) {
 				var spt = $(element).attr('src').split('?');
 				webx.data.captchaErrorTimes = 0;
-				$(element).attr('src',spt[0]+'?app='+app+'&reload='+Math.random());
-        	},
-        	monitor:function(element,app){
-				$(element).error(function(){
-					webx.captcha.action(this,app);
+				$(element).attr('src', spt[0] + '?app=' + app + '&reload=' + Math.random());
+			},
+			monitor: function(element, app) {
+				$(element).error(function() {
+					webx.captcha.action(this, app);
 				});
 			},
-			action:function(element,app){
+			action: function(element, app) {
 				if (webx.data.captchaErrorTimes > 1) {
-					if (webx.data.captchaErrorTimes < 9){
+					if (webx.data.captchaErrorTimes < 9) {
 						alert(webx.t("验证码图片已经失效，请刷新页面重试。"));
 						webx.data.captchaErrorTimes = 9;
 					}
 					return;
 				}
-				var obj=$(element);
-				$.get(webx.siteUrl+'captcha/reload',{format:'json',app:app,v:Math.random()},function(r){
-					if(typeof(r)!='object')return;
-					var id=r.Data.Id;
+				var obj = $(element);
+				$.get(webx.siteUrl + 'captcha/reload', {
+					format: 'json',
+					app: app,
+					v: Math.random()
+				}, function(r) {
+					if (typeof(r) != 'object') return;
+					var id = r.Data.Id;
 					webx.data.captchaErrorTimes++;
-					obj.attr('src',webx.siteUrl+'captcha\/'+id+'.png');
+					obj.attr('src', webx.siteUrl + 'captcha\/' + id + '.png');
 					obj.next('input[type=hidden]').val(id);
-				},'json');
+				}, 'json');
 			}
-        }
+		},
+		validate: function(element, sucFn, options) {
+			webx.defined(typeof($.fn.html5Validate), 'validate');
+			var defaults = {
+				novalidate: false,
+				validate: function() {
+					return true;
+				},
+				submit: true
+			};
+			var params = $.extend({}, defaults, options || {});
+			var object;
+			if (typeof(element) == 'object' && typeof(element.length) != 'undefined') {
+				object = element
+			} else {
+				object = $(element);
+			}
+			return object.html5Validate(function() {
+				if (sucFn != null) sucFn();
+				if (params.submit && $(this).get(0).tagName.toLowerCase() == 'form') this.submit();
+				return true;
+			}, params);
+		},
+		parseAjaxSetting: function(data) {
+			if (typeof(data)!='string') return data;
+			var ti = data.indexOf("json:");
+			if (ti === 0) {
+				data = $.parseJSON(data.substring(5));
+				return data;
+			}
+			var elem = data;
+			data = {};
+			ti = elem.indexOf("elem:");
+			if (ti !== 0) return data;
+			elem = elem.substring(5);
+			if ($(elem).length < 1) return data;
+			if (elem.indexOf(",") === -1) {
+				switch ($(elem).get(0).tagName) {
+				case "FORM":
+					data = $(elem).serialize();
+					break;
+				case "INPUT":
+					var ob = $(elem),
+						tp = ob.first().attr('type');
+					var me = ob.first().attr('name');
+					if (tp.toUpperCase() == "CHECKBOX") {
+						data[me] = [];
+						ob.has(":checked").each(function() {
+							data[me].push($(this).val())
+						});
+						break;
+					}
+					data[me] = $(elem).first().val();
+					break;
+				case "SELECT":
+					var ob = $(elem),
+						multi = ob.first().attr('multiple');
+					var me = ob.first().attr('name');
+					if (multi) {
+						data[me] = [];
+						ob.find("option:selected").each(function() {
+							data[me].push($(this).val())
+						});
+						break;
+					}
+					data[me] = $(elem).first().val();
+					break;
+				default:
+					var me = $(elem).first().attr('name');
+					data[me] = $(elem).first().val();
+				}
+				return data;
+			}
+			var ob = $(elem);
+			ob.each(function() {
+				var me = $(this).attr('name');
+				switch ($(this).get(0).tagName) {
+				case "INPUT":
+					var tp = $(this).attr('type');
+					if (tp.toUpperCase() == "CHECKBOX") {
+						if (typeof(data[me]) == 'undefined') {
+							data[me] = [];
+						}
+						data[me].push($(this).val());
+						break;
+					}
+					data[me] = $(this).val();
+					break;
+				case "SELECT":
+					var multi = $(this).attr('multiple');
+					if (multi) {
+						if (typeof(data[me]) == 'undefined') {
+							data[me] = [];
+						}
+						$(this).find('option:selected').each(function() {
+							data[me].push($(this).val())
+						});
+						break;
+					}
+					data[me] = $(this).val();
+					break;
+				default:
+					data[me] = $(this).val();
+				}
+			});
+			return data;
+		},
+		autoAjax: function(element) {
+			if (element == null) element = '';
+			$(element + '[data-ajax-url]').click(function(e) {
+				e.preventDefault();
+				var that = $(this);
+				var href = that.data('ajax-url'),
+					type = that.data('ajax-type'),
+					dataType = that.data('ajax-dataType'),
+					confirmMsg = that.data('ajax-confirm'),
+					data = that.data('ajax-data'),
+					formId = that.data('ajax-formId');
+				if (confirmMsg && !confirm(confirmMsg)) return;
+				if (!href) return;
+				if (!type) type = 'get';
+				if (!dataType) dataType = 'json';
+				if (formId) data = $('#' + formId).serializeArray();
+				data = data ? webx.parseAjaxSetting(data) : {format: 'json'};
+				if (typeof(data) != 'object') {
+					data += '&format=json';
+				} else {
+					data["format"] = 'json';
+				}
+				$.ajax({
+					url: href,
+					type: type,
+					data: data,
+					cache: false,
+					dataType: dataType,
+					success: function(data, textStatus) {
+						webx.ajaxr(data, function(resp, done) {
+							if (that.data('ajax-reload')) {
+								webx.noty(resp.Message);
+								window.setTimeout(function() {
+									window.location.reload();
+								}, 2000);
+								return;
+							}
+							var c = that.data('ajax-callback');
+							if (c) {
+								//c(resp,done);
+								window.setTimeout(c, 0);
+								return;
+							}
+							if (that.attr('type') == 'checkbox') that.prop('checked', !that.prop('checked'));
+							webx.noty(resp.Message);
+						});
+					}
+				});
+			});
+		},
+		ajaxr: function(resp, callback, respType) {
+			if (respType == null) respType = typeof(resp) == 'object' ? 'json' : '';
+			if (callback == null) {
+				callback = {
+					'1': function() {
+						webx.noty(webx.t('操作成功'));
+					}
+				};
+			} else {
+				var dataType = typeof(callback);
+				switch (dataType) {
+				case 'function':
+					callback = {
+						'1': callback
+					};
+					break;
+				case 'string':
+					callback = {
+						'1': function() {
+							webx.noty(callback);
+						}
+					};
+					break;
+				}
+			}
+			var done = null;
+			switch (respType) {
+			case 'json':
+				if (typeof(resp) != 'object' || resp == null) return done;
+				if (typeof(callback[resp.Status]) == 'function') done = callback[resp.Status](resp, done);
+				if (done == null) {
+					switch (resp.Status) {
+					case -1:
+						/*未登录*/
+						webx.dialog().confirm(webx.t('登录状态已经失效，您需要重新登录。现在要前往登录界面吗？'), {
+							icon: 4
+						}, function(index) {
+							window.location = resp.Data.Location;
+						});
+						break;
+					case -2:
+						/*无权限*/
+					case 0:
+						/*操作失败*/
+						webx.noty({
+							text: resp.Message,
+							type: 'error'
+						});
+						break;
+					}
+				}
+				break;
+			default:
+				if (typeof(callback['1']) == 'function') {
+					done = callback['1'](resp, done);
+				}
+			}
+			return done;
+		},
+		table:function(element,options){
+			webx.defined(typeof($.fn.dataTable),'table');
+			var url=$(element).data('table-url');
+			var cols=$(element).data('table-cols');
+			var defaults={
+				"processing": true,
+        		"serverSide": true,
+        		"ajax": url,
+        		"columns": [],
+        		"sDom": "<'dtTop'<'dtShowPer'l><'dtFilter'f>><'dtTables't><'dtBottom'<'dtInfo'i><'dtPagination'p>>",
+        		"oLanguage": {
+            		"sLengthMenu": "Show entries _MENU_",
+        		},
+        		"sPaginationType": "full_numbers",
+        		"fnInitComplete": function(){
+        			var id=$(element).attr("id")+"_wrapper";
+        			$("#"+id).find(".dtShowPer select").uniform();
+        			$("#"+id).find(".dtFilter input").addClass("simple_field").css({
+        				"width": "auto",
+        				"margin-left": "15px",
+        			});
+        		}
+    		};
+    		options=$.extend({},defaults,options||{});
+			if (cols) {
+				cols=cols.split(';');
+				for (var i = cols.length - 1; i >= 0; i--) {
+					var kv=cols[i].split(':'),cd={};
+					if(kv.length<2){
+						cd.data=cols[i];
+					}else{
+						cd[kv[0]]=kv[1];
+					}
+					options.columns.push(cd);
+				};
+			};
+			if(!options.ajax)options.serverSide=false;
+			return $(element).dataTable(options);
+		}
 	};
 })();
+
 function T(k, obj) {
 	return webx.t(k, obj);
 }
+
 function D() {
 	return webx.dialog();
 }

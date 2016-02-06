@@ -33,6 +33,7 @@ func init() {
 type Public struct {
 	login    X.Mapper
 	register X.Mapper
+	logout   X.Mapper
 	*base.Controller
 	user *model.User
 }
@@ -54,7 +55,7 @@ func (a *Public) Login() error {
 		if err != nil {
 			return a.SetErr(err)
 		}
-		ss.Set(`uid`, u.Id).Save()
+		ss.Set(`user`, u).Save()
 		return a.Redirect(a.Url(`Index`, `Index`))
 		//a.SetSuc(a.T(`登录成功`))
 	}
@@ -77,7 +78,7 @@ func (a *Public) Register() error {
 			return a.SetErr(err)
 		}
 		if active {
-			a.Session().Set(`uid`, u.Id).Save()
+			a.Session().Set(`user`, u).Save()
 		}
 		return a.Redirect(a.Url(`Index`, `Index`))
 	}
@@ -85,5 +86,6 @@ func (a *Public) Register() error {
 }
 
 func (a *Public) Logout() error {
-	return nil
+	a.Session().Delete(`user`).Save()
+	return a.Redirect(a.Url(`Index`, `Index`))
 }

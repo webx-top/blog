@@ -16,7 +16,9 @@
 	webx.lang='{{Lang}}';
 	webx.siteUrl='{{RootUrl}}';
 	webx.appUrl='{{AppUrl}}';
-	webx.route='{{.Path}}';
+	webx.appName='{{AppName}}';
+	webx.controllerName='{{ControllerName}}';
+	webx.actionName='{{ActionName}}';
 	{{if Message}}webx.setMsgs({{Status}},'{{Message}}');{{end}}
 	</script>
 </head>
@@ -50,7 +52,7 @@
 	<!-- Flot -->
 	 {{JsTag "Flot/jquery.flot.js" "Flot/jquery.flot.resize.js" "Flot/jquery.flot.pie.js"}}
 	<!-- DataTables -->
-	{{JsTag "DataTables/jquery.dataTables.min.js"}}
+	{{JsTag "dataTables/min.js"}}
 	<!-- ColResizable -->
 	{{JsTag "ColResizable/colResizable-1.3.js"}}
 	<!-- jQuryUI -->

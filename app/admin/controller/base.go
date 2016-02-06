@@ -18,10 +18,17 @@
 package controller
 
 import (
+	"encoding/gob"
+
 	//"github.com/webx-top/blog/app/admin/lib"
 	"github.com/webx-top/blog/app/base"
+	"github.com/webx-top/blog/app/base/dbschema"
 	X "github.com/webx-top/webx"
 )
+
+func init() {
+	gob.Register(&dbschema.User{})
+}
 
 func New(c *X.Context) *Base {
 	return &Base{
@@ -31,13 +38,21 @@ func New(c *X.Context) *Base {
 
 type Base struct {
 	*base.Controller
+	*dbschema.User
 }
 
 func (a *Base) Before() error {
 	ss := a.Session()
-	if uid, ok := ss.Get(`uid`).(int); !ok || uid < 1 {
-		ss.AddFlash(a.T(`请先登录`), `errMsg`).Save()
+	if user, ok := ss.Get(`user`).(*dbschema.User); !ok || user == nil || user.Id < 1 {
+		var errMsg = a.T(`请先登录`)
+		if a.Format == `html` {
+			ss.AddFlash(errMsg, `errMsg`).Save()
+		}
+		a.SetNoAuth(errMsg)
 		return a.Redirect(a.App.Url + `public/login`)
+	} else {
+		a.User = user
+		a.Assign(`User`, user)
 	}
 	return a.Controller.Before()
 }

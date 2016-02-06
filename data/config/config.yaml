@@ -1,11 +1,29 @@
 DB : {
-  Engine    : "mysql",
-  User      : "root",
-  Pass      : "root",
-  Name      : "blog",
-  Host      : "localhost",
-  Port      : "3306",
-  Charset   : "utf8",
+  Engine    : "mysql"
+  User      : "root"
+  Pass      : "root"
+  Name      : "blog"
+  Host      : "localhost"
+  Port      : "3306"
+  Charset   : "utf8"
   Prefix    : "webx_"
 }
 
+Cookie : {
+  Prefix    : "blog_"
+  HttpOnly  : true
+  AuthKey   : "p1234567890p12345678901234567890"
+  BlockKey  : "p1234567890p12345678901234567890"
+  Expires   : 86400
+  Domain    : ""
+}
+
+Session : {
+  StoreEngine : "cookie"
+  StoreConfig : "p1234567890p12345678901234567890"
+}
+
+Language : {
+  Default : "zh-cn"
+  AllList : ["zh-cn","en"]
+}

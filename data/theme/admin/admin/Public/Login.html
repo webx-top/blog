@@ -18,7 +18,7 @@
 			</div>
 			{{$next:=Query "next"}}
 			<div class="widget_contents lgNoPadding">
-				<form action="{{UrlFor (printf "Public/Login?next=%v" $next)}}" method="post">
+				<form action="{{UrlFor (printf "Public/Login?next=%v" $next)}}" method="post" data-validate="true">
 				{{XsrfForm}}
 				<div class="line_grid">
 					<div class="g_2 g_2M"><span class="label">{{"USERNAME" | T}}</span></div>
