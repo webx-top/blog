@@ -727,12 +727,27 @@
         				});
                 		return d;
             		}
-    			},
+    			}, 
+    			"columnDefs": [],
     			"autoWidth": false,
         		"columns": [],
         		"sDom": "<'dtTop'<'dtShowPer'l><'dtFilter'f>><'dtTables't><'dtBottom'<'dtInfo'i><'dtPagination'p>>",
-        		"oLanguage": {
-            		"sLengthMenu": webx.t("Show entries _MENU_"),
+        		"language": {
+            		'emptyTable': webx.t('没有数据'),  
+                	'loadingRecords': webx.t('加载中...'),  
+                	'processing': webx.t('查询中...'),  
+                	'search': webx.t('检索:'),  
+                	'lengthMenu': webx.t('每页 _MENU_ 行'),  
+                	'zeroRecords': webx.t('没有数据'),  
+                	'paginate': {  
+                    	'first': webx.t('第一页'),  
+                    	'last': webx.t('最后一页'),  
+                    	'next': '&gt;',  
+                    	'previous': '&lt;'  
+                	},  
+                	'info': webx.t('第 _PAGE_ 页 / 共 _PAGES_ 页'),  
+                	'infoEmpty': webx.t('没有数据'),  
+                	'infoFiltered': webx.t('(共有 _MAX_ 行)')
         		},
         		"sPaginationType": "full_numbers",
         		"initComplete": function(){
@@ -742,7 +757,11 @@
         				"width": "auto",
         				"margin-left": "15px",
         			});
-        		}
+        		},
+        		"drawCallback": function(settings) {
+        			var id=$(element).attr("id")+"_wrapper";
+        			$("#"+id).find("td .simple_form").uniform();
+    			}
     		};
     		options=$.extend({},defaults,options||{});
     		var toBool=function(v){
@@ -767,25 +786,48 @@
     		}
 			if (cols) {
 				cols=cols.split(';');
-				for (var i =  0; i < cols.length; i++) {
-					var kv=cols[i].split(':'),cd={};
-					if(kv.length<2){
-						cd.data=cols[i];
-					}else{
-						kv=parser(kv[0],kv[1]);
-						cd[kv[0]]=kv[1];
+				for (var i = 0; i < cols.length; i++) {
+					cols[i]=$.trim(cols[i]);
+					var kvs=cols[i].split(','),cd={};
+					for (var j = 0; j < kvs.length; j++) {
+						kvs[j]=$.trim(kvs[j]);
+						var kv=kvs[j].split(':');
+						if(kv.length<2){
+							cd.data=kvs[j];
+						}else{
+							kv=parser($.trim(kv[0]),$.trim(kv[1]));
+							cd[kv[0]]=kv[1];
+						}
 					}
 					options.columns.push(cd);
-				};
+				}
 			} else {
-    			$(element).find("thead > tr > th[data-col-field]").each(function(){
-    				cd={};
+				var hideCols = [];
+    			$(element).find("thead > tr > th[data-col-field]").each(function(k,item){
+    				var cd={};
 					cd.data=$(this).data("col-field");
-					cd.orderable=toBool($(this).data("col-orderable"));
-					cd.searchable=toBool($(this).data("col-searchable"));
+					var v=$(this).data("col-orderable");
+					if(v!==undefined)cd.orderable=toBool(v);
+					v=$(this).data("col-searchable")
+					if(v!==undefined)cd.searchable=toBool(v);
 					options.columns.push(cd);
+					v=$(this).data("col-render");
+					if(v!==undefined){
+						var td = v;
+						if(v.length>0&&v.substring(0,1)=="#")td=$(v).html();
+						cd = {
+							render:function(data,type,row){
+                    			return webx.parseTmpl(td+'',{data:data,row:row,type:type});
+                			},
+                			targets:k
+                		};
+						options.columnDefs.push(cd);
+					}
+					v=$(this).data("col-visible");
+					if(v!==undefined&&toBool(v))hideCols.push(k);
     			});
-    		};
+    			if (hideCols.length>0) options.columnDefs.push({visible:false,targets:hideCols});
+    		}
 			if(!options.ajax.url){
 				options.serverSide=false;
 				options.ajax=null;

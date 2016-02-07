@@ -45,10 +45,10 @@
 						<h4 class="widget_header_title wwIcon i_16_tooltip">{{"所有文章"|T}}</h4>
 					</div>
 					<div class="widget_contents noPadding twCheckbox">
-						<table data-table-url="{{Url "Post" "Index"}}" data-table-cols="data:id;orderable:0;title;priority;status" class="tables noObOLine">
+						<table data-table-url="{{Url "Post" "Index"}}" class="tables noObOLine">
 							<thead>
 								<tr>
-									<th>
+									<th data-col-field="_" data-col-render='<input type="checkbox" class="simple_form" value="{%row.id%}">' data-col-orderable="false">
 										<input type="checkbox" class="simple_form tMainC">
 									</th>
 									<th data-col-field="id">ID</th>
@@ -69,7 +69,7 @@
 					<div class="widget_contents noPadding">
 						<div class="line_grid">
 							<div class="g_2 g_2M">
-								<img src="Images/Avatar/avatar1.png" alt="avatar" class="avatar">
+								<img src="{{"Avatar/avatar1.png"|ImgUrl}}" alt="avatar" class="avatar">
 							</div>
 							<div class="g_10 g_10M">
 								<div class="message">
@@ -88,12 +88,12 @@
 								</div>
 							</div>
 							<div class="g_2 g_2M">
-								<img src="Images/Avatar/avatar3.png" alt="avatar" class="avatar aR">
+								<img src="{{"Avatar/avatar3.png"|ImgUrl}}" alt="avatar" class="avatar aR">
 							</div>
 						</div>
 						<div class="line_grid">
 							<div class="g_2 g_2M">
-								<img src="Images/Avatar/avatar1.png" alt="avatar" class="avatar">
+								<img src="{{"Avatar/avatar1.png"|ImgUrl}}" alt="avatar" class="avatar">
 							</div>
 							<div class="g_10 g_10M">
 								<div class="message">
@@ -105,7 +105,7 @@
 						</div>
 						<div class="line_grid">
 							<div class="g_2 g_2M">
-								<img src="Images/Avatar/avatar2.png" alt="avatar" class="avatar">
+								<img src="{{"Avatar/avatar2.png"|ImgUrl}}" alt="avatar" class="avatar">
 							</div>
 							<div class="g_10 g_10M">
 								<textarea placeholder="Type your Message and press Enter .." class="mpReply elastic simple_field"></textarea>
