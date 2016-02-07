@@ -709,14 +709,33 @@
 			var defaults={
 				"processing": true,
         		"serverSide": true,
-        		"ajax": url,
+        		"ajax": {
+        			url: url,
+    				data: function(d){
+    					d.format='json';
+    					return d;//附加提交参数
+            		},
+        			result: function(d){
+        				d=webx.ajaxr(d,function(r, done){
+        					d={
+        						draw:r.Data.draw,
+        						recordsTotal:r.Data.recordsTotal,
+        						recordsFiltered:r.Data.recordsFiltered,
+        						data:r.Data.data
+        					};
+        					return d;
+        				});
+                		return d;
+            		}
+    			},
+    			"autoWidth": false,
         		"columns": [],
         		"sDom": "<'dtTop'<'dtShowPer'l><'dtFilter'f>><'dtTables't><'dtBottom'<'dtInfo'i><'dtPagination'p>>",
         		"oLanguage": {
-            		"sLengthMenu": "Show entries _MENU_",
+            		"sLengthMenu": webx.t("Show entries _MENU_"),
         		},
         		"sPaginationType": "full_numbers",
-        		"fnInitComplete": function(){
+        		"initComplete": function(){
         			var id=$(element).attr("id")+"_wrapper";
         			$("#"+id).find(".dtShowPer select").uniform();
         			$("#"+id).find(".dtFilter input").addClass("simple_field").css({
@@ -726,19 +745,51 @@
         		}
     		};
     		options=$.extend({},defaults,options||{});
+    		var toBool=function(v){
+    			if(v=='0'||v=='false'||v=='off'||v=='no'||v=='n'||!v){
+					v=false;
+				}else{
+					v=true;
+				}
+				return v
+    		}
+    		var parser=function(k,v){
+				switch(k){
+					case 'field':
+						k='data';
+					break;
+					case 'orderable':
+					case 'searchable':
+						v=toBool(v);
+					break;
+				}
+				return [k,v];
+    		}
 			if (cols) {
 				cols=cols.split(';');
-				for (var i = cols.length - 1; i >= 0; i--) {
+				for (var i =  0; i < cols.length; i++) {
 					var kv=cols[i].split(':'),cd={};
 					if(kv.length<2){
 						cd.data=cols[i];
 					}else{
+						kv=parser(kv[0],kv[1]);
 						cd[kv[0]]=kv[1];
 					}
 					options.columns.push(cd);
 				};
-			};
-			if(!options.ajax)options.serverSide=false;
+			} else {
+    			$(element).find("thead > tr > th[data-col-field]").each(function(){
+    				cd={};
+					cd.data=$(this).data("col-field");
+					cd.orderable=toBool($(this).data("col-orderable"));
+					cd.searchable=toBool($(this).data("col-searchable"));
+					options.columns.push(cd);
+    			});
+    		};
+			if(!options.ajax.url){
+				options.serverSide=false;
+				options.ajax=null;
+			}
 			return $(element).dataTable(options);
 		}
 	};

@@ -52,6 +52,8 @@ func (a *Base) Before() error {
 		return a.Redirect(a.App.Url + `public/login`)
 	} else {
 		a.User = user
+		user.Passwd = `[HIDE]`
+		user.Salt = `[HIDE]`
 		a.Assign(`User`, user)
 	}
 	return a.Controller.Before()

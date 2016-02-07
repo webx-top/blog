@@ -1612,7 +1612,7 @@
 		background: linear-gradient(to bottom,  #ffffff 0%,#fbfbfb 100%); /* W3C */
 	}
 
-	.dtPagination a.paginate_active {
+	.dtPagination a.paginate_active,.dtPagination a.paginate_button.current {
 		background: none repeat scroll 0 0 #EFEFEF;	
 	}
 

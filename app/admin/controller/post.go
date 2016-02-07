@@ -18,9 +18,12 @@
 package controller
 
 import (
+	//"fmt"
+	"strings"
+
 	"github.com/webx-top/blog/app/admin/lib"
 	X "github.com/webx-top/webx"
-	//"github.com/webx-top/webx/lib/com"
+	"github.com/webx-top/webx/lib/com"
 )
 
 func init() {
@@ -38,5 +41,55 @@ func (a *Post) Init(c *X.Context) error {
 }
 
 func (a *Post) Index() error {
+	var pageSize int = com.Int(a.Form(`length`))
+	var offset int = com.Int(a.Form(`start`))
+	if pageSize < 1 || pageSize > 1000 {
+		pageSize = 10
+	}
+	var fields []string = make([]string, 0)
+	var orderBy string
+	var fm []string = strings.Split(`columns[0][data]`, `0`)
+	a.AutoParseForm()
+	for k, _ := range a.Request().Form {
+		if !strings.HasPrefix(k, fm[0]) || !strings.HasSuffix(k, fm[1]) {
+			continue
+		}
+		//要查询的所有字段
+		field := a.Form(k)
+		fields = append(fields, field)
+
+		//要排序的字段
+		idx := strings.TrimSuffix(k, fm[1])
+		idx = strings.TrimPrefix(idx, fm[0])
+
+		fidx := a.Form(`order[` + idx + `][column]`)
+		if fidx != `` {
+			field := a.Form(fm[0] + fidx + fm[1])
+			if field == `` {
+				continue
+			}
+			sort := a.Form(`order[` + idx + `][dir]`)
+			if sort != `asc` {
+				sort = `desc`
+			}
+			orderBy += field + ` ` + sort + `,`
+		}
+	}
+	if orderBy != `` {
+		orderBy = strings.TrimSuffix(orderBy, `,`)
+	}
+	var search string = a.Form(`search[value]`)
+	_ = search
+	_ = offset
+	//a.Form(`search[regex]`)=="false"
+	a.AssignX(&map[string]interface{}{
+		"draw":            a.Form(`draw`),
+		"recordsTotal":    100000000,
+		"recordsFiltered": 50000,
+		"data": []map[string]string{
+			map[string]string{"id": "id", "title": "title1", "priority": "priority1", "status": "status1"},
+		},
+	})
+	//columns[0][search][regex]=false / columns[0][search][value]
 	return nil
 }
