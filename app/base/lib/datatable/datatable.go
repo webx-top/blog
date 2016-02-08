@@ -22,12 +22,13 @@ import (
 	"strings"
 
 	//"github.com/webx-top/echo"
+	"github.com/webx-top/blog/app/base/lib/database"
 	X "github.com/webx-top/webx"
 	"github.com/webx-top/webx/lib/com"
 )
 
-func New(c *X.Context) *DataTable {
-	a := &DataTable{Context: c}
+func New(c *X.Context, orm *database.Orm, m interface{}) *DataTable {
+	a := &DataTable{Context: c, Orm: orm}
 	a.PageSize = com.Int64(c.Form(`length`))
 	a.Offset = com.Int64(c.Form(`start`))
 	if a.PageSize < 1 || a.PageSize > 1000 {
@@ -44,24 +45,30 @@ func New(c *X.Context) *DataTable {
 		}
 		//要查询的所有字段
 		field := c.Form(k)
-		a.Fields = append(a.Fields, field)
+		if a.Orm.VerifyField(m, field) != `` {
+			a.Fields = append(a.Fields, field)
+		}
 
 		//要排序的字段
 		idx := strings.TrimSuffix(k, fm[1])
 		idx = strings.TrimPrefix(idx, fm[0])
 
 		fidx := c.Form(`order[` + idx + `][column]`)
-		if fidx != `` {
-			field := c.Form(fm[0] + fidx + fm[1])
-			if field == `` {
-				continue
-			}
-			sort := c.Form(`order[` + idx + `][dir]`)
-			if sort != `asc` {
-				sort = `desc`
-			}
-			a.Orders.Insert(com.Int(idx), field, sort)
+		if fidx == `` {
+			continue
 		}
+		field = c.Form(fm[0] + fidx + fm[1])
+		if field == `` {
+			continue
+		}
+		if a.Orm.VerifyField(m, field) == `` {
+			continue
+		}
+		sort := c.Form(`order[` + idx + `][dir]`)
+		if sort != `asc` {
+			sort = `desc`
+		}
+		a.Orders.Insert(com.Int(idx), field, sort)
 	}
 	a.OrderBy = a.Orders.Sql()
 	a.Search = c.Form(`search[value]`)
@@ -122,6 +129,7 @@ func (a Sorts) Sql(args ...func(string, string) string) (r string) {
 
 type DataTable struct {
 	*X.Context
+	*database.Orm
 	Draw       string //DataTabels发起的请求标识
 	PageSize   int64  //每页数据量
 	Page       int64

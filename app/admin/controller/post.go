@@ -22,7 +22,7 @@ import (
 	//"strings"
 
 	"github.com/webx-top/blog/app/admin/lib"
-	"github.com/webx-top/blog/app/base/lib/datatable"
+	D "github.com/webx-top/blog/app/base/dbschema"
 	"github.com/webx-top/blog/app/base/model"
 	X "github.com/webx-top/webx"
 	//"github.com/webx-top/webx/lib/com"
@@ -46,7 +46,7 @@ func (a *Post) Init(c *X.Context) error {
 
 func (a *Post) Index() error {
 	if a.Format != `html` {
-		dt := datatable.New(a.Controller.Context)
+		dt := a.postM.NewDataTable(&D.Post{})
 		sel := a.postM.NewSelect()
 		sel.Condition = `uid=?`
 		sel.AddP(a.User.Id).FromDT(dt)

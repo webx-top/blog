@@ -107,8 +107,11 @@ func (this *M) End(result bool, args ...*xorm.Session) (err error) {
 }
 
 func (this *M) NewSelect() *Select {
-	s := NewSelect(this.DB)
-	return s
+	return NewSelect(this.DB)
+}
+
+func (this *M) NewDataTable(m interface{}) *datatable.DataTable {
+	return datatable.New(this.Context, this.DB, m)
 }
 
 func NewSelect(orm *database.Orm) *Select {
@@ -171,7 +174,11 @@ func (a *Select) GenSS(args ...interface{}) *xorm.Session {
 			s = s.Alias(a.Alias)
 		}
 	}
-	return s.Where(a.Condition, a.Params...).GroupBy(a.GroupBy).Having(a.Having)
+	s = s.Where(a.Condition, a.Params...).GroupBy(a.GroupBy)
+	if a.Having != `` {
+		s = s.Having(a.Having)
+	}
+	return s
 }
 
 func (a *Select) Count(m interface{}) int64 {

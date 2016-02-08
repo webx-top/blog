@@ -21,12 +21,11 @@ import (
 	//"fmt"
 	"io"
 	"log"
-	"reflect"
 	"regexp"
 	"strings"
 	"time"
 
-	"github.com/coscms/xorm"
+	. "github.com/coscms/xorm"
 	"github.com/coscms/xorm/core"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/webx-top/webx/lib/cachestore"
@@ -37,7 +36,7 @@ var CacheDir string = "data/cache"
 
 func NewOrm(engine string, dsn string) (db *Orm, err error) {
 	db = &Orm{}
-	db.Engine, err = xorm.NewEngine(engine, dsn)
+	db.Engine, err = NewEngine(engine, dsn)
 	if err != nil {
 		log.Println("The database connection failed:", err)
 		return
@@ -52,7 +51,7 @@ func NewOrm(engine string, dsn string) (db *Orm, err error) {
 }
 
 type Orm struct {
-	*xorm.Engine
+	*Engine
 	CacheStore   interface{}
 	PrefixMapper core.PrefixMapper
 }
@@ -69,7 +68,7 @@ func (this *Orm) SetTimezone(timezone string) *Orm {
 
 func (this *Orm) SetPrefix(prefix string) *Orm {
 	this.PrefixMapper = core.NewPrefixMapper(core.SnakeMapper{}, prefix)
-	this.SetTableMapper(this.PrefixMapper)
+	this.SetTblMapper(this.PrefixMapper)
 	return this
 }
 
@@ -79,7 +78,7 @@ func (this *Orm) T(noPrefixTableName string) string {
 }
 
 func (this *Orm) SetLogger(out io.Writer) *Orm {
-	this.Logger = xorm.NewSimpleLogger(out)
+	this.Logger = NewSimpleLogger(out)
 	return this
 }
 
@@ -87,11 +86,12 @@ func (this *Orm) SetCacher(cs core.CacheStore) *Orm {
 	this.CacheStore = cs
 	if this.CacheStore != nil {
 		var (
-			cacher     *xorm.LRUCacher
+			cacher     *LRUCacher
 			lifeTime   int32 = 86400
 			maxEleSize int   = 999999999 //max element size
 		)
-		cacher = xorm.NewLRUCacher(this.CacheStore.(core.CacheStore), maxEleSize) //NewLRUCacher(store core.CacheStore, maxElementSize int)
+		//NewLRUCacher(store core.CacheStore, maxElementSize int)
+		cacher = NewLRUCacher(this.CacheStore.(core.CacheStore), maxEleSize)
 		cacher.Expired = time.Duration(lifeTime) * time.Second
 		this.SetDefaultCacher(cacher)
 	}
@@ -117,42 +117,60 @@ func (this *Orm) Close() {
 
 //验证字段
 func (this *Orm) VerifyField(v interface{}, field string) string {
-	if field == "" {
+	table := this.TableInfo(v)
+	column := table.GetColumn(field)
+	if column == nil {
 		return ""
 	}
-	val := reflect.ValueOf(v)
-	typ := val.Type()
-	if typ.Kind() == reflect.Ptr && typ.Elem().Kind() == reflect.Struct {
-		typ = typ.Elem()
-		val = val.Elem()
-	}
-	name := this.Engine.ColumnMapper.Table2Obj(field)
-	if field == name {
-		return ""
-	}
-	for i := 0; i < val.NumField(); i++ {
-		vt := typ.Field(i)
-		if name == vt.Name {
-			return field
-		}
+	if column.Name == field {
+		return field
 	}
 	return ""
 }
 
 //验证字段并返回有效的字段切片
-func (this *Orm) VerifyFields(v interface{}, fn func(reflect.Type, reflect.Value, int) string) []string {
+func (this *Orm) VerifyFields(v interface{}, fields ...string) []string {
 	ret := make([]string, 0)
-	val := reflect.ValueOf(v)
-	typ := val.Type()
-	if typ.Kind() == reflect.Ptr && typ.Elem().Kind() == reflect.Struct {
-		typ = typ.Elem()
-		val = val.Elem()
-	}
-	for i := 0; i < val.NumField(); i++ {
-		v := fn(typ, val, i)
-		if v != "" {
-			ret = append(ret, v)
+	table := this.TableInfo(v)
+	for _, field := range fields {
+		column := table.GetColumn(field)
+		if column == nil {
+			continue
 		}
+		if column.Name != field {
+			continue
+		}
+		ret = append(ret, field)
+	}
+	return ret
+}
+
+//验证字段
+func (this *Orm) VerifyTblField(v interface{}, field string) string {
+	table := this.TableInfo(v)
+	column := table.GetColumn(field)
+	if column == nil {
+		return ""
+	}
+	if this.Engine.ColumnMapper.Obj2Table(column.Name) == field {
+		return field
+	}
+	return ""
+}
+
+//验证字段并返回有效的字段切片
+func (this *Orm) VerifyTblFields(v interface{}, fields ...string) []string {
+	ret := make([]string, 0)
+	table := this.TableInfo(v)
+	for _, field := range fields {
+		column := table.GetColumn(field)
+		if column == nil {
+			continue
+		}
+		if this.Engine.ColumnMapper.Obj2Table(column.Name) != field {
+			continue
+		}
+		ret = append(ret, field)
 	}
 	return ret
 }
@@ -300,10 +318,4 @@ func (this *Orm) SearchField(field string, keywords string, idFields ...string) 
 		}
 	}
 	return sql
-}
-
-func AddSlashes(s string) string {
-	s = strings.Replace(s, `\`, `\\`, -1)
-	s = strings.Replace(s, "'", `\'`, -1)
-	return s
 }
