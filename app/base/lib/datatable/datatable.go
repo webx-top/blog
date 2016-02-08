@@ -35,6 +35,7 @@ func New(c *X.Context, orm *database.Orm, m interface{}) *DataTable {
 		a.PageSize = 10
 	}
 	a.Fields = make([]string, 0)
+	a.TableFields = make([]string, 0)
 	a.Page = (a.Offset + a.PageSize) / a.PageSize
 	a.Orders = Sorts{}
 	var fm []string = strings.Split(`columns[0][data]`, `0`)
@@ -47,6 +48,8 @@ func New(c *X.Context, orm *database.Orm, m interface{}) *DataTable {
 		field := c.Form(k)
 		if a.Orm.VerifyField(m, field) != `` {
 			a.Fields = append(a.Fields, field)
+			field = a.Orm.Engine.ColumnMapper.Obj2Table(field)
+			a.TableFields = append(a.TableFields, field)
 		}
 
 		//要排序的字段
@@ -68,7 +71,7 @@ func New(c *X.Context, orm *database.Orm, m interface{}) *DataTable {
 		if sort != `asc` {
 			sort = `desc`
 		}
-		a.Orders.Insert(com.Int(idx), field, sort)
+		a.Orders.Insert(com.Int(idx), field, a.Orm.Engine.ColumnMapper.Obj2Table(field), sort)
 	}
 	a.OrderBy = a.Orders.Sql()
 	a.Search = c.Form(`search[value]`)
@@ -79,8 +82,9 @@ func New(c *X.Context, orm *database.Orm, m interface{}) *DataTable {
 }
 
 type Sort struct {
-	Field string
-	Sort  string
+	Field      string
+	TableField string
+	Sort       string
 }
 
 type Sorts []*Sort
@@ -88,19 +92,19 @@ type Sorts []*Sort
 func (a Sorts) Each(f func(string, string)) {
 	for _, v := range a {
 		if v != nil {
-			f(v.Field, v.Sort)
+			f(v.TableField, v.Sort)
 		}
 	}
 }
 
-func (a *Sorts) Insert(index int, field string, sort string) {
+func (a *Sorts) Insert(index int, field string, tableField string, sort string) {
 	length := len(*a)
 	if length > index {
-		(*a)[index] = &Sort{Field: field, Sort: sort}
+		(*a)[index] = &Sort{Field: field, TableField: tableField, Sort: sort}
 	} else if index <= 10 {
 		for i := length; i <= index; i++ {
 			if i == index {
-				*a = append(*a, &Sort{Field: field, Sort: sort})
+				*a = append(*a, &Sort{Field: field, TableField: tableField, Sort: sort})
 			} else {
 				*a = append(*a, nil)
 			}
@@ -130,15 +134,16 @@ func (a Sorts) Sql(args ...func(string, string) string) (r string) {
 type DataTable struct {
 	*X.Context
 	*database.Orm
-	Draw       string //DataTabels发起的请求标识
-	PageSize   int64  //每页数据量
-	Page       int64
-	Offset     int64    //数据偏移值
-	Fields     []string //查询的字段
-	Orders     Sorts    //字段和排序方式
-	OrderBy    string   //ORDER BY 语句
-	Search     string   //搜索关键字
-	totalPages int64    //总页数
+	Draw        string //DataTabels发起的请求标识
+	PageSize    int64  //每页数据量
+	Page        int64
+	Offset      int64    //数据偏移值
+	Fields      []string //查询的字段
+	TableFields []string //查询的字段
+	Orders      Sorts    //字段和排序方式
+	OrderBy     string   //ORDER BY 语句
+	Search      string   //搜索关键字
+	totalPages  int64    //总页数
 }
 
 //总页数
