@@ -706,6 +706,16 @@
 			webx.defined(typeof($.fn.dataTable),'table');
 			var url=$(element).data('table-url');
 			var cols=$(element).data('table-cols');
+			var order=$(element).data('order');
+			if(typeof(order)=='string'){
+				if(order.substring(0,2)!='[['){
+					order=eval(order);
+					order=[order];
+				} else{
+					order=eval(order);
+				}
+				$(element).data('order',order);
+			}
 			var defaults={
 				"processing": true,
         		"serverSide": true,
