@@ -54,11 +54,11 @@
 									<th data-col-field="Id">ID</th>
 									<th data-col-field="Title">{{"标题"|T}}</th>
 									<th data-col-field="Uname">{{"作者"|T}}</th>
-									<th data-col-field="Updated">{{"更新时间"|T}}</th>
+									<th data-col-field="Updated" data-col-render=":formater.date">{{"更新时间"|T}}</th>
 									<th data-col-field="Views">{{"浏览量"|T}}</th>
 									<th data-col-field="Likes">{{"喜欢量"|T}}</th>
 									<th data-col-field="Comments">{{"评论量"|T}}</th>
-									<th data-col-field="Deleted">{{"删除"|T}}</th>
+									<th data-col-field="Deleted" data-col-render=":formater.onOff">{{"删除"|T}}</th>
 								</tr>
 							</thead>
 						</table>
