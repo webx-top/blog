@@ -26,15 +26,16 @@ import (
 	"github.com/webx-top/webx/lib/com"
 )
 
-func New(c *X.Context) *dataTable {
-	a := &dataTable{Context: c}
-	a.PageSize = com.Int(c.Form(`length`))
-	a.Offset = com.Int(c.Form(`start`))
+func New(c *X.Context) *DataTable {
+	a := &DataTable{Context: c}
+	a.PageSize = com.Int64(c.Form(`length`))
+	a.Offset = com.Int64(c.Form(`start`))
 	if a.PageSize < 1 || a.PageSize > 1000 {
 		a.PageSize = 10
 	}
 	a.Fields = make([]string, 0)
-	a.Orders = make(map[string]string)
+	a.Page = (a.Offset + a.PageSize) / a.PageSize
+	a.Orders = Sorts{}
 	var fm []string = strings.Split(`columns[0][data]`, `0`)
 	c.AutoParseForm()
 	for k, _ := range c.Request().Form {
@@ -59,13 +60,10 @@ func New(c *X.Context) *dataTable {
 			if sort != `asc` {
 				sort = `desc`
 			}
-			a.Orders[field] = sort
-			a.OrderBy += field + ` ` + sort + `,`
+			a.Orders.Insert(com.Int(idx), field, sort)
 		}
 	}
-	if a.OrderBy != `` {
-		a.OrderBy = strings.TrimSuffix(a.OrderBy, `,`)
-	}
+	a.OrderBy = a.Orders.Sql()
 	a.Search = c.Form(`search[value]`)
 	a.Draw = c.Form(`draw`)
 	//a.Form(`search[regex]`)=="false"
@@ -73,30 +71,80 @@ func New(c *X.Context) *dataTable {
 	return a
 }
 
-type dataTable struct {
+type Sort struct {
+	Field string
+	Sort  string
+}
+
+type Sorts []*Sort
+
+func (a Sorts) Each(f func(string, string)) {
+	for _, v := range a {
+		if v != nil {
+			f(v.Field, v.Sort)
+		}
+	}
+}
+
+func (a *Sorts) Insert(index int, field string, sort string) {
+	length := len(*a)
+	if length > index {
+		(*a)[index] = &Sort{Field: field, Sort: sort}
+	} else if index <= 10 {
+		for i := length; i <= index; i++ {
+			if i == index {
+				*a = append(*a, &Sort{Field: field, Sort: sort})
+			} else {
+				*a = append(*a, nil)
+			}
+		}
+	}
+}
+
+func (a Sorts) Sql(args ...func(string, string) string) (r string) {
+	var fn func(string, string) string
+	if len(args) > 0 {
+		fn = args[0]
+	} else {
+		fn = func(field string, sort string) string {
+			return field + ` ` + sort
+		}
+	}
+	a.Each(func(field string, sort string) {
+		r += fn(field, sort) + `,`
+	})
+
+	if r != `` {
+		r = strings.TrimSuffix(r, `,`)
+	}
+	return
+}
+
+type DataTable struct {
 	*X.Context
-	Draw       string            //DataTabels发起的请求标识
-	PageSize   int               //每页数据量
-	Offset     int               //数据偏移值
-	Fields     []string          //查询的字段
-	Orders     map[string]string //字段和排序方式
-	OrderBy    string            //ORDER BY 语句
-	Search     string            //搜索关键字
-	totalPages int               //总页数
+	Draw       string //DataTabels发起的请求标识
+	PageSize   int64  //每页数据量
+	Page       int64
+	Offset     int64    //数据偏移值
+	Fields     []string //查询的字段
+	Orders     Sorts    //字段和排序方式
+	OrderBy    string   //ORDER BY 语句
+	Search     string   //搜索关键字
+	totalPages int64    //总页数
 }
 
 //总页数
-func (a *dataTable) Pages(totalRows int) int {
+func (a *DataTable) Pages(totalRows int64) int64 {
 	if totalRows <= 0 {
 		a.totalPages = 1
 	} else {
-		a.totalPages = int(math.Ceil(float64(totalRows) / float64(a.PageSize)))
+		a.totalPages = int64(math.Ceil(float64(totalRows) / float64(a.PageSize)))
 	}
 	return a.totalPages
 }
 
 //结果数据
-func (a *dataTable) Data(totalRows int, data interface{}) (r *map[string]interface{}) {
+func (a *DataTable) Data(totalRows int64, data interface{}) (r *map[string]interface{}) {
 	r = &map[string]interface{}{
 		"draw":            a.Draw,
 		"recordsTotal":    totalRows,
@@ -105,4 +153,9 @@ func (a *dataTable) Data(totalRows int, data interface{}) (r *map[string]interfa
 	}
 	a.Context.AssignX(r)
 	return
+}
+
+//生成 ORDER BY 子句
+func (a *DataTable) GenOrderBy(args ...func(string, string) string) string {
+	return a.Orders.Sql(args...)
 }

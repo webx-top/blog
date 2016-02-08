@@ -40,7 +40,7 @@ type Public struct {
 
 func (a *Public) Init(c *X.Context) error {
 	a.Controller = base.NewController(c)
-	a.user = model.NewUser(a.Lang())
+	a.user = model.NewUser(c)
 	return nil
 }
 
@@ -57,7 +57,6 @@ func (a *Public) Login() error {
 		}
 		ss.Set(`user`, u).Save()
 		return a.Redirect(a.Url(`Index`, `Index`))
-		//a.SetSuc(a.T(`登录成功`))
 	}
 	if err := a.Flash(`errMsg`); err != nil {
 		ss.Save()

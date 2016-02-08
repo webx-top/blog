@@ -13,7 +13,7 @@
 						<div class="bwIcon i_16_help">Help</div>
 					</div> -->
 					<div class="simple_buttons">
-						<div class="bwIcon i_16_settings">Settings</div>
+						<div class="bwIcon i_16_settings">...</div>
 						<div class="buttons_arrow">
 							<!-- Drop Menu -->
 							<ul class="drop_menu menu_with_icons right_direction">
@@ -51,10 +51,14 @@
 									<th data-col-field="_" data-col-render='<input type="checkbox" class="simple_form" value="{%row.id%}">' data-col-orderable="false">
 										<input type="checkbox" class="simple_form tMainC">
 									</th>
-									<th data-col-field="id">ID</th>
-									<th data-col-field="title">Title</th>
-									<th data-col-field="priority">Priority</th>
-									<th data-col-field="status">Status</th>
+									<th data-col-field="Id">ID</th>
+									<th data-col-field="Title">{{"标题"|T}}</th>
+									<th data-col-field="Uname">{{"作者"|T}}</th>
+									<th data-col-field="Updated">{{"更新时间"|T}}</th>
+									<th data-col-field="Views">{{"浏览量"|T}}</th>
+									<th data-col-field="Likes">{{"喜欢量"|T}}</th>
+									<th data-col-field="Comments">{{"评论量"|T}}</th>
+									<th data-col-field="Deleted">{{"删除"|T}}</th>
 								</tr>
 							</thead>
 						</table>

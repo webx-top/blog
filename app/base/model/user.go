@@ -5,11 +5,12 @@ import (
 	"strings"
 
 	D "github.com/webx-top/blog/app/base/dbschema"
+	X "github.com/webx-top/webx"
 	"github.com/webx-top/webx/lib/com"
 )
 
-func NewUser(lang string) *User {
-	return &User{M: NewM(lang)}
+func NewUser(ctx *X.Context) *User {
+	return &User{M: NewM(ctx)}
 }
 
 type User struct {

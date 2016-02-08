@@ -23,6 +23,7 @@ import (
 
 	"github.com/webx-top/blog/app/admin/lib"
 	"github.com/webx-top/blog/app/base/lib/datatable"
+	"github.com/webx-top/blog/app/base/model"
 	X "github.com/webx-top/webx"
 	//"github.com/webx-top/webx/lib/com"
 )
@@ -34,17 +35,23 @@ func init() {
 type Post struct {
 	index X.Mapper
 	*Base
+	postM *model.Post
 }
 
 func (a *Post) Init(c *X.Context) error {
 	a.Base = New(c)
+	a.postM = model.NewPost(c)
 	return nil
 }
 
 func (a *Post) Index() error {
-	dt := datatable.New(a.Controller.Context)
-	dt.Data(1000000, []map[string]string{
-		map[string]string{"id": "id", "title": "title1", "priority": "priority1", "status": "status1"},
-	})
+	if a.Format != `html` {
+		dt := datatable.New(a.Controller.Context)
+		sel := a.postM.NewSelect()
+		sel.Condition = `uid=?`
+		sel.AddP(a.User.Id).FromDT(dt)
+		count, data, _ := a.postM.List(sel)
+		dt.Data(count, data)
+	}
 	return nil
 }

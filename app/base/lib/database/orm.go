@@ -47,13 +47,13 @@ func NewOrm(engine string, dsn string) (db *Orm, err error) {
 		log.Println("The database ping failed:", err)
 		return
 	}
+	db.Engine.OpenLog("cache", "event", "sql", "etime", "base", "other")
 	return
 }
 
 type Orm struct {
 	*xorm.Engine
 	CacheStore   interface{}
-	TransSession *xorm.Session
 	PrefixMapper core.PrefixMapper
 }
 
@@ -113,65 +113,6 @@ func (this *Orm) Close() {
 		closer.Close()
 	}
 	this.CacheStore = nil
-}
-
-func (this *Orm) Begin() *xorm.Session {
-	if this.TransSession != nil {
-		this.TransSession.Close()
-	}
-	this.TransSession = this.NewSession()
-	err := this.TransSession.Begin()
-	if err != nil {
-		log.Println(err)
-	}
-	return this.TransSession
-}
-
-//事务是否已经开始
-func (this *Orm) HasBegun() bool {
-	if this.TransSession != nil {
-		return true
-	}
-	return false
-}
-
-func (this *Orm) TSess() *xorm.Session { // TransSession
-	if this.HasBegun() == false {
-		return this.Begin()
-	}
-	return this.TransSession
-}
-
-func (this *Orm) Trans(fn func() error) *Orm {
-	begun := this.HasBegun()
-	result := fn()
-	if !begun {
-		this.End(result == nil)
-	}
-	return this
-}
-
-func (this *Orm) Sess() *xorm.Session { // TransSession or Session
-	if this.HasBegun() == false {
-		var session *xorm.Session = this.NewSession()
-		session.IsAutoClose = true
-		return session
-	}
-	return this.TransSession
-}
-
-func (this *Orm) End(result bool) (err error) {
-	if result {
-		err = this.TransSession.Commit()
-	} else {
-		err = this.TransSession.Rollback()
-	}
-	if err != nil {
-		log.Println(err)
-	}
-	this.TransSession.Close()
-	this.TransSession = nil
-	return
 }
 
 //验证字段
