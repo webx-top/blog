@@ -830,13 +830,12 @@
 			} else {
 				var hideCols = [];
     			$(element).find("thead > tr > th[data-col-field]").each(function(k,item){
-    				var cd={};
-					cd.data=$(this).data("col-field");
+    				var c={};
+					c.data=$(this).data("col-field");
 					var v=$(this).data("col-orderable");
-					if(v!==undefined)cd.orderable=toBool(v);
+					if(v!==undefined)c.orderable=toBool(v);
 					v=$(this).data("col-searchable")
-					if(v!==undefined)cd.searchable=toBool(v);
-					options.columns.push(cd);
+					if(v!==undefined)c.searchable=toBool(v);
 					v=$(this).data("col-render");
 					if(v!==undefined){
 						var td = v;
@@ -853,6 +852,8 @@
 									break;
 								case "#":
 									td=$(v).html();
+									c.searchable=false;
+									c.orderable=false;
 								default:
 									cd.render=function(data,type,row){
                     					return webx.parseTmpl(td+'',{data:data,row:row,type:type});
@@ -863,6 +864,7 @@
 						}
 						options.columnDefs.push(cd);
 					}
+					options.columns.push(c);
 					v=$(this).data("col-visible");
 					if(v!==undefined&&toBool(v))hideCols.push(k);
     			});
