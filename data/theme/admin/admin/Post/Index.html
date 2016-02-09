@@ -12,7 +12,7 @@
 						<div class="bwIcon i_16_help">Help</div>
 					</div> -->
 					<div class="simple_buttons">
-						<div class="bwIcon i_16_settings">...</div>
+						<div class="bwIcon i_16_settings">&nbsp;</div>
 						<div class="buttons_arrow">
 							<!-- Drop Menu -->
 							<ul class="drop_menu menu_with_icons right_direction">
@@ -50,15 +50,15 @@
 									<th data-col-field="_" data-col-render='<input type="checkbox" class="simple_form" value="{%row.Id%}">' data-col-orderable="false">
 										<input type="checkbox" class="simple_form tMainC">
 									</th>
-									<th data-col-field="Id">ID</th>
-									<th data-col-field="Title">{{"标题"|T}}</th>
-									<th data-col-field="Uname">{{"作者"|T}}</th>
-									<th data-col-field="Updated" data-col-render=":formater.date">{{"更新时间"|T}}</th>
-									<th data-col-field="Views">{{"浏览量"|T}}</th>
-									<th data-col-field="Likes">{{"喜欢量"|T}}</th>
-									<th data-col-field="Comments">{{"评论量"|T}}</th>
-									<th data-col-field="Deleted" data-col-render=":formater.onOff">{{"删除"|T}}</th>
-									<th data-col-field="Operate" data-col-render='<a href="{{Url "Post" "Edit"}}?id={%row.Id%}">{{"编辑"|T}}</a> | <a href="{{Url "Post" "Del"}}?id={%row.Id%}">{{"删除"|T}}</a>'>{{"操作"|T}}</th>
+									<th data-col-field="Id" width="30">ID</th>
+									<th data-col-field="Title" data-col-render='<a href="{{Url "Post" "View"}}?id={%row.Id%}" target="_blank">{%data%}</a>'>{{"标题"|T}}</th>
+									<th data-col-field="Uname" width="50">{{"作者"|T}}</th>
+									<th data-col-field="Updated" data-col-render=":formater.date" width="130">{{"更新时间"|T}}</th>
+									<th data-col-field="Views" width="50">{{"浏览量"|T}}</th>
+									<th data-col-field="Likes" width="50">{{"喜欢量"|T}}</th>
+									<th data-col-field="Comments" width="50">{{"评论量"|T}}</th>
+									<th data-col-field="Deleted" data-col-render=":formater.onOff" width="30">{{"删除"|T}}</th>
+									<th data-col-field="Operate" data-col-render='#operate-template' width="50">{{"操作"|T}}</th>
 								</tr>
 							</thead>
 							<tfoot>
@@ -68,12 +68,12 @@
 									</th>
 									<th><input type="text" class="simple_field"></th>
 									<th><input type="text" class="simple_field"></th>
-									<th></th>
-									<th></th>
-									<th></th>
-									<th></th>
-									<th></th>
-									<th></th>
+									<th><input type="text" class="simple_field"></th>
+									<th><input type="text" class="simple_field"></th>
+									<th><input type="text" class="simple_field"></th>
+									<th><input type="text" class="simple_field"></th>
+									<th><input type="text" class="simple_field"></th>
+									<th><select><option value=""></option><option value="1">已删除</option><option value="0">未删除</option></select></th>
 									<th></th>
 								</tr>
 							</tfoot>
@@ -183,4 +183,7 @@
 <script>
 webx.pageJs=true;
 </script>
+<template id="operate-template">
+<a title="{{"编辑"|T}}" href="{{Url "Post" "Edit"}}?id={%row.Id%}" class="fa fa-edit"></a> | <a title="{{"删除"|T}}" href="{{Url "Post" "Delete"}}?id={%row.Id%}" class="fa fa-trash" onclick="return confirm('{{"确定删除？"|T}}');"></a>
+</template>
 {{/Block}}

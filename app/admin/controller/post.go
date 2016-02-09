@@ -33,7 +33,10 @@ func init() {
 }
 
 type Post struct {
-	index X.Mapper
+	index  X.Mapper
+	edit   X.Mapper
+	delete X.Mapper
+	view   X.Mapper
 	*Base
 	postM *model.Post
 }
@@ -53,5 +56,17 @@ func (a *Post) Index() error {
 		count, data, _ := a.postM.List(sel)
 		dt.Data(count, data)
 	}
+	return nil
+}
+
+func (a *Post) Edit() error {
+	return nil
+}
+
+func (a *Post) Delete() error {
+	return nil
+}
+
+func (a *Post) View() error {
 	return nil
 }

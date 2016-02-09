@@ -23,6 +23,7 @@ import (
 	"strings"
 
 	//"github.com/webx-top/echo"
+	"github.com/coscms/xorm/core"
 	"github.com/webx-top/blog/app/base/lib/database"
 	X "github.com/webx-top/webx"
 	"github.com/webx-top/webx/lib/com"
@@ -40,60 +41,68 @@ func New(c *X.Context, orm *database.Orm, m interface{}) *DataTable {
 	a.Searches = make(map[string]string)
 	a.Page = (a.Offset + a.PageSize) / a.PageSize
 	a.Orders = Sorts{}
-	table := orm.TableInfo(m)
-	if table != nil {
-		pkCols := table.PKColumns()
-		if len(pkCols) > 0 {
-			a.IdFieldName = pkCols[0].Name
-		}
-		var fm []string = strings.Split(`columns[0][data]`, `0`)
-		c.AutoParseForm()
-		for k, _ := range c.Request().Form {
-			if !strings.HasPrefix(k, fm[0]) || !strings.HasSuffix(k, fm[1]) {
-				continue
-			}
-			idx := strings.TrimSuffix(k, fm[1])
-			idx = strings.TrimPrefix(idx, fm[0])
-
-			//要查询的所有字段
-			field := c.Form(k)
-
-			column := table.GetColumn(field)
-			if column != nil && column.FieldName == field {
-				a.Fields = append(a.Fields, field)
-				field = a.Orm.Engine.ColumnMapper.Obj2Table(field)
-				a.TableFields = append(a.TableFields, field)
-
-				//搜索本字段
-				kw := c.Form(`columns[` + idx + `][search][value]`)
-				if kw != `` {
-					a.Searches[field] = kw
-				}
-			}
-
-			//要排序的字段
-			fidx := c.Form(`order[` + idx + `][column]`)
-			if fidx == `` {
-				continue
-			}
-			field = c.Form(fm[0] + fidx + fm[1])
-			if field == `` {
-				continue
-			}
-			column = table.GetColumn(field)
-			if column != nil && column.FieldName == field {
-				continue
-			}
-			sort := c.Form(`order[` + idx + `][dir]`)
-			if sort != `asc` {
-				sort = `desc`
-			}
-			a.Orders.Insert(com.Int(idx), field, a.Orm.Engine.ColumnMapper.Obj2Table(field), sort)
-		}
-	}
-	a.OrderBy = a.Orders.Sql()
+	a.fieldsInfo = make(map[string]*core.Column)
 	a.Search = c.Form(`search[value]`)
 	a.Draw = c.Form(`draw`)
+	table := orm.TableInfo(m)
+	if table == nil {
+		return a
+	}
+	pks := table.PKColumns()
+	if len(pks) > 0 {
+		for _, col := range pks {
+			if col.IsPrimaryKey && col.IsAutoIncrement {
+				a.IdFieldName = col.Name
+				break
+			}
+		}
+	}
+	var fm []string = strings.Split(`columns[0][data]`, `0`)
+	c.AutoParseForm()
+	for k, _ := range c.Request().Form {
+		if !strings.HasPrefix(k, fm[0]) || !strings.HasSuffix(k, fm[1]) {
+			continue
+		}
+		idx := strings.TrimSuffix(k, fm[1])
+		idx = strings.TrimPrefix(idx, fm[0])
+
+		//要查询的所有字段
+		field := c.Form(k)
+
+		column := table.GetColumn(field)
+		if column != nil && column.FieldName == field {
+			a.Fields = append(a.Fields, field)
+			field = a.Orm.Engine.ColumnMapper.Obj2Table(field)
+			a.TableFields = append(a.TableFields, field)
+
+			//搜索本字段
+			kw := c.Form(`columns[` + idx + `][search][value]`)
+			if kw != `` {
+				a.Searches[field] = kw
+			}
+			a.fieldsInfo[field] = column
+		}
+
+		//要排序的字段
+		fidx := c.Form(`order[` + idx + `][column]`)
+		if fidx == `` {
+			continue
+		}
+		field = c.Form(fm[0] + fidx + fm[1])
+		if field == `` {
+			continue
+		}
+		column = table.GetColumn(field)
+		if column != nil && column.FieldName == field {
+			continue
+		}
+		sort := c.Form(`order[` + idx + `][dir]`)
+		if sort != `asc` {
+			sort = `desc`
+		}
+		a.Orders.Insert(com.Int(idx), field, a.Orm.Engine.ColumnMapper.Obj2Table(field), sort)
+	}
+	a.OrderBy = a.Orders.Sql()
 	//a.Form(`search[regex]`)=="false"
 	//columns[0][search][regex]=false / columns[0][search][value]
 	return a
@@ -164,6 +173,7 @@ type DataTable struct {
 	Searches    map[string]string //搜索某个字段
 	totalPages  int64             //总页数
 	IdFieldName string
+	fieldsInfo  map[string]*core.Column
 }
 
 //总页数
@@ -200,21 +210,39 @@ func (a *DataTable) GenSearch(fields ...string) string {
 	var sqle, lnke string
 	for field, keywords := range a.Searches {
 		var cond string
-		if field == a.IdFieldName {
-			if field == `id` {
-				cond = a.Orm.RangeField(field, keywords)
-			} else {
+		column, ok := a.fieldsInfo[field]
+		if !ok {
+			continue
+		}
+		if column.SQLType.IsText() {
+			switch column.SQLType.Name {
+			case core.Enum, core.Set, core.Char, core.Uuid:
 				cond = a.Orm.EqField(field, keywords)
+				if cond != `` {
+					sqle += lnke + cond
+					lnke = ` AND `
+				}
+			default:
+				cond = a.Orm.SearchField(field, keywords, a.IdFieldName, a.IdFieldName)
+				if cond != `` {
+					sql += lnk + cond
+					lnk = ` AND `
+				}
 			}
-			if cond != `` {
-				sqle += lnke + cond
-				lnke = ` AND `
-			}
-		} else {
-			cond = a.Orm.SearchField(field, keywords, a.IdFieldName)
-			if cond != `` {
-				sql += lnk + cond
-				lnk = ` AND `
+		} else if column.SQLType.IsNumeric() {
+			switch column.SQLType.Name {
+			case core.Bool, core.Serial, core.BigSerial:
+				cond = a.Orm.EqField(field, keywords)
+				if cond != `` {
+					sqle += lnke + cond
+					lnke = ` AND `
+				}
+			default:
+				cond = a.Orm.RangeField(field, keywords)
+				if cond != `` {
+					sql += lnk + cond
+					lnk = ` AND `
+				}
 			}
 		}
 	}

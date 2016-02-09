@@ -765,8 +765,7 @@
         			var id=$(element).attr("id")+"_wrapper";
         			$("#"+id).find(".dtShowPer select").uniform();
         			$("#"+id).find(".dtFilter input").addClass("simple_field").css({
-        				"width": "auto",
-        				"margin-left": "15px",
+        				"width": "auto","margin-left": "15px",
         			});
         			if ($(element).find('tfoot tr th').length<1) return;
         			var api =  this.api();
