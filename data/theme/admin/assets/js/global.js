@@ -706,6 +706,7 @@
 			webx.defined(typeof($.fn.dataTable),'table');
 			var url=$(element).data('table-url');
 			var cols=$(element).data('table-cols');
+			var trigger=$(element).data('table-trigger');
 			var order=$(element).data('order');
 			if(typeof(order)=='string'){
 				if(order.substring(0,2)!='[['){
@@ -767,6 +768,22 @@
         				"width": "auto",
         				"margin-left": "15px",
         			});
+        			if ($(element).find('tfoot tr th').length<1) return;
+        			var api =  this.api();
+        			api.columns().every(function(){
+        			var that = this;
+        			$('input,textarea', that.footer()).on('keyup change', function () {
+            			if (that.search() !== this.value) {
+                			that.search(this.value).draw();
+            			}
+        			});
+        			$('select', that.footer()).on('change', function () {
+        				var val=$(this).val();
+            			if (that.search() !== val) {
+                			that.search(val).draw();
+            			}
+        			});
+    				});
         		},
         		"drawCallback": function(settings) {
         			var id=$(element).attr("id")+"_wrapper";
@@ -828,7 +845,12 @@
 						if(v.length>0){
 							switch(v.substring(0,1)){
 								case ":":
-									cd.render=eval(v.substring(1));
+									try {
+										cd.render = eval(v.substring(1));
+									} catch (e) {
+										cd.render = null;
+										console.log(e);
+									}
 									break;
 								case "#":
 									td=$(v).html();
@@ -851,7 +873,16 @@
 				options.serverSide=false;
 				options.ajax=null;
 			}
-			return $(element).dataTable(options);
+			var table=$(element).dataTable(options);
+			if (trigger) {
+				try {
+					trigger=eval(trigger);
+				} catch (e) {
+					console.log(e);
+				}
+				if (typeof(trigger)=='function') trigger(table);
+			};
+			return table;
 		},
 /** 
  * 和PHP一样的时间戳格式化函数 

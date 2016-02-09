@@ -1,4 +1,4 @@
-<!DOCTYPE HTML>
+{{if not C.IsPjax}}<!DOCTYPE HTML>
 <html lang="{{Lang}}">
 <head>
 	<meta charset="utf-8" />
@@ -10,6 +10,8 @@
 	{{"<![endif]-->"|Html}}
 	<!-- The Main CSS File -->
 	{{CssTag "Oswald_Droid_Sans400,700.css" "style.css" "animate.css" "font-awesome.min.css" "buttons.css"}}
+	<link href='{{JsUrl "fullCalendar/fullcalendar.css"}}' rel='stylesheet' />
+	<link href='{{JsUrl "fullCalendar/fullcalendar.print.css"}}' rel='stylesheet' media='print' />
 	{{JsTag "global.js"}}
 	<script type="text/javascript">
 	webx.staticUrl='{{StaticUrl ""}}';
@@ -39,16 +41,15 @@
 		{{Include "#shared/header"}}
 	{{/Block}}
 	<div class="wrapper contents_wrapper">
-	{{Block "content"}}
-		{{Include "#shared/sidebar"}}
-	{{/Block}}
+	{{Block "sidebar"}}{{Include "#shared/sidebar"}}{{/Block}}
+	<div id="contents_wrapper">{{Block "content"}}{{/Block}}</div>
 	</div>
 	{{Block "footer"}}
 		{{Include "#shared/footer"}}
 	{{/Block}}
 	<!-- jQuery -->
-    {{JsTag "jQuery/jquery-1.7.2.min.js"}}
-    {{JsTag "dataTables/formater.js"}}
+    {{JsTag "jQuery/jquery-1.8.3.min.js"}}
+    {{JsTag "dataTables/formater.js" "pjax/min.js"}}
     
 	<!-- Flot -->
 	 {{JsTag "flot/jquery.flot.js" "flot/jquery.flot.resize.js" "flot/jquery.flot.pie.js"}}
@@ -75,7 +76,7 @@
 	<!-- ClEditor -->
 	{{JsTag "clEditor/jquery.cleditor.js"}}
 	<!-- Full Calendar -->
-	{{JsTag "fullCalendar/fullcalendar.js"}}
+	{{JsTag "fullCalendar/moment.min.js" "fullCalendar/fullcalendar.min.js"}}
 	<!-- Color Box -->
 	{{JsTag "colorBox/jquery.colorbox.js"}}
 	<!-- Kanrisha Script -->
@@ -84,3 +85,6 @@
 	{{JsTag "footer.js"}}
 </body>
 </html>
+{{else}}
+{{Block "content"}}{{/Block}}
+{{end}}

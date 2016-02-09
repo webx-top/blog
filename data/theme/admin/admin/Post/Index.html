@@ -1,6 +1,5 @@
 {{Extend "#shared/layout"}}
 {{Block "content"}}
-{{Super}}
 		<div class="contents">
 			<div class="grid_wrapper">
 
@@ -48,7 +47,7 @@
 						<table data-table-url="{{Url "Post" "Index"}}" data-order="[1,'asc']" class="tables noObOLine">
 							<thead>
 								<tr>
-									<th data-col-field="_" data-col-render='<input type="checkbox" class="simple_form" value="{%row.id%}">' data-col-orderable="false">
+									<th data-col-field="_" data-col-render='<input type="checkbox" class="simple_form" value="{%row.Id%}">' data-col-orderable="false">
 										<input type="checkbox" class="simple_form tMainC">
 									</th>
 									<th data-col-field="Id">ID</th>
@@ -59,8 +58,25 @@
 									<th data-col-field="Likes">{{"喜欢量"|T}}</th>
 									<th data-col-field="Comments">{{"评论量"|T}}</th>
 									<th data-col-field="Deleted" data-col-render=":formater.onOff">{{"删除"|T}}</th>
+									<th data-col-field="Operate" data-col-render='<a href="{{Url "Post" "Edit"}}?id={%row.Id%}">{{"编辑"|T}}</a> | <a href="{{Url "Post" "Del"}}?id={%row.Id%}">{{"删除"|T}}</a>'>{{"操作"|T}}</th>
 								</tr>
 							</thead>
+							<tfoot>
+								<tr>
+									<th>
+										<input type="checkbox" class="simple_form tMainC">
+									</th>
+									<th><input type="text" class="simple_field"></th>
+									<th><input type="text" class="simple_field"></th>
+									<th></th>
+									<th></th>
+									<th></th>
+									<th></th>
+									<th></th>
+									<th></th>
+									<th></th>
+								</tr>
+							</tfoot>
 						</table>
 					</div>
 				</div>

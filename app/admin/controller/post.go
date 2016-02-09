@@ -49,7 +49,7 @@ func (a *Post) Index() error {
 		dt := a.postM.NewDataTable(&D.Post{})
 		sel := a.postM.NewSelect()
 		sel.Condition = `uid=?`
-		sel.AddP(a.User.Id).FromDT(dt)
+		sel.AddP(a.User.Id).FromDT(dt, true, "title")
 		count, data, _ := a.postM.List(sel)
 		dt.Data(count, data)
 	}

@@ -115,8 +115,38 @@ func (this *Orm) Close() {
 	this.CacheStore = nil
 }
 
-//验证字段
+//验证模型结构体字段
 func (this *Orm) VerifyField(v interface{}, field string) string {
+	table := this.TableInfo(v)
+	column := table.GetColumn(field)
+	if column == nil {
+		return ""
+	}
+	if column.FieldName == field {
+		return field
+	}
+	return ""
+}
+
+//验证模型结构体字段并返回有效的字段切片
+func (this *Orm) VerifyFields(v interface{}, fields ...string) []string {
+	ret := make([]string, 0)
+	table := this.TableInfo(v)
+	for _, field := range fields {
+		column := table.GetColumn(field)
+		if column == nil {
+			continue
+		}
+		if column.FieldName != field {
+			continue
+		}
+		ret = append(ret, field)
+	}
+	return ret
+}
+
+//验证数据表字段
+func (this *Orm) VerifyTblField(v interface{}, field string) string {
 	table := this.TableInfo(v)
 	column := table.GetColumn(field)
 	if column == nil {
@@ -128,8 +158,8 @@ func (this *Orm) VerifyField(v interface{}, field string) string {
 	return ""
 }
 
-//验证字段并返回有效的字段切片
-func (this *Orm) VerifyFields(v interface{}, fields ...string) []string {
+//验证数据表字段并返回有效的字段切片
+func (this *Orm) VerifyTblFields(v interface{}, fields ...string) []string {
 	ret := make([]string, 0)
 	table := this.TableInfo(v)
 	for _, field := range fields {
@@ -145,39 +175,9 @@ func (this *Orm) VerifyFields(v interface{}, fields ...string) []string {
 	return ret
 }
 
-//验证字段
-func (this *Orm) VerifyTblField(v interface{}, field string) string {
-	table := this.TableInfo(v)
-	column := table.GetColumn(field)
-	if column == nil {
-		return ""
-	}
-	if this.Engine.ColumnMapper.Obj2Table(column.Name) == field {
-		return field
-	}
-	return ""
-}
-
-//验证字段并返回有效的字段切片
-func (this *Orm) VerifyTblFields(v interface{}, fields ...string) []string {
-	ret := make([]string, 0)
-	table := this.TableInfo(v)
-	for _, field := range fields {
-		column := table.GetColumn(field)
-		if column == nil {
-			continue
-		}
-		if this.Engine.ColumnMapper.Obj2Table(column.Name) != field {
-			continue
-		}
-		ret = append(ret, field)
-	}
-	return ret
-}
-
 var (
 	searchMultiKwRule   *regexp.Regexp = regexp.MustCompile(`[\s]+`)       //多个关键词
-	searchMultiIdRule   *regexp.Regexp = regexp.MustCompile(`[\s,]+`)      //多个Id
+	searchMultiIdRule   *regexp.Regexp = regexp.MustCompile(`[^\d-]+`)     //多个Id
 	searchIdRule        *regexp.Regexp = regexp.MustCompile(`^[\s\d-,]+$`) //多个Id
 	searchParagraphRule *regexp.Regexp = regexp.MustCompile(`"[^"]+"`)     //段落
 )
@@ -201,121 +201,144 @@ func (this *Orm) SearchField(field string, keywords string, idFields ...string) 
 	keywords = strings.TrimSpace(keywords)
 	sql := ""
 	if idField != "" && searchIdRule.FindString(keywords) != "" {
-		kws := searchMultiIdRule.Split(keywords, -1)
+		sql = this.RangeField(idField, keywords)
+		return sql
+	}
+	var paragraphs []string = make([]string, 0)
+	keywords = searchParagraphRule.ReplaceAllStringFunc(keywords, func(paragraph string) string {
+		paragraph = strings.Trim(paragraph, `"`)
+		paragraphs = append(paragraphs, paragraph)
+		return ""
+	})
+	kws := searchMultiKwRule.Split(keywords, -1)
+	kws = append(kws, paragraphs...)
+	if strings.Contains(field, ",") {
+		fs := strings.Split(field, ",")
+		ds := make([]string, len(fs))
 		for _, v := range kws {
-			length := len(v)
-			if length < 1 {
+			v = strings.TrimSpace(v)
+			if v == "" {
 				continue
 			}
-			if strings.Contains(v, "-") {
-				if length < 2 {
-					continue
+			cond := ""
+			if strings.Contains(v, "||") {
+				vals := strings.Split(v, "||")
+				for _, val := range vals {
+					val = AddSlashes(val)
+					val = strings.Replace(val, "_", `\_`, -1)
+					val = strings.Replace(val, "%", `\%`, -1)
+					cond += " OR 'FIELD' LIKE '%" + val + "%'"
 				}
-				if v[0] == '-' {
-					v = strings.Trim(v, "-")
-					if v == "" {
-						continue
-					}
-					sql += " OR " + this.Quote(idField) + "<='" + v + "'"
-					continue
-				}
-				if v[length-1] == '-' {
-					v = strings.Trim(v, "-")
-					if v == "" {
-						continue
-					}
-					sql += " OR " + this.Quote(idField) + ">='" + v + "'"
-					continue
-				}
-
-				v = strings.Trim(v, "-")
-				if v == "" {
-					continue
-				}
-				vs := strings.SplitN(v, "-", 2)
-				sql += " OR " + this.Quote(idField) + " BETWEEN ('" + vs[0] + "','" + vs[1] + "')"
+				cond = cond[3:]
 			} else {
-				sql += " OR " + this.Quote(idField) + "='" + v + "'"
+				v = AddSlashes(v)
+				v = strings.Replace(v, "_", `\_`, -1)
+				v = strings.Replace(v, "%", `\%`, -1)
+			}
+			for k, f := range fs {
+				if cond != "" {
+					ds[k] += " AND (" + strings.Replace(cond, "'FIELD'", this.Quote(f), -1) + ")"
+					continue
+				}
+				ds[k] += " AND " + this.Quote(f) + " LIKE '%" + v + "%'"
+			}
+		}
+		for _, v := range ds {
+			if v != "" {
+				sql += " OR (" + v[4:] + ")"
 			}
 		}
 		if sql != "" {
 			sql = "(" + sql[3:] + ")"
 		}
 	} else {
-		var paragraphs []string = make([]string, 0)
-		keywords = searchParagraphRule.ReplaceAllStringFunc(keywords, func(paragraph string) string {
-			paragraph = strings.Trim(paragraph, `"`)
-			paragraphs = append(paragraphs, paragraph)
-			return ""
-		})
-		kws := searchMultiKwRule.Split(keywords, -1)
-		kws = append(kws, paragraphs...)
-		if strings.Contains(field, ",") {
-			fs := strings.Split(field, ",")
-			ds := make([]string, len(fs))
-			for _, v := range kws {
-				v = strings.TrimSpace(v)
-				if v == "" {
-					continue
-				}
+		for _, v := range kws {
+			v = strings.TrimSpace(v)
+			if v == "" {
+				continue
+			}
+			if strings.Contains(v, "||") {
+				vals := strings.Split(v, "||")
 				cond := ""
-				if strings.Contains(v, "||") {
-					vals := strings.Split(v, "||")
-					for _, val := range vals {
-						val = AddSlashes(val)
-						val = strings.Replace(val, "_", `\_`, -1)
-						val = strings.Replace(val, "%", `\%`, -1)
-						cond += " OR 'FIELD' LIKE '%" + val + "%'"
-					}
-					cond = cond[3:]
-				} else {
-					v = AddSlashes(v)
-					v = strings.Replace(v, "_", `\_`, -1)
-					v = strings.Replace(v, "%", `\%`, -1)
+				for _, val := range vals {
+					val = AddSlashes(val)
+					val = strings.Replace(val, "_", `\_`, -1)
+					val = strings.Replace(val, "%", `\%`, -1)
+					cond += " OR " + this.Quote(field) + " LIKE '%" + val + "%'"
 				}
-				for k, f := range fs {
-					if cond != "" {
-						ds[k] += " AND (" + strings.Replace(cond, "'FIELD'", this.Quote(f), -1) + ")"
-						continue
-					}
-					ds[k] += " AND " + this.Quote(f) + " LIKE '%" + v + "%'"
-				}
+				sql += " AND (" + cond[3:] + ")"
+				continue
 			}
-			for _, v := range ds {
-				if v != "" {
-					sql += " OR (" + v[4:] + ")"
-				}
-			}
-			if sql != "" {
-				sql = "(" + sql[3:] + ")"
-			}
-		} else {
-			for _, v := range kws {
-				v = strings.TrimSpace(v)
-				if v == "" {
-					continue
-				}
-				if strings.Contains(v, "||") {
-					vals := strings.Split(v, "||")
-					cond := ""
-					for _, val := range vals {
-						val = AddSlashes(val)
-						val = strings.Replace(val, "_", `\_`, -1)
-						val = strings.Replace(val, "%", `\%`, -1)
-						cond += " OR " + this.Quote(field) + " LIKE '%" + val + "%'"
-					}
-					sql += " AND (" + cond[3:] + ")"
-					continue
-				}
-				v = AddSlashes(v)
-				v = strings.Replace(v, "_", `\_`, -1)
-				v = strings.Replace(v, "%", `\%`, -1)
-				sql += " AND " + this.Quote(field) + " LIKE '%" + v + "%'"
-			}
-			if sql != "" {
-				sql = "(" + sql[4:] + ")"
-			}
+			v = AddSlashes(v)
+			v = strings.Replace(v, "_", `\_`, -1)
+			v = strings.Replace(v, "%", `\%`, -1)
+			sql += " AND " + this.Quote(field) + " LIKE '%" + v + "%'"
+		}
+		if sql != "" {
+			sql = "(" + sql[4:] + ")"
 		}
 	}
 	return sql
+}
+
+func (this *Orm) RangeField(idField string, keywords string) string {
+	if keywords == "" || idField == "" {
+		return ""
+	}
+	var sql string
+	var logic string
+	keywords = strings.TrimSpace(keywords)
+	kws := searchMultiIdRule.Split(keywords, -1)
+	for _, v := range kws {
+		length := len(v)
+		if length < 1 {
+			continue
+		}
+		if strings.Contains(v, "-") {
+			if length < 2 {
+				continue
+			}
+			if v[0] == '-' {
+				v = strings.Trim(v, "-")
+				if v == "" {
+					continue
+				}
+				sql += logic + this.Quote(idField) + "<='" + v + "'"
+				logic = " OR "
+				continue
+			}
+			if v[length-1] == '-' {
+				v = strings.Trim(v, "-")
+				if v == "" {
+					continue
+				}
+				sql += logic + this.Quote(idField) + ">='" + v + "'"
+				logic = " OR "
+				continue
+			}
+
+			v = strings.Trim(v, "-")
+			if v == "" {
+				continue
+			}
+			vs := strings.SplitN(v, "-", 2)
+			sql += logic + this.Quote(idField) + " BETWEEN '" + vs[0] + "' AND '" + vs[1] + "'"
+			logic = " OR "
+		} else {
+			sql += logic + this.Quote(idField) + "='" + v + "'"
+			logic = " OR "
+		}
+	}
+	if sql != "" {
+		sql = "(" + sql + ")"
+	}
+	return sql
+}
+
+func (this *Orm) EqField(field string, keywords string) string {
+	if keywords == "" || field == "" {
+		return ""
+	}
+	keywords = strings.TrimSpace(keywords)
+	return this.Quote(field) + "='" + AddSlashes(keywords) + "'"
 }

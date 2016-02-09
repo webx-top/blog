@@ -18,6 +18,7 @@
 package datatable
 
 import (
+	//"fmt"
 	"math"
 	"strings"
 
@@ -36,42 +37,59 @@ func New(c *X.Context, orm *database.Orm, m interface{}) *DataTable {
 	}
 	a.Fields = make([]string, 0)
 	a.TableFields = make([]string, 0)
+	a.Searches = make(map[string]string)
 	a.Page = (a.Offset + a.PageSize) / a.PageSize
 	a.Orders = Sorts{}
-	var fm []string = strings.Split(`columns[0][data]`, `0`)
-	c.AutoParseForm()
-	for k, _ := range c.Request().Form {
-		if !strings.HasPrefix(k, fm[0]) || !strings.HasSuffix(k, fm[1]) {
-			continue
+	table := orm.TableInfo(m)
+	if table != nil {
+		pkCols := table.PKColumns()
+		if len(pkCols) > 0 {
+			a.IdFieldName = pkCols[0].Name
 		}
-		//要查询的所有字段
-		field := c.Form(k)
-		if a.Orm.VerifyField(m, field) != `` {
-			a.Fields = append(a.Fields, field)
-			field = a.Orm.Engine.ColumnMapper.Obj2Table(field)
-			a.TableFields = append(a.TableFields, field)
-		}
+		var fm []string = strings.Split(`columns[0][data]`, `0`)
+		c.AutoParseForm()
+		for k, _ := range c.Request().Form {
+			if !strings.HasPrefix(k, fm[0]) || !strings.HasSuffix(k, fm[1]) {
+				continue
+			}
+			idx := strings.TrimSuffix(k, fm[1])
+			idx = strings.TrimPrefix(idx, fm[0])
 
-		//要排序的字段
-		idx := strings.TrimSuffix(k, fm[1])
-		idx = strings.TrimPrefix(idx, fm[0])
+			//要查询的所有字段
+			field := c.Form(k)
 
-		fidx := c.Form(`order[` + idx + `][column]`)
-		if fidx == `` {
-			continue
+			column := table.GetColumn(field)
+			if column != nil && column.FieldName == field {
+				a.Fields = append(a.Fields, field)
+				field = a.Orm.Engine.ColumnMapper.Obj2Table(field)
+				a.TableFields = append(a.TableFields, field)
+
+				//搜索本字段
+				kw := c.Form(`columns[` + idx + `][search][value]`)
+				if kw != `` {
+					a.Searches[field] = kw
+				}
+			}
+
+			//要排序的字段
+			fidx := c.Form(`order[` + idx + `][column]`)
+			if fidx == `` {
+				continue
+			}
+			field = c.Form(fm[0] + fidx + fm[1])
+			if field == `` {
+				continue
+			}
+			column = table.GetColumn(field)
+			if column != nil && column.FieldName == field {
+				continue
+			}
+			sort := c.Form(`order[` + idx + `][dir]`)
+			if sort != `asc` {
+				sort = `desc`
+			}
+			a.Orders.Insert(com.Int(idx), field, a.Orm.Engine.ColumnMapper.Obj2Table(field), sort)
 		}
-		field = c.Form(fm[0] + fidx + fm[1])
-		if field == `` {
-			continue
-		}
-		if a.Orm.VerifyField(m, field) == `` {
-			continue
-		}
-		sort := c.Form(`order[` + idx + `][dir]`)
-		if sort != `asc` {
-			sort = `desc`
-		}
-		a.Orders.Insert(com.Int(idx), field, a.Orm.Engine.ColumnMapper.Obj2Table(field), sort)
 	}
 	a.OrderBy = a.Orders.Sql()
 	a.Search = c.Form(`search[value]`)
@@ -137,13 +155,15 @@ type DataTable struct {
 	Draw        string //DataTabels发起的请求标识
 	PageSize    int64  //每页数据量
 	Page        int64
-	Offset      int64    //数据偏移值
-	Fields      []string //查询的字段
-	TableFields []string //查询的字段
-	Orders      Sorts    //字段和排序方式
-	OrderBy     string   //ORDER BY 语句
-	Search      string   //搜索关键字
-	totalPages  int64    //总页数
+	Offset      int64             //数据偏移值
+	Fields      []string          //查询的字段
+	TableFields []string          //查询的字段
+	Orders      Sorts             //字段和排序方式
+	OrderBy     string            //ORDER BY 语句
+	Search      string            //搜索关键字
+	Searches    map[string]string //搜索某个字段
+	totalPages  int64             //总页数
+	IdFieldName string
 }
 
 //总页数
@@ -171,4 +191,52 @@ func (a *DataTable) Data(totalRows int64, data interface{}) (r *map[string]inter
 //生成 ORDER BY 子句
 func (a *DataTable) GenOrderBy(args ...func(string, string) string) string {
 	return a.Orders.Sql(args...)
+}
+
+//生成搜索条件
+func (a *DataTable) GenSearch(fields ...string) string {
+	var sql string
+	var lnk string
+	var sqle, lnke string
+	for field, keywords := range a.Searches {
+		var cond string
+		if field == a.IdFieldName {
+			if field == `id` {
+				cond = a.Orm.RangeField(field, keywords)
+			} else {
+				cond = a.Orm.EqField(field, keywords)
+			}
+			if cond != `` {
+				sqle += lnke + cond
+				lnke = ` AND `
+			}
+		} else {
+			cond = a.Orm.SearchField(field, keywords, a.IdFieldName)
+			if cond != `` {
+				sql += lnk + cond
+				lnk = ` AND `
+			}
+		}
+	}
+	if sqle != `` {
+		if sql != `` {
+			sql = sqle + lnke + sql
+		} else {
+			sql = sqle
+		}
+	}
+	if sql != `` {
+		sql = `(` + sql + `)`
+	}
+	if a.Search != `` && len(fields) > 0 {
+		cond := a.Orm.SearchField(strings.Join(fields, `,`), a.Search, a.IdFieldName)
+		if cond != `` {
+			if sql != `` {
+				sql += ` AND ` + cond
+			} else {
+				sql = cond
+			}
+		}
+	}
+	return sql
 }

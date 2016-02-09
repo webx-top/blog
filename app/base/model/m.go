@@ -143,10 +143,22 @@ func (a *Select) AddP(args ...interface{}) *Select {
 	return a
 }
 
-func (a *Select) FromDT(dt *datatable.DataTable) *Select {
+func (a *Select) FromDT(dt *datatable.DataTable, gen bool, fields ...string) *Select {
 	a.OrderBy = dt.OrderBy
 	a.Offset = dt.Offset
 	a.Limit = dt.PageSize
+	if !gen {
+		return a
+	}
+	sql := a.Condition
+	sch := dt.GenSearch(fields...)
+	if sch != `` {
+		if sql != `` {
+			sql += ` AND `
+		}
+		sql += sch
+	}
+	a.Condition = sql
 	return a
 }
 
