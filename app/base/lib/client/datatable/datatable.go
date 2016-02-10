@@ -22,90 +22,21 @@ import (
 	"math"
 	"strings"
 
-	//"github.com/webx-top/echo"
 	"github.com/coscms/xorm/core"
+	"github.com/webx-top/blog/app/base/lib/client"
 	"github.com/webx-top/blog/app/base/lib/database"
 	X "github.com/webx-top/webx"
 	"github.com/webx-top/webx/lib/com"
 )
 
-func New(c *X.Context, orm *database.Orm, m interface{}) *DataTable {
-	a := &DataTable{Context: c, Orm: orm}
-	a.PageSize = com.Int64(c.Form(`length`))
-	a.Offset = com.Int64(c.Form(`start`))
-	if a.PageSize < 1 || a.PageSize > 1000 {
-		a.PageSize = 10
-	}
-	a.Fields = make([]string, 0)
-	a.TableFields = make([]string, 0)
-	a.Searches = make(map[string]string)
-	a.Page = (a.Offset + a.PageSize) / a.PageSize
-	a.Orders = Sorts{}
-	a.fieldsInfo = make(map[string]*core.Column)
-	a.Search = c.Form(`search[value]`)
-	a.Draw = c.Form(`draw`)
-	table := orm.TableInfo(m)
-	if table == nil {
-		return a
-	}
-	pks := table.PKColumns()
-	if len(pks) > 0 {
-		for _, col := range pks {
-			if col.IsPrimaryKey && col.IsAutoIncrement {
-				a.IdFieldName = col.Name
-				break
-			}
-		}
-	}
-	var fm []string = strings.Split(`columns[0][data]`, `0`)
-	c.AutoParseForm()
-	for k, _ := range c.Request().Form {
-		if !strings.HasPrefix(k, fm[0]) || !strings.HasSuffix(k, fm[1]) {
-			continue
-		}
-		idx := strings.TrimSuffix(k, fm[1])
-		idx = strings.TrimPrefix(idx, fm[0])
+func init() {
+	client.Reg(`dataTable`, func() client.Client {
+		return New()
+	})
+}
 
-		//要查询的所有字段
-		field := c.Form(k)
-
-		column := table.GetColumn(field)
-		if column != nil && column.FieldName == field {
-			a.Fields = append(a.Fields, field)
-			field = a.Orm.Engine.ColumnMapper.Obj2Table(field)
-			a.TableFields = append(a.TableFields, field)
-
-			//搜索本字段
-			kw := c.Form(`columns[` + idx + `][search][value]`)
-			if kw != `` {
-				a.Searches[field] = kw
-			}
-			a.fieldsInfo[field] = column
-		}
-
-		//要排序的字段
-		fidx := c.Form(`order[` + idx + `][column]`)
-		if fidx == `` {
-			continue
-		}
-		field = c.Form(fm[0] + fidx + fm[1])
-		if field == `` {
-			continue
-		}
-		column = table.GetColumn(field)
-		if column != nil && column.FieldName == field {
-			continue
-		}
-		sort := c.Form(`order[` + idx + `][dir]`)
-		if sort != `asc` {
-			sort = `desc`
-		}
-		a.Orders.Insert(com.Int(idx), field, a.Orm.Engine.ColumnMapper.Obj2Table(field), sort)
-	}
-	a.OrderBy = a.Orders.Sql()
-	//a.Form(`search[regex]`)=="false"
-	//columns[0][search][regex]=false / columns[0][search][value]
-	return a
+func New() client.Client {
+	return &DataTable{}
 }
 
 type Sort struct {
@@ -161,37 +92,136 @@ func (a Sorts) Sql(args ...func(string, string) string) (r string) {
 type DataTable struct {
 	*X.Context
 	*database.Orm
-	Draw        string //DataTabels发起的请求标识
-	PageSize    int64  //每页数据量
-	Page        int64
-	Offset      int64             //数据偏移值
-	Fields      []string          //查询的字段
-	TableFields []string          //查询的字段
-	Orders      Sorts             //字段和排序方式
-	OrderBy     string            //ORDER BY 语句
-	Search      string            //搜索关键字
-	Searches    map[string]string //搜索某个字段
+	draw        string //DataTabels发起的请求标识
+	pageSize    int64  //每页数据量
+	totalRows   int64
+	page        int64
+	offset      int64             //数据偏移值
+	fields      []string          //查询的字段
+	tableFields []string          //查询的字段
+	orders      Sorts             //字段和排序方式
+	search      string            //搜索关键字
+	searches    map[string]string //搜索某个字段
 	totalPages  int64             //总页数
-	IdFieldName string
+	idFieldName string
 	fieldsInfo  map[string]*core.Column
+	countFn     func() int64
+}
+
+func (a *DataTable) Init(c *X.Context, orm *database.Orm, m interface{}) client.Client {
+	a := &DataTable{Context: c, Orm: orm}
+	a.pageSize = com.Int64(c.Form(`length`))
+	a.offset = com.Int64(c.Form(`start`))
+	if a.pageSize < 1 || a.pageSize > 1000 {
+		a.pageSize = 10
+	}
+	if a.offset < 0 {
+		a.offset = 0
+	}
+	a.fields = make([]string, 0)
+	a.tableFields = make([]string, 0)
+	a.searches = make(map[string]string)
+	a.page = (a.offset + a.pageSize) / a.pageSize
+	a.orders = Sorts{}
+	a.fieldsInfo = make(map[string]*core.Column)
+	a.search = c.Form(`search[value]`)
+	a.draw = c.Form(`draw`)
+	a.totalRows = com.Int64(a.Context.Form(`totalrows`))
+	if a.totalRows < 1 && a.countFn != nil {
+		a.totalRows = a.countFn()
+	}
+	table := orm.TableInfo(m)
+	if table == nil {
+		return a
+	}
+	pks := table.PKColumns()
+	if len(pks) > 0 {
+		for _, col := range pks {
+			if col.IsPrimaryKey && col.IsAutoIncrement {
+				a.idFieldName = col.Name
+				break
+			}
+		}
+	}
+	var fm []string = strings.Split(`columns[0][data]`, `0`)
+	c.AutoParseForm()
+	for k, _ := range c.Request().Form {
+		if !strings.HasPrefix(k, fm[0]) || !strings.HasSuffix(k, fm[1]) {
+			continue
+		}
+		idx := strings.TrimSuffix(k, fm[1])
+		idx = strings.TrimPrefix(idx, fm[0])
+
+		//要查询的所有字段
+		field := c.Form(k)
+
+		column := table.GetColumn(field)
+		if column != nil && column.FieldName == field {
+			a.fields = append(a.fields, field)
+			field = column.Name
+			a.tableFields = append(a.tableFields, field)
+
+			//搜索本字段
+			kw := c.Form(`columns[` + idx + `][search][value]`)
+			if kw != `` {
+				a.searches[field] = kw
+			}
+			a.fieldsInfo[field] = column
+		}
+
+		//要排序的字段
+		fidx := c.Form(`order[` + idx + `][column]`)
+		if fidx == `` {
+			continue
+		}
+		field = c.Form(fm[0] + fidx + fm[1])
+		if field == `` {
+			continue
+		}
+		column = table.GetColumn(field)
+		if column != nil && column.FieldName == field {
+			continue
+		}
+		sort := c.Form(`order[` + idx + `][dir]`)
+		if sort != `asc` {
+			sort = `desc`
+		}
+		a.orders.Insert(com.Int(idx), field, column.Name, sort)
+	}
+	//a.Form(`search[regex]`)=="false"
+	//columns[0][search][regex]=false / columns[0][search][value]
+	return a
+}
+
+func (a *DataTable) SetCount(fn func() int64) client.Client {
+	a.countFn = fn
+	return a
+}
+
+func (a *DataTable) PageSize() int64 {
+	return a.pageSize
+}
+
+func (a *DataTable) Offset() int64 {
+	return a.offset
 }
 
 //总页数
-func (a *DataTable) Pages(totalRows int64) int64 {
-	if totalRows <= 0 {
+func (a *DataTable) Pages() int64 {
+	if a.totalRows <= 0 {
 		a.totalPages = 1
 	} else {
-		a.totalPages = int64(math.Ceil(float64(totalRows) / float64(a.PageSize)))
+		a.totalPages = int64(math.Ceil(float64(a.totalRows) / float64(a.pageSize)))
 	}
 	return a.totalPages
 }
 
 //结果数据
-func (a *DataTable) Data(totalRows int64, data interface{}) (r *map[string]interface{}) {
+func (a *DataTable) Data(data interface{}) (r *map[string]interface{}) {
 	r = &map[string]interface{}{
-		"draw":            a.Draw,
-		"recordsTotal":    totalRows,
-		"recordsFiltered": totalRows,
+		"draw":            a.draw,
+		"recordsTotal":    a.totalRows,
+		"recordsFiltered": a.totalRows,
 		"data":            data,
 	}
 	a.Context.AssignX(r)
@@ -200,7 +230,7 @@ func (a *DataTable) Data(totalRows int64, data interface{}) (r *map[string]inter
 
 //生成 ORDER BY 子句
 func (a *DataTable) GenOrderBy(args ...func(string, string) string) string {
-	return a.Orders.Sql(args...)
+	return a.orders.Sql(args...)
 }
 
 //生成搜索条件
@@ -208,7 +238,7 @@ func (a *DataTable) GenSearch(fields ...string) string {
 	var sql string
 	var lnk string
 	var sqle, lnke string
-	for field, keywords := range a.Searches {
+	for field, keywords := range a.searches {
 		var cond string
 		column, ok := a.fieldsInfo[field]
 		if !ok {
@@ -223,7 +253,7 @@ func (a *DataTable) GenSearch(fields ...string) string {
 					lnke = ` AND `
 				}
 			default:
-				cond = a.Orm.SearchField(field, keywords, a.IdFieldName, a.IdFieldName)
+				cond = a.Orm.SearchField(field, keywords, a.idFieldName)
 				if cond != `` {
 					sql += lnk + cond
 					lnk = ` AND `
@@ -256,8 +286,8 @@ func (a *DataTable) GenSearch(fields ...string) string {
 	if sql != `` {
 		sql = `(` + sql + `)`
 	}
-	if a.Search != `` && len(fields) > 0 {
-		cond := a.Orm.SearchField(strings.Join(fields, `,`), a.Search, a.IdFieldName)
+	if a.search != `` && len(fields) > 0 {
+		cond := a.Orm.SearchField(strings.Join(fields, `,`), a.search, a.idFieldName)
 		if cond != `` {
 			if sql != `` {
 				sql += ` AND ` + cond

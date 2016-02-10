@@ -49,12 +49,11 @@ func (a *Post) Init(c *X.Context) error {
 
 func (a *Post) Index() error {
 	if a.Format != `html` {
-		dt := a.postM.NewDataTable(&D.Post{})
-		sel := a.postM.NewSelect()
+		sel := a.postM.NewSelect(&D.Post{})
 		sel.Condition = `uid=?`
-		sel.AddP(a.User.Id).FromDT(dt, true, "title")
-		count, data, _ := a.postM.List(sel)
-		dt.Data(count, data)
+		sel.AddP(a.User.Id).FromClient(true, "title")
+		countFn, data, _ := a.postM.List(sel)
+		sel.Client.SetCount(countFn).Data(data)
 	}
 	return nil
 }

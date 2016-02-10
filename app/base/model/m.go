@@ -5,8 +5,8 @@ import (
 
 	"github.com/coscms/xorm"
 	"github.com/webx-top/blog/app/base"
+	"github.com/webx-top/blog/app/base/lib/client"
 	"github.com/webx-top/blog/app/base/lib/database"
-	"github.com/webx-top/blog/app/base/lib/datatable"
 	X "github.com/webx-top/webx"
 	"github.com/webx-top/webx/lib/i18n"
 )
@@ -106,18 +106,22 @@ func (this *M) End(result bool, args ...*xorm.Session) (err error) {
 	return
 }
 
-func (this *M) NewSelect() *Select {
-	return NewSelect(this.DB)
+func (this *M) NewSelect(m interface{}) *Select {
+	return NewSelect(this.DB, this.NewClient(m))
 }
 
-func (this *M) NewDataTable(m interface{}) *datatable.DataTable {
-	return datatable.New(this.Context, this.DB, m)
+func (this *M) NewClient(m interface{}) client.Client {
+	clientName := this.Context.Query(`client`)
+	c := client.Get(clientName)
+	return c.Init(this.Context, this.DB, m)
 }
 
-func NewSelect(orm *database.Orm) *Select {
-	s := &Select{}
-	s.Orm = orm
-	s.Params = make([]interface{}, 0)
+func NewSelect(orm *database.Orm, c client.Client) *Select {
+	s := &Select{
+		Orm:    orm,
+		Params: make([]interface{}, 0),
+		Client: c,
+	}
 	return s
 }
 
@@ -132,6 +136,7 @@ type Select struct {
 	Table     interface{}
 	Alias     string
 	*database.Orm
+	client.Client
 }
 
 func (a *Select) Do(args ...interface{}) *xorm.Session {
@@ -143,15 +148,15 @@ func (a *Select) AddP(args ...interface{}) *Select {
 	return a
 }
 
-func (a *Select) FromDT(dt *datatable.DataTable, gen bool, fields ...string) *Select {
-	a.OrderBy = dt.OrderBy
-	a.Offset = dt.Offset
-	a.Limit = dt.PageSize
+func (a *Select) FromClient(gen bool, fields ...string) *Select {
+	a.OrderBy = a.Client.GenOrderBy()
+	a.Offset = a.Client.Offset()
+	a.Limit = a.Client.PageSize()
 	if !gen {
 		return a
 	}
 	sql := a.Condition
-	sch := dt.GenSearch(fields...)
+	sch := a.Client.GenSearch(fields...)
 	if sch != `` {
 		if sql != `` {
 			sql += ` AND `

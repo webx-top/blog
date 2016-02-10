@@ -724,6 +724,7 @@
         			url: url,
     				data: function(d){
     					d.format='json';
+    					d.client='dataTable';
     					return d;//附加提交参数
             		},
         			result: function(d){

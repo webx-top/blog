@@ -17,13 +17,15 @@ type Post struct {
 	*M
 }
 
-func (a *Post) List(s *Select) (count int64, m []*D.Post, err error) {
+func (a *Post) List(s *Select) (countFn func() int64, m []*D.Post, err error) {
 	m = []*D.Post{}
 	err = s.Do().Find(&m)
 	if err != nil {
 		return
 	}
-	count = s.Count(D.Post{})
+	countFn = func() int64 {
+		return s.Count(D.Post{})
+	}
 	return
 }
 
