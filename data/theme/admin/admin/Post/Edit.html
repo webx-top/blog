@@ -45,111 +45,68 @@
 						<h4 class="widget_header_title wwIcon i_16_forms">{{if eq ActionName "Edit"}}{{"修改文章"|T}}{{else}}{{"添加文章"|T}}{{end}}</h4>
 					</div>
 					<div class="widget_contents noPadding">
+					<form action="" data-validate="true">
 						<div class="line_grid">
-							<div class="g_3"><span class="label">Simple Text Field
-							<span class="must">*</span></span></div>
+							<div class="g_3"><span class="label">{{"标题"|T}}
+							<span class="must">*</span></span><div class="field_notice">{{"文章标题"}}</div></div>
 							<div class="g_9">
-								<input class="simple_field" type="text" />
+								<input class="simple_field" required="required" type="text" name="title" value="{{.Detail.Title}}" />
 							</div>
 						</div>
 						<div class="line_grid">
-							<div class="g_3"><span class="label">With Placeholder</span></div>
+							<div class="g_3"><span class="label">{{"分类"|T}}<span class="must">*</span></span></div>
 							<div class="g_9">
-								<input class="simple_field" type="text" placeholder="Any Stuff .." />
+								<select name="catid" required="required" class="simple_form"><option value="">- {{"请选择"|T}} -</option></select>
 							</div>
 						</div>
 						<div class="line_grid">
-							<div class="g_3"><span class="label">With Predefined Value</span></div>
+							<div class="g_3"><span class="label">{{"简介"|T}}</span></div>
 							<div class="g_9">
-								<input class="simple_field" type="text" value="google" />
+								<textarea class="simple_field elastic twMaxChars">{{.Detail.Description}}</textarea>
+								<div class="field_notice">{{"内容简介"|T}}</div>
 							</div>
 						</div>
 						<div class="line_grid">
-							<div class="g_3"><span class="label">Input with Description</span></div>
+							<div class="g_3"><span class="label">{{"内容"|T}}<span class="must">*</span></span></div>
 							<div class="g_9">
-								<input class="simple_field" type="text" />
-								<div class="field_notice">Description About The Field Content</div>
+								<textarea class="simple_field wysiwyg" required="required">{{.Detail.Content}}</textarea>
+								<div class="field_notice"></div>
 							</div>
 						</div>
 						<div class="line_grid">
-							<div class="g_3"><span class="label">Label with Description</span><div class="field_notice">Description About Label</div></div>
+							<div class="g_3"><span class="label">{{"权限"|T}}<span class="must">*</span></span></div>
 							<div class="g_9">
-								<input class="simple_field" type="text" />
+								<label><input type="radio" name="display" class="simple_form" value="ALL" checked="true"><span class="label ilC">完全公开</span></label>
+								<label><input type="radio" name="display" class="simple_form" value="SELF"><span class="label ilC">自己可见</span></label>
+								<label><input type="radio" name="display" class="simple_form" value="FRIEND"><span class="label ilC">好友可见</span></label>
+								<label><input type="radio" name="display" class="simple_form" value="PWD"><span class="label ilC">需要密码</span></label>
 							</div>
 						</div>
 						<div class="line_grid">
-							<div class="g_3"><span class="label">Label With Tooltip</span></div>
+							<div class="g_3"><span class="label">{{"访问密码"|T}}</span></div>
 							<div class="g_9">
-								<input class="simple_field tooltip" placeholder="Focus to See" type="text" title="Tooltip trigger on Focus!" />
+								<input type="text" placeholder="{{"选择“权限”为“需要密码”时有效"|T}}" title="{{"选择“权限”为“需要密码”时有效"|T}}" disabled="disabled" name="passwd" class="simple_field tooltip" value="">
 							</div>
 						</div>
 						<div class="line_grid">
-							<div class="g_3"><span class="label">Disabled Field</span></div>
+							<div class="g_3"><span class="label">{{"允许评论"|T}}</span></div>
 							<div class="g_9">
-								<input class="simple_field" disabled="disabled" placeholder="It's Disabled :(" type="text" />
+								<label><input type="checkbox" name="allowComment" class="simple_form" value="1" checked="true"></label>
 							</div>
 						</div>
 						<div class="line_grid">
-							<div class="g_3"><span class="label lwIcon i_16_pie">Label With Icon</span></div>
+							<div class="g_3"><span class="label">{{"标签"|T}}</span></div>
 							<div class="g_9">
-								<input class="simple_field fiwIcon" />
-								<img alt="data" src="{{"Icons/16/i_16_data.png"|ImgUrl}}" class="fwIcon" />
-							</div>
-						</div>
-						<div class="line_grid">
-							<div class="g_3"><span class="label">Masked Input</span></div>
-							<div class="g_9">
-									<form />
-										<input type="text" class="simple_field date_mask" />
-										<div class="field_notice">Format: YYYY/MM/DD</div>
-									</form>
-							</div>
-						</div>
-						<div class="line_grid">
-							<div class="g_3"><span class="label">Read Only</span></div>
-							<div class="g_9">	
-								<input type="text" class="simple_field" readonly value="You can't edit me :p" />
-							</div>
-						</div>
-						<div class="line_grid">
-							<div class="g_3"><span class="label">Auto Complete</span></div>
-							<div class="g_9">	
-								<input type="text" class="simple_field atC" />
-								<div class="field_notice">Try typing: a or j| Use Up & Down Key too ..</div>
-							</div>
-						</div>
-						<div class="line_grid">
-							<div class="g_3"><span class="label">Simple Textarea</span></div>
-							<div class="g_9">
-								<textarea class="simple_field"></textarea>
-							</div>
-						</div>
-						<div class="line_grid">
-							<div class="g_3"><span class="label">Auto Resizing Textarea</span></div>
-							<div class="g_9">
-								<textarea class="simple_field elastic"></textarea>
-								<div class="field_notice">Make a lot of lines to see</div>
-							</div>
-						</div>
-						<div class="line_grid">
-							<div class="g_3"><span class="label">Chars Remained</span></div>
-							<div class="g_9">
-								<textarea class="simple_field twMaxChars"></textarea>
-							</div>
-						</div>
-						<div class="line_grid">
-							<div class="g_3"><span class="label">Are you agree? <span class="must">*</span></span></div>
-							<div class="g_9">
-								<textarea class="simple_field wysiwyg"></textarea>
-								<div class="field_notice">What You See Is What You Get ;)</div>
+								<input type="text" name="tags" class="simple_field tooltip" value="" placeholder="多个标签用逗号隔开" title="多个标签用逗号隔开">
 							</div>
 						</div>
 							<div class="line_grid">
-								<div class="g_3"><span class="label">Submit</span></div>
+								<div class="g_3"><span class="label">提交</span></div>
 								<div class="g_9">
-									<input type="submit" value="Validate" class="submitIt simple_buttons" />
+									<input type="submit" value="保存" class="submitIt simple_buttons" />
 								</div>
 							</div>
+						</form>
 					</div>
 				</div>
 				
