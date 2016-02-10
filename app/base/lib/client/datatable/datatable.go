@@ -109,7 +109,8 @@ type DataTable struct {
 }
 
 func (a *DataTable) Init(c *X.Context, orm *database.Orm, m interface{}) client.Client {
-	a := &DataTable{Context: c, Orm: orm}
+	a.Context = c
+	a.Orm = orm
 	a.pageSize = com.Int64(c.Form(`length`))
 	a.offset = com.Int64(c.Form(`start`))
 	if a.pageSize < 1 || a.pageSize > 1000 {
@@ -195,6 +196,9 @@ func (a *DataTable) Init(c *X.Context, orm *database.Orm, m interface{}) client.
 
 func (a *DataTable) SetCount(fn func() int64) client.Client {
 	a.countFn = fn
+	if a.totalRows < 1 && a.countFn != nil {
+		a.totalRows = a.countFn()
+	}
 	return a
 }
 

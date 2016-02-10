@@ -49,9 +49,6 @@ func (a *defaultClient) Init(ctx *X.Context, orm *database.Orm, m interface{}) C
 		a.pageRows = 10
 	}
 	a.totalRows = com.Int64(a.Context.Form(`totalrows`))
-	if a.totalRows < 1 && a.countFn != nil {
-		a.totalRows = a.countFn()
-	}
 	a.pageno = com.Int64(a.Context.Form(`page`))
 	if a.pageno < 1 {
 		a.pageno = 1
@@ -70,6 +67,9 @@ func (a *defaultClient) Offset() int64 {
 
 func (a *defaultClient) SetCount(fn func() int64) Client {
 	a.countFn = fn
+	if a.totalRows < 1 && a.countFn != nil {
+		a.totalRows = a.countFn()
+	}
 	return a
 }
 
@@ -89,7 +89,7 @@ func (a *defaultClient) Data(data interface{}) *map[string]interface{} {
 		"data":       data,
 		"pageRows":   a.pageRows,
 		"totalRows":  a.totalRows,
-		"totalPages": a.totalPages,
+		"totalPages": a.Pages(),
 		"offset":     a.offset,
 		"page":       a.pageno,
 	}

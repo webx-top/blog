@@ -34,6 +34,7 @@ import (
 	"github.com/webx-top/webx/lib/session/ssi"
 	"github.com/webx-top/webx/lib/xsrf"
 
+	_ "github.com/webx-top/blog/app/base/lib/client/datatable"
 	"github.com/webx-top/blog/app/base/lib/config"
 
 	"github.com/admpub/confl"
