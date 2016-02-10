@@ -101,7 +101,7 @@ func init() {
 	// ======================
 	// 监控语言文件更改
 	// ======================
-	moniterLanguageResource()
+	monitorLanguageResource()
 
 	// ======================
 	// 连接数据库
@@ -113,14 +113,14 @@ func init() {
 	}
 }
 
-func moniterLanguageResource() {
-	var callback = com.MoniterEventFunc{
+func monitorLanguageResource() {
+	var callback = com.MonitorEventFunc{
 		Modify: func(file string) {
 			Server.Core.Logger().Info("reload language: %v", file)
 			I18n.Reload(file)
 		},
 	}
-	go com.Moniter(RootDir+`/data/lang/messages`, callback, func(f string) bool {
+	go com.Monitor(RootDir+`/data/lang/messages`, callback, func(f string) bool {
 		Server.Core.Logger().Info("changed: %v", f)
 		return strings.HasSuffix(f, `.yaml`)
 	})

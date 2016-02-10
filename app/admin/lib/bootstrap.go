@@ -37,7 +37,7 @@ var (
 func init() {
 	tp := base.ThemePath(`admin`)
 	te := tplex.New(tp)
-	te.InitMgr(true, true)
+	te.Init(true, true)
 	Static = base.Server.Static(`/`+Name+StaticPath, tp+StaticPath, &FuncMap)
 	FuncMap["AppUrl"] = func(p ...string) string {
 		if len(p) > 0 {
@@ -45,10 +45,10 @@ func init() {
 		}
 		return App.Url
 	}
-	te.FuncMapFn = func() template.FuncMap {
+	te.SetFuncMapFn(func() template.FuncMap {
 		return FuncMap
-	}
-	te.FileChangeEvent = Static.OnUpdate(te.TemplateDir)
+	})
+	te.MonitorEvent(Static.OnUpdate(tp))
 	x := App.Webx()
 	x.SetRenderer(te)
 	x.Static(StaticPath, tp+StaticPath)
