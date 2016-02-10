@@ -25,7 +25,7 @@ import (
 	D "github.com/webx-top/blog/app/base/dbschema"
 	"github.com/webx-top/blog/app/base/model"
 	X "github.com/webx-top/webx"
-	//"github.com/webx-top/webx/lib/com"
+	"github.com/webx-top/webx/lib/com"
 )
 
 func init() {
@@ -59,6 +59,12 @@ func (a *Post) Index() error {
 }
 
 func (a *Post) Edit() error {
+	id := com.Int(a.Form(`id`))
+	m, err := a.postM.Get(id)
+	if err != nil {
+		return err
+	}
+	a.Assign(`Detail`, m)
 	return nil
 }
 

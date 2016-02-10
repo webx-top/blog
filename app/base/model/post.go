@@ -33,3 +33,9 @@ func (a *Post) Add(m *D.Post) (err error) {
 	_, err = a.DB.Insert(m)
 	return
 }
+
+func (a *Post) Get(id int) (m *D.Post, err error) {
+	m = &D.Post{}
+	_, err = a.DB.Id(id).Get(m)
+	return
+}

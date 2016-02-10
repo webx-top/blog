@@ -290,30 +290,12 @@ $(function () {
 	}
 	
 /* Tables ============================================ */
-	// Set the DataTables
-	$(".datatable").dataTable({
-        "sDom": "<'dtTop'<'dtShowPer'l><'dtFilter'f>><'dtTables't><'dtBottom'<'dtInfo'i><'dtPagination'p>>",
-        "oLanguage": {
-            "sLengthMenu": "Show entries _MENU_",
-        },
-        "sPaginationType": "full_numbers",
-        "fnInitComplete": function(){
-        	$(".dtShowPer select").uniform();
-        	$(".dtFilter input").addClass("simple_field").css({
-        		"width": "auto",
-        		"margin-left": "15px",
-        	});
-        }
-    });
 
 	// Table Resize-able
 	$(".resizeable_tables").colResizable({
 		liveDrag: true,
 		minWidth: 40,
 	});
-
-	// Table with Tabs
-	$( "#table_wTabs" ).tabs();
 	
 	// Check All Checkbox
 	$(".tMainC").click(function(){
@@ -338,18 +320,6 @@ $(function () {
 	   	maxl: 140
 	});
 
-/* Spinner =========================================== */
-	$(".spinner1").spinner();
-	$(".spinner2").spinner({
-		min: 0,
-		max: 30,
-	});
-	$(".spinner3").spinner({
-		min: 0,
-		prefix: '$',
-	});
-	$(".spinner4").spinner().spinner("disable");
-	$(".spinner5").spinner({'step':5});
 
 /* ToolTip & ColorPicker & DatePicker ================ */
 	$(".tooltip").tipsy({trigger: 'focus', gravity: 's', fade: true});
@@ -373,40 +343,12 @@ $(function () {
 		$(this).ColorPickerSetColor(this.value);
 	});	
 
-	$( ".pick_date" ).datepicker();
 
 /* Masked Input & AutoComplet ======================== */
 
 	$(".phone_mask").mask("(999) 999-9999");
 	$(".date_mask").mask("9999/99/99");
 
-	var availableTags = [
-			"ActionScript",
-			"AppleScript",
-			"Asp",
-			"BASIC",
-			"C",
-			"C++",
-			"Clojure",
-			"COBOL",
-			"ColdFusion",
-			"Erlang",
-			"Fortran",
-			"Groovy",
-			"Haskell",
-			"Java",
-			"JavaScript",
-			"Lisp",
-			"Perl",
-			"PHP",
-			"Python",
-			"Ruby",
-			"Scala",
-			"Scheme"
-		];
-	$( ".atC" ).autocomplete({
-			source: availableTags
-		});
 
 /* Wysiwyg =========================================== */
 	
@@ -453,172 +395,6 @@ $(function () {
 		},
 	]});
 
-/* Slider ============================================ */
-	$(".sSimple").slider();
-
-	$(".swMin").slider({
-		range: "min",
-		value: 80,
-		min: 1,
-		max: 700,
-		slide: function( event, ui ) {
-			$( ".swmLabel" ).html( "$" + ui.value );
-		}
-	});
-
-	$(".swMin-1").slider({
-		range: "min",
-		value: 120,
-		min: 1,
-		max: 700,
-		slide: function( event, ui ) {
-			$( ".swmLabel" ).html( "$" + ui.value );
-		}
-	});
-
-	$(".swMin-2").slider({
-		range: "min",
-		value: 220,
-		min: 1,
-		max: 700,
-		slide: function( event, ui ) {
-			$( ".swmLabel" ).html( "$" + ui.value );
-		}
-	});
-
-	$(".swMin-3").slider({
-		range: "min",
-		value: 350,
-		min: 1,
-		max: 700,
-		slide: function( event, ui ) {
-			$( ".swmLabel" ).html( "$" + ui.value );
-		}
-	});
-
-	$(".swMin-4").slider({
-		range: "min",
-		value: 450,
-		min: 1,
-		max: 700,
-		slide: function( event, ui ) {
-			$( ".swmLabel" ).html( "$" + ui.value );
-		}
-	});
-
-	$(".swMin-5").slider({
-		range: "min",
-		value: 600,
-		min: 1,
-		max: 700,
-		slide: function( event, ui ) {
-			$( ".swmLabel" ).html( "$" + ui.value );
-		}
-	});
-
-	$(".swMax").slider({
-		range: "max",
-		value: 600,
-		min: 1,
-		max: 700,
-		slide: function( event, ui ) {
-			$( ".swnLabel" ).html( "$" + ui.value );
-		}
-	});
-
-	$( ".swRange" ).slider({
-		range: true,
-		min: 0,
-		max: 500,
-		values: [ 75, 300 ],
-		slide: function( event, ui ) {
-			$( ".swrLabel" ).html( "$" + ui.values[ 0 ] + " - $" + ui.values[ 1 ] );
-		}
-	});
-
-	$( "#swVer-1" ).slider({
-		orientation: "vertical",
-		range: "min",
-		min: 0,
-		max: 100,
-		value: 60,
-	});
-
-	$( "#swVer-2" ).slider({
-		orientation: "vertical",
-		range: "min",
-		min: 0,
-		max: 100,
-		value: 40,
-	});
-
-	$( "#swVer-3" ).slider({
-		orientation: "vertical",
-		range: "min",
-		min: 0,
-		max: 100,
-		value: 30,
-	});
-
-	$( "#swVer-4" ).slider({
-		orientation: "vertical",
-		range: "min",
-		min: 0,
-		max: 100,
-		value: 15,
-	});
-
-	$( "#swVer-5" ).slider({
-		orientation: "vertical",
-		range: "min",
-		min: 0,
-		max: 100,
-		value: 40,
-	});
-
-	$( "#swVer-6" ).slider({
-		orientation: "vertical",
-		range: "min",
-		min: 0,
-		max: 100,
-		value: 80,
-	});
-
-/* Progress ========================================== */
-	
-	$(".sProgress").progressbar({
-		value: 40
-	});
-
-	$(".pwAnimate").progressbar({
-		value: 1,
-		create: function() {
-			$(".pwAnimate .ui-progressbar-value").animate({"width":"100%"},{
-				duration: 10000,
-				step: function(now){
-					$(".paValue").html(parseInt(now)+"%");
-				},
-				easing: "linear"
-			})
-		}
-	});
-
-	$(".pwuAnimate").progressbar({
-		value: 1,
-		create: function() {
-			$(".pwuAnimate .ui-progressbar-value").animate({"width":"100%"},{
-				duration: 30000,
-				easing: 'linear',
-				step: function(now){
-					$(".pauValue").html(parseInt(now*10.24)+" Mb");
-				},
-				complete: function(){
-					$(".pwuAnimate + .field_notice").html("<span class='must'>Upload Finished</span>");
-				} 
-			})
-		}
-	});
-
 /* Tab Toggle ======================================== */
 	
 	$(".cwhToggle").click(function(){
@@ -635,40 +411,6 @@ $(function () {
 			wC.css('height','0').addClass('noPadding');
 		}
 	})
-
-/* Dialog ============================================ */
-	
-	$.fx.speeds._default = 400; // Adjust the dialog animation speed
-
-	$(".bDialog").dialog({
-		autoOpen: false,
-		show: "fadeIn",
-		modal: true,
-	});
-
-	$(".dConf").dialog({
-		autoOpen: false,
-		show: "fadeIn",
-		modal: true,
-		buttons: {
-			"Yeah!": function() {
-				$( this ).dialog( "close" );
-			},
-			"Never": function() {
-				$( this ).dialog( "close" );
-			}
-		}
-	});
-
-	$(".bdC").live("click", function(){ /* change click to live */
-		$(".bDialog").dialog( "open" );
-		return false;
-	});
-
-	$(".bdcC").live("click", function(){ /* change click to live */
-		$(".dConf").dialog( "open" );
-		return false;
-	});
 
 /* LightBox ========================================== */
 	
