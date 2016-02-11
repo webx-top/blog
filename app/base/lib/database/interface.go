@@ -15,121 +15,121 @@ type Ormer interface {
 	Close()
 
 	// Prepare
-	Prepare() Ormer
+	Prepare() *Session
 
 	// Method Sql provides raw sql input parameter. When you have a complex SQL statement
 	// and cannot use Where, Id, In and etc. Methods to describe, you can use Sql.
-	Sql(querystring string, args ...interface{}) Ormer
+	Sql(querystring string, args ...interface{}) *Session
 
 	// Method Where provides custom query condition.
-	Where(querystring string, args ...interface{}) Ormer
+	Where(querystring string, args ...interface{}) *Session
 
 	// Method Where provides custom query condition.
-	And(querystring string, args ...interface{}) Ormer
+	And(querystring string, args ...interface{}) *Session
 
 	// Method Where provides custom query condition.
-	Or(querystring string, args ...interface{}) Ormer
+	Or(querystring string, args ...interface{}) *Session
 
 	// Method Id provides converting id as a query condition
-	Id(id interface{}) Ormer
+	Id(id interface{}) *Session
 
 	// Apply before Processor, affected bean is passed to closure arg
-	Before(closures func(interface{})) Ormer
+	Before(closures func(interface{})) *Session
 
 	// Apply after Processor, affected bean is passed to closure arg
-	After(closures func(interface{})) Ormer
+	After(closures func(interface{})) *Session
 
 	// Method core.Table can input a string or pointer to struct for special a table to operate.
-	Table(tableNameOrBean interface{}) Ormer
+	Table(tableNameOrBean interface{}) *Session
 
 	// set the table alias
-	Alias(alias string) Ormer
+	Alias(alias string) *Session
 
 	// Method In provides a query string like "id in (1, 2, 3)"
-	In(column string, args ...interface{}) Ormer
+	In(column string, args ...interface{}) *Session
 
 	// Method In provides a query string like "count = count + 1"
-	Incr(column string, arg ...interface{}) Ormer
+	Incr(column string, arg ...interface{}) *Session
 
 	// Method Decr provides a query string like "count = count - 1"
-	Decr(column string, arg ...interface{}) Ormer
+	Decr(column string, arg ...interface{}) *Session
 
 	// Method SetExpr provides a query string like "column = {expression}"
-	SetExpr(column string, expression string) Ormer
+	SetExpr(column string, expression string) *Session
 
 	// Method Cols provides some columns to special
-	Select(str string) Ormer
+	Select(str string) *Session
 
 	// Method Cols provides some columns to special
-	Cols(columns ...string) Ormer
+	Cols(columns ...string) *Session
 
-	AllCols() Ormer
+	AllCols() *Session
 
-	MustCols(columns ...string) Ormer
+	MustCols(columns ...string) *Session
 
-	NoCascade() Ormer
+	NoCascade() *Session
 
 	// Xorm automatically retrieve condition according struct, but
 	// if struct has bool field, it will ignore them. So use UseBool
 	// to tell system to do not ignore them.
 	// If no paramters, it will use all the bool field of struct, or
 	// it will use paramters's columns
-	UseBool(columns ...string) Ormer
+	UseBool(columns ...string) *Session
 
 	// use for distinct columns. Caution: when you are using cache,
 	// distinct will not be cached because cache system need id,
 	// but distinct will not provide id
-	Distinct(columns ...string) Ormer
+	Distinct(columns ...string) *Session
 
 	// Set Read/Write locking for UPDATE
-	ForUpdate() Ormer
+	ForUpdate() *Session
 
 	// Only not use the paramters as select or update columns
-	Omit(columns ...string) Ormer
+	Omit(columns ...string) *Session
 
 	// Set null when column is zero-value and nullable for update
-	Nullable(columns ...string) Ormer
+	Nullable(columns ...string) *Session
 
 	// Method NoAutoTime means do not automatically give created field and updated field
 	// the current time on the current session temporarily
-	NoAutoTime() Ormer
+	NoAutoTime() *Session
 
-	NoAutoCondition(no ...bool) Ormer
+	NoAutoCondition(no ...bool) *Session
 
 	// Method Limit provide limit and offset query condition
-	Limit(limit int, start ...int) Ormer
+	Limit(limit int, start ...int) *Session
 
 	// Method OrderBy provide order by query condition, the input parameter is the content
 	// after order by on a sql statement.
-	OrderBy(order string) Ormer
+	OrderBy(order string) *Session
 
 	// Method Desc provide desc order by query condition, the input parameters are columns.
-	Desc(colNames ...string) Ormer
+	Desc(colNames ...string) *Session
 
 	// Method Asc provide asc order by query condition, the input parameters are columns.
-	Asc(colNames ...string) Ormer
+	Asc(colNames ...string) *Session
 
 	// Method StoreEngine is only avialble mysql dialect currently
-	StoreEngine(storeEngine string) Ormer
+	StoreEngine(storeEngine string) *Session
 
 	// Method Charset is only avialble mysql dialect currently
-	Charset(charset string) Ormer
+	Charset(charset string) *Session
 
 	// Method Cascade indicates if loading sub Struct
-	Cascade(trueOrFalse ...bool) Ormer
+	Cascade(trueOrFalse ...bool) *Session
 
 	// Method NoCache ask this session do not retrieve data from cache system and
 	// get data from database directly.
-	NoCache() Ormer
+	NoCache() *Session
 
 	//The join_operator should be one of INNER, LEFT OUTER, CROSS etc - this will be prepended to JOIN
-	Join(join_operator string, tablename interface{}, condition string) Ormer
+	Join(join_operator string, tablename interface{}, condition string) *Session
 
 	// Generate Group By statement
-	GroupBy(keys string) Ormer
+	GroupBy(keys string) *Session
 
 	// Generate Having statement
-	Having(conditions string) Ormer
+	Having(conditions string) *Session
 
 	DB() *core.DB
 
@@ -222,5 +222,5 @@ type Ormer interface {
 	Sync2(beans ...interface{}) error
 
 	// Always disable struct tag "deleted"
-	Unscoped() Ormer
+	Unscoped() *Session
 }

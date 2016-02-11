@@ -31,8 +31,8 @@ func (this *M) T(key string, args ...interface{}) string {
 // TransManager
 // =====================================
 func (this *M) Begin() *xorm.Session {
-	ss, ok := this.transSession()
-	if ok {
+	ss, _ := this.transSession()
+	if ss != nil {
 		ss.Close()
 	}
 	ss = this.DB.NewSession()
@@ -63,13 +63,13 @@ func (this *M) TSess() *xorm.Session { // TransSession
 	return ss
 }
 
-func (this *M) Trans(fn func(*xorm.Session) error) *database.Orm {
+func (this *M) Trans(fn func() error) *database.Orm {
 	ss, ok := this.transSession()
 	begun := ok && ss != nil
 	if !begun {
 		ss = this.Begin()
 	}
-	result := fn(ss)
+	result := fn()
 	if !begun {
 		this.End(result == nil, ss)
 	}

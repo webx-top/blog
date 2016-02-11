@@ -10,11 +10,12 @@ import (
 )
 
 func NewPost(ctx *X.Context) *Post {
-	return &Post{M: NewM(ctx)}
+	return &Post{M: NewM(ctx), C: NewOcontent(ctx)}
 }
 
 type Post struct {
 	*M
+	C *Ocontent
 }
 
 func (a *Post) List(s *Select) (countFn func() int64, m []*D.Post, err error) {
@@ -29,13 +30,61 @@ func (a *Post) List(s *Select) (countFn func() int64, m []*D.Post, err error) {
 	return
 }
 
-func (a *Post) Add(m *D.Post) (err error) {
-	_, err = a.DB.Insert(m)
+func (a *Post) Add(m *D.Post) (affected int64, err error) {
+	affected, err = a.DB.Insert(m)
 	return
 }
 
-func (a *Post) Get(id int) (m *D.Post, err error) {
+func (a *Post) Edit(id int, m *D.Post) (affected int64, err error) {
+	oc, has, err := a.C.GetByMaster(id, `post`)
+	otherContent := a.EditorContent(m)
+	a.Trans(func() error {
+		affected, err = a.Sess().Id(id).Update(m)
+		if err != nil {
+			return err
+		}
+		if m.Etype != `html` {
+			occ := &D.Ocontent{
+				RcId:    id,
+				RcType:  `post`,
+				Content: otherContent,
+				Etype:   `markdown`,
+			}
+			if has {
+				_, err = a.C.Edit(oc.Id, occ)
+			} else {
+				_, err = a.C.Add(occ)
+			}
+		} else {
+			if has {
+				_, err = a.C.DelByMaster(id, `post`)
+			}
+		}
+		return err
+	})
+	return
+}
+
+func (a *Post) Get(id int) (m *D.Post, has bool, err error) {
 	m = &D.Post{}
-	_, err = a.DB.Id(id).Get(m)
+	has, err = a.DB.Id(id).Get(m)
+	return
+}
+
+func (a *Post) GetOtherContent(id int) (m *D.Ocontent, has bool, err error) {
+	return a.C.GetByMaster(id, `post`)
+}
+
+func (a *Post) EditorContent(m *D.Post) (otherContent string) {
+	switch m.Etype {
+	case `markdown`:
+		otherContent = m.Content
+		editorId := a.M.Context.Form(`editorId`)
+		if editorId != `` {
+			m.Content = a.M.Context.Form(editorId + `-html-code`)
+		} else {
+			m.Content = ``
+		}
+	}
 	return
 }

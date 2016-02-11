@@ -60,11 +60,32 @@ func (a *Post) Index() error {
 
 func (a *Post) Edit() error {
 	id := com.Int(a.Form(`id`))
-	m, err := a.postM.Get(id)
+	m, has, err := a.postM.Get(id)
+	if err != nil {
+		return err
+	} else if !has {
+		return a.NotFoundData()
+	}
+	if a.IsPost() {
+		err = a.Bind(m)
+		if err != nil {
+			return err
+		}
+		affected, err := a.postM.Edit(m.Id, m)
+		if err != nil {
+			a.SetErr(err.Error())
+		} else if affected < 1 {
+			a.NotModified()
+		} else {
+			a.Done()
+		}
+	}
+	other, _, err := a.postM.GetOtherContent(m.Id)
 	if err != nil {
 		return err
 	}
 	a.Assign(`Detail`, m)
+	a.Assign(`Other`, other)
 	return nil
 }
 

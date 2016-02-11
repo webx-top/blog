@@ -57,6 +57,22 @@ func (a *Controller) T(key string, args ...interface{}) string {
 	return i18n.T(a.Lang(), key, args...)
 }
 
+func (a *Controller) NotFoundData() error {
+	return a.SetErr(a.T(`数据不存在`))
+}
+
+func (a *Controller) NotModified() error {
+	return a.SetErr(a.T(`没有修改任何内容`))
+}
+
+func (a *Controller) Failed() error {
+	return a.SetErr(a.T(`操作失败`))
+}
+
+func (a *Controller) Done() error {
+	return a.SetSuc(a.T(`操作成功`))
+}
+
 // 验证码验证
 func (a *Controller) VerifyCaptcha(captchaSolution string) bool {
 	captchaId := a.Form("captchaId")
