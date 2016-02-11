@@ -16,9 +16,7 @@ $("#formPost input[name='etype']").click(function(){
 		var etype=$(this).val();
 		var texta=$("#formPost textarea[name='content']");
 		texta.data("editor",etype);
-		return switchEditor(texta,function(){
-			$("#formPost input[name='etype'][value='html']").trigger('click.uniform');
-		});
+		return switchEditor(texta);
 	};
 });
 $("#formPost input[name='etype']:checked").trigger('click');

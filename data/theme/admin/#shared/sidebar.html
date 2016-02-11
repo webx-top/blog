@@ -13,28 +13,28 @@
 						<span class="tab_info">{{"我的博文"|T}}</span>
 					</a>
 				</li>
-				<li class="i_32_charts">
-					<a href="charts.html" title="Visual Data">
-						<span class="tab_label">Charts</span>
-						<span class="tab_info">Visual Data</span>
+				<li class="{{if eq ControllerName "Category"}}active_tab {{end}}i_32_charts">
+					<a href="{{Url "Category" "Index"}}" title="{{"分类管理"|T}}">
+						<span class="tab_label">{{"分类"|T}}</span>
+						<span class="tab_info">{{"分类管理"|T}}</span>
 					</a>
 				</li>
-				<li class="i_32_ui">
-					<a href="ui.html" title="Kit elements">
-						<span class="tab_label">UI</span>
-						<span class="tab_info">Kit elements</span>
+				<li class="{{if eq ControllerName "Comment"}}active_tab {{end}}i_32_ui">
+					<a href="{{Url "Comment" "Index"}}" title="{{"全部评论"|T}}">
+						<span class="tab_label">{{"评论"|T}}</span>
+						<span class="tab_info">{{"全部评论"|T}}</span>
 					</a>
 				</li>
-				<li class="i_32_tables">
-					<a href="tables.html" title="Some Rows">
-						<span class="tab_label">Tables</span>
-						<span class="tab_info">Some Rows</span>
+				<li class="{{if eq ControllerName "Link"}}active_tab {{end}}i_32_tables">
+					<a href="{{Url "Link" "Index"}}" title="{{"友情链接"|T}}">
+						<span class="tab_label">{{"友链"|T}}</span>
+						<span class="tab_info">{{"友情链接"|T}}</span>
 					</a>
 				</li>
-				<li class="i_32_forms">
-					<a href="forms.html" title="Some Fields">
-						<span class="tab_label">Forms</span>
-						<span class="tab_info">Some Fields</span>
+				<li class="{{if eq ControllerName "Setting"}}active_tab {{end}}i_32_forms">
+					<a href="{{Url "Setting" "Index"}}" title="{{"网站设置"|T}}">
+						<span class="tab_label">{{"配置"|T}}</span>
+						<span class="tab_info">{{"网站设置"|T}}</span>
 					</a>
 				</li>
 			</ul>
