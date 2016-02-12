@@ -18,10 +18,8 @@
 package lib
 
 import (
-	"html/template"
-
-	//X "github.com/webx-top/webx"
 	"github.com/webx-top/blog/app/base"
+	//"github.com/webx-top/webx/lib/tplex/pongo2"
 	"github.com/webx-top/webx/lib/tplex"
 	"github.com/webx-top/webx/lib/tplfunc"
 )
@@ -36,16 +34,11 @@ var (
 
 func init() {
 	tp := base.ThemePath(`admin`)
+	//te := pongo2.New(tp)
 	te := tplex.New(tp)
 	te.Init(true, true)
 	Static = base.Server.Static(`/`+Name+StaticPath, tp+StaticPath, &FuncMap)
-	FuncMap["AppUrl"] = func(p ...string) string {
-		if len(p) > 0 {
-			return App.Url + p[0]
-		}
-		return App.Url
-	}
-	te.SetFuncMapFn(func() template.FuncMap {
+	te.SetFuncMapFn(func() map[string]interface{} {
 		return FuncMap
 	})
 	te.MonitorEvent(Static.OnUpdate(tp))

@@ -38,6 +38,11 @@ func (a *Index) Init(c *X.Context) error {
 }
 
 func (a *Index) Index() error {
+	a.AssignX(&map[string]interface{}{
+		`name`: `webx`,
+		"test": "times---",
+		"r":    []string{"one", "two", "three"},
+	})
 	return nil
 }
 

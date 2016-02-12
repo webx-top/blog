@@ -707,7 +707,25 @@
 			var url=$(element).data('table-url');
 			var cols=$(element).data('table-cols');
 			var trigger=$(element).data('table-trigger');
-			var order=$(element).data('order');
+			var order=$(element).data('table-order');
+			var oninit=$(element).data('table-oninit');
+			var ondraw=$(element).data('table-ondraw');
+			if (oninit) {
+				try {
+					oninit=eval(oninit);
+				} catch (e) {
+					console.log(e);
+				}
+				if (typeof(oninit)!='function') oninit=null;
+			}
+			if (ondraw) {
+				try {
+					ondraw=eval(ondraw);
+				} catch (e) {
+					console.log(e);
+				}
+				if (typeof(ondraw)!='function') ondraw=null;
+			}
 			if(typeof(order)=='string'){
 				if(order.substring(0,2)!='[['){
 					order=eval(order);
@@ -763,31 +781,22 @@
         		},
         		"sPaginationType": "full_numbers",
         		"initComplete": function(){
-        			var id=$(element).attr("id")+"_wrapper";
-        			$("#"+id).find(".dtShowPer select").uniform();
-        			$("#"+id).find(".dtFilter input").addClass("simple_field").css({
-        				"width": "auto","margin-left": "15px",
-        			});
+        			if (oninit) oninit(element,this);
         			if ($(element).find('tfoot tr th').length<1) return;
         			var api =  this.api();
         			api.columns().every(function(){
-        			var that = this;
-        			$('input,textarea', that.footer()).on('keyup change', function () {
-            			if (that.search() !== this.value) {
-                			that.search(this.value).draw();
-            			}
-        			});
-        			$('select', that.footer()).on('change', function () {
-        				var val=$(this).val();
-            			if (that.search() !== val) {
-                			that.search(val).draw();
-            			}
-        			});
+        				var that = this;
+        				$('input,textarea',that.footer()).on('keyup change',function(){
+            				if (that.search() !== this.value) that.search(this.value).draw();
+        				});
+        				$('select', that.footer()).on('change',function(){
+        					var val=$(this).val();
+            				if (that.search() !== val) that.search(val).draw();
+        				});
     				});
         		},
         		"drawCallback": function(settings) {
-        			var id=$(element).attr("id")+"_wrapper";
-        			$("#"+id).find("td .simple_form").uniform();
+        			if (ondraw) ondraw(element,this,settings);
     			}
     		};
     		options=$.extend({},defaults,options||{});
