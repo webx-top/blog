@@ -19,7 +19,6 @@ package lib
 
 import (
 	"github.com/webx-top/blog/app/base"
-	//"github.com/webx-top/webx/lib/tplex/pongo2"
 	"github.com/webx-top/webx/lib/tplex"
 	"github.com/webx-top/webx/lib/tplfunc"
 )
@@ -34,8 +33,7 @@ var (
 
 func init() {
 	tp := base.ThemePath(`admin`)
-	//te := pongo2.New(tp)
-	te := tplex.New(tp)
+	var te tplex.TemplateEx = tplex.New(tp)
 	te.Init(true, true)
 	Static = base.Server.Static(`/`+Name+StaticPath, tp+StaticPath, &FuncMap)
 	te.SetFuncMapFn(func() map[string]interface{} {

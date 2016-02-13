@@ -12,7 +12,7 @@
 			ParseTmpl=window.webx.parseTmpl;
 		}else{
 			function ParseTmpl(template, data) {
-				return template.replace(/\{%([\w\.]*)%\}/g, function(str, key) {
+				return template.replace(/\{=([\w\.]*)=\}/g, function(str, key) {
 					var keys = key.split("."), v = data[keys.shift()];
 					for (var i = 0, l = keys.length; i < l; i++) v = v[keys[i]];
 					return typeof(v)!== "undefined" && v !== null ? v : "";
@@ -192,10 +192,10 @@
 				if (!attrMin && !attrMax) {
 					attrDataMin = $(ele).attr("data-min"), attrDataMax = $(ele).attr("data-max");
 					if (attrDataMin && value.length < attrDataMin) {
-						$(ele).testRemind(Tr("至少输入{%min%}个字符",{min:attrDataMin}));
+						$(ele).testRemind(Tr("至少输入{=min=}个字符",{min:attrDataMin}));
 						ele.focus();
 					} else if (attrDataMax && value.length > attrDataMax) {
-						$(ele).testRemind(Tr("最多输入{%max%}个字符",{max:attrDataMax}));
+						$(ele).testRemind(Tr("最多输入{=max=}个字符",{max:attrDataMax}));
 						$(ele).selectRange(attrDataMax, value.length);
 					} else {
 						return false;
@@ -267,7 +267,7 @@
 							// 提示文字的获取
 							var finalText = OBJREG.prompt[type] || OBJREG.prompt["pattern"];
 							if (text) {
-								finalText = Tr("您输入的{%t%}格式不准确",{t:text});
+								finalText = Tr("您输入的{=t=}格式不准确",{t:text});
 							}
 							if (type != "number" && $(control).hasProp("multiple")) {
 								finalText += "，" + OBJREG.prompt["multiple"];
@@ -287,16 +287,16 @@
 						var customTxt;
 						if(key){
 							if(!/^radio|checkbox$/i.test(type) && text){
-								customTxt=Tr("您尚未{%k%}{%t%}",{k:key,t:text});
+								customTxt=Tr("您尚未{=k=}{=t=}",{k:key,t:text});
 							}else{
-								customTxt=Tr("您尚未{%k%}该项内容",{k:key});
+								customTxt=Tr("您尚未{=k=}该项内容",{k:key});
 							}
 						}else{
 							if(!/^radio|checkbox$/i.test(type) && text){
 								if(tag == "empty"){
-									customTxt=Tr("您尚未输入{%t%}",{t:text});
+									customTxt=Tr("您尚未输入{=t=}",{t:text});
 								}else{
-									customTxt=Tr("您尚未选择{%t%}",{t:text});
+									customTxt=Tr("您尚未选择{=t=}",{t:text});
 								}
 							}else{
 								if(tag == "empty"){

@@ -47,11 +47,11 @@
 						<table data-table-url="{{Url "Post" "Index"}}" data-table-order="[1,'asc']" data-table-oninit="eventer.onInit" data-table-ondraw="eventer.onDraw" class="tables noObOLine">
 							<thead>
 								<tr>
-									<th data-col-field="_" data-col-render='<input type="checkbox" class="simple_form" value="{%row.Id%}">' data-col-orderable="false">
+									<th data-col-field="_" data-col-render='<input type="checkbox" class="simple_form" value="{=row.Id=}">' data-col-orderable="false">
 										<input type="checkbox" class="simple_form tMainC">
 									</th>
 									<th data-col-field="Id" width="30">ID</th>
-									<th data-col-field="Title" data-col-render='<a href="{{Url "Post" "View"}}?id={%row.Id%}" target="_blank">{%data%}</a>'>{{"标题"|T}}</th>
+									<th data-col-field="Title" data-col-render='<a href="{{Url "Post" "View"}}?id={=row.Id=}" target="_blank">{=data=}</a>'>{{"标题"|T}}</th>
 									<th data-col-field="Uname" width="50">{{"作者"|T}}</th>
 									<th data-col-field="Updated" data-col-render=":formater.date" width="130">{{"更新时间"|T}}</th>
 									<th data-col-field="Views" width="50">{{"浏览量"|T}}</th>
@@ -87,6 +87,6 @@
 webx.pageJs=true;
 </script>
 <template id="operate-template">
-<a title="{{"编辑"|T}}" href="{{Url "Post" "Edit"}}?id={%row.Id%}" class="fa fa-edit"></a> | <a title="{{"删除"|T}}" href="{{Url "Post" "Delete"}}?id={%row.Id%}" class="fa fa-trash" onclick="return confirm('{{"确定删除？"|T}}');"></a>
+<a title="{{"编辑"|T}}" href="{{Url "Post" "Edit"}}?id={=row.Id=}" class="fa fa-edit"></a> | <a title="{{"删除"|T}}" href="{{Url "Post" "Delete"}}?id={=row.Id=}" class="fa fa-trash" onclick="return confirm('{{"确定删除？"|T}}');"></a>
 </template>
 {{/Block}}

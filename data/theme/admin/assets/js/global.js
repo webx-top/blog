@@ -123,7 +123,7 @@
 		},
 		/* 解析模板 */
 		parseTmpl: function(template, data) {
-			return template.replace(/\{%([\w\.]*)%\}/g, function(str, key) {
+			return template.replace(/\{=([\w\.]*)=\}/g, function(str, key) {
 				var keys = key.split("."),
 					v = data[keys.shift()];
 				for (var i = 0, l = keys.length; i < l; i++) v = v[keys[i]];
@@ -406,7 +406,7 @@
 					easing: 'swing',
 					speed: 500
 				},
-				tmpl: '<div class="activity-item"><i class="fa fa-{%icon%}"></i><div class="activity">{%content%}</div></div>'
+				tmpl: '<div class="activity-item"><i class="fa fa-{=icon=}"></i><div class="activity">{=content=}</div></div>'
 			};
 			option = $.extend({}, defaults, option || {})
 			webx.defined(typeof(noty), 'noty');
