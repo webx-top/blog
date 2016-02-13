@@ -117,12 +117,12 @@ func init() {
 func monitorLanguageResource() {
 	var callback = com.MonitorEventFunc{
 		Modify: func(file string) {
-			Server.Core.Logger().Info("reload language: %v", file)
+			Server.Core.Logger().Info("reload language:", file)
 			I18n.Reload(file)
 		},
 	}
 	go com.Monitor(RootDir+`/data/lang/messages`, callback, func(f string) bool {
-		Server.Core.Logger().Info("changed: %v", f)
+		Server.Core.Logger().Info("changed:", f)
 		return strings.HasSuffix(f, `.yaml`)
 	})
 }

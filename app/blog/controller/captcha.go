@@ -121,11 +121,11 @@ func (this *Captcha) checkRefer(f func() error) (err error, ret bool) {
 	logger := this.Server.Core.Logger()
 	//println("[Refer]", r, this.IsAjax(), this.Request.Host)
 	if r == "" || (strings.Contains(r, "://") && !this.checkAllowedDomain(r, allowedDomain) && !strings.Contains(r, "://"+this.Request().Host+"/")) {
-		logger.Error("[IP:%s]Update captcha from [%s] => Denied!", this.IP(), r)
+		logger.Errorf("[IP:%s]Update captcha from [%s] => Denied!", this.IP(), r)
 		err = this.NotFound()
 	} else {
 		err = f()
-		logger.Info("[IP:%s]Update captcha from [%s] => Allowed.", this.IP(), r)
+		logger.Infof("[IP:%s]Update captcha from [%s] => Allowed.", this.IP(), r)
 		ret = true
 	}
 	return
