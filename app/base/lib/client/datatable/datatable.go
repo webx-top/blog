@@ -248,6 +248,7 @@ func (a *DataTable) GenSearch(fields ...string) string {
 		if !ok {
 			continue
 		}
+		println(field, column.SQLType.Name)
 		if column.SQLType.IsText() {
 			switch column.SQLType.Name {
 			case core.Enum, core.Set, core.Char, core.Uuid:
@@ -257,7 +258,7 @@ func (a *DataTable) GenSearch(fields ...string) string {
 					lnke = ` AND `
 				}
 			default:
-				cond = a.Orm.SearchField(field, keywords, a.idFieldName)
+				cond = a.Orm.SearchField(field, keywords)
 				if cond != `` {
 					sql += lnk + cond
 					lnk = ` AND `
