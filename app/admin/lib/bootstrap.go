@@ -19,28 +19,29 @@ package lib
 
 import (
 	"github.com/webx-top/blog/app/base"
-	"github.com/webx-top/webx/lib/tplex"
 	"github.com/webx-top/webx/lib/tplfunc"
 )
 
 var (
-	Name       = `admin`
-	App        = base.Server.NewApp(Name, base.Language.Store(), base.SessionMW, base.Xsrf.Middleware() /*, base.Jwt.Validate()*/)
-	FuncMap    = base.Server.FuncMap()
-	StaticPath = `/assets`
-	Static     *tplfunc.Static
+	Name          = `admin`
+	App           = base.Server.NewApp(Name, base.Language.Store(), base.SessionMW, base.Xsrf.Middleware() /*, base.Jwt.Validate()*/)
+	FuncMap       = base.Server.FuncMap()
+	StaticPath    = `/assets`
+	Static        *tplfunc.Static
+	AbsStaticPath string
+	AbsThemePath  string
 )
 
 func init() {
-	tp := base.ThemePath(`admin`)
-	var te tplex.TemplateEx = tplex.New(tp)
-	te.Init(true, true)
-	Static = base.Server.Static(`/`+Name+StaticPath, tp+StaticPath, &FuncMap)
+	AbsThemePath = base.ThemePath(base.Config.BackendTemplate.Theme)
+	AbsStaticPath = AbsThemePath + StaticPath
+	var te = base.Server.InitTmpl(AbsThemePath, base.Config.BackendTemplate.Engine)
+	Static = base.Server.Static(`/`+Name+StaticPath, AbsStaticPath, &FuncMap)
 	te.SetFuncMapFn(func() map[string]interface{} {
 		return FuncMap
 	})
-	te.MonitorEvent(Static.OnUpdate(tp))
+	te.MonitorEvent(Static.OnUpdate(AbsThemePath))
 	x := App.Webx()
 	x.SetRenderer(te)
-	x.Static(StaticPath, tp+StaticPath)
+	x.Static(StaticPath, AbsStaticPath)
 }

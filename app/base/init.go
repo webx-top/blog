@@ -32,23 +32,30 @@ import (
 	"github.com/webx-top/webx/lib/middleware/language"
 	"github.com/webx-top/webx/lib/middleware/session"
 	"github.com/webx-top/webx/lib/session/ssi"
+	"github.com/webx-top/webx/lib/tplfunc"
 	"github.com/webx-top/webx/lib/xsrf"
 
 	_ "github.com/webx-top/blog/app/base/lib/client/datatable"
+	_ "github.com/webx-top/webx/lib/tplex/pongo2"
+
 	"github.com/webx-top/blog/app/base/lib/config"
 
 	"github.com/admpub/confl"
 )
 
 var (
-	Server      *X.Server
-	SessionMW   echo.MiddlewareFunc
-	HtmlCache   *htmlcache.Config
-	HtmlCacheMW echo.MiddlewareFunc
-	I18n        *i18n.I18n
-	Xsrf        *xsrf.Xsrf
-	Jwt         *jwt.JWT
-	DB          *database.Orm
+	Server        *X.Server
+	SessionMW     echo.MiddlewareFunc
+	HtmlCache     *htmlcache.Config
+	HtmlCacheMW   echo.MiddlewareFunc
+	I18n          *i18n.I18n
+	Xsrf          *xsrf.Xsrf
+	Jwt           *jwt.JWT
+	DB            *database.Orm
+	Static        *tplfunc.Static
+	FuncMap       map[string]interface{}
+	AbsThemePath  string
+	AbsStaticPath string
 
 	DefaultLang = `zh-cn`
 	Project     = `blog`
@@ -58,15 +65,21 @@ var (
 	templateDir = RootDir + `/data/theme/`
 	Config      = &config.Config{}
 	configFile  = RootDir + `/data/config/config.yaml`
+	StaticPath  = `/assets`
 )
 
 func init() {
 	LoadConfig(configFile)
 
+	theme = Config.FrontendTemplate.Theme
+
+	AbsThemePath = ThemePath()
+	AbsStaticPath = AbsThemePath + StaticPath
+
 	// ======================
 	// 初始化默认Server
 	// ======================
-	Server = X.Serv(Project).InitTmpl(ThemePath())
+	Server = X.Serv(Project).ResetTmpl(AbsThemePath, Config.FrontendTemplate.Engine)
 	ApplyConfig()
 	SessionMW = session.Middleware(&ssi.Options{
 		Engine:   Server.SessionStoreEngine,
@@ -98,6 +111,13 @@ func init() {
 	Server.Pprof()
 	Server.Debug(true)
 	Server.SetHook(Language.DetectURI)
+
+	FuncMap = Server.FuncMap()
+	Server.TemplateEngine.SetFuncMapFn(func() map[string]interface{} {
+		return FuncMap
+	})
+	Static = Server.Static(StaticPath, AbsStaticPath, &FuncMap)
+	Server.TemplateEngine.MonitorEvent(Static.OnUpdate(AbsThemePath))
 
 	// ======================
 	// 监控语言文件更改
@@ -138,7 +158,7 @@ func SetTheme(args ...string) {
 	if len(args) > 1 && args[0] == `admin` {
 		return
 	}
-	Server.InitTmpl(ThemePath(args...))
+	Server.ResetTmpl(ThemePath(args...))
 }
 
 func LoadConfig(file string) {
@@ -151,6 +171,13 @@ func LoadConfig(file string) {
 			panic(err)
 		}
 	}
+	if Config.FrontendTemplate.Theme == `` {
+		Config.FrontendTemplate.Theme = `default`
+	}
+	if Config.BackendTemplate.Theme == `` {
+		Config.BackendTemplate.Theme = `admin`
+	}
+	//fmt.Printf("%#v\n", Config)
 }
 
 func ApplyConfig() {

@@ -84,9 +84,17 @@ type Language struct {
 	AllList []string
 }
 
+type Template struct {
+	Theme  string
+	Engine string
+	Style  string
+}
+
 type Config struct {
-	DB       `json:"DB"`
-	Cookie   `json:"Cookie"`
-	Session  `json:"Session"`
-	Language `json:"Language"`
+	DB               `json:"DB"`
+	Cookie           `json:"Cookie"`
+	Session          `json:"Session"`
+	Language         `json:"Language"`
+	FrontendTemplate Template `json:"FrontendTemplate"`
+	BackendTemplate  Template `json:"BackendTemplate"`
 }

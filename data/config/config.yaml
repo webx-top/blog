@@ -27,3 +27,15 @@ Language : {
   Default : "zh-cn"
   AllList : ["zh-cn","en"]
 }
+
+FrontendTemplate : {
+  Theme   : "default"
+  Engine  : "default"
+  Style   : ""
+}
+
+BackendTemplate : {
+  Theme   : "admin"
+  Engine  : "default"
+  Style   : ""
+}

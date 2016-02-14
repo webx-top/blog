@@ -20,29 +20,14 @@ package lib
 import (
 	"github.com/webx-top/blog/app/base"
 	X "github.com/webx-top/webx"
-	"github.com/webx-top/webx/lib/tplex/pongo2"
-	"github.com/webx-top/webx/lib/tplfunc"
 )
 
 var (
-	App        = base.Server.NewApp("", base.Language.Store(), base.SessionMW, base.HtmlCacheMW)
-	FuncMap    = base.Server.FuncMap()
-	StaticPath = `/assets`
-	Static     *tplfunc.Static
+	App = base.Server.NewApp("", base.Language.Store(), base.SessionMW, base.HtmlCacheMW)
 )
 
 func init() {
-	tp := base.ThemePath(`default`)
-	te := pongo2.New(tp)
-	te.Init(true, true)
-	Static = base.Server.Static(StaticPath, tp+StaticPath, &FuncMap)
-	te.SetFuncMapFn(func() map[string]interface{} {
-		return FuncMap
-	})
-	te.MonitorEvent(Static.OnUpdate(tp))
-	x := App.Webx()
-	x.SetRenderer(te)
-	x.Static(StaticPath, tp+StaticPath)
+	App.Webx().Static(base.StaticPath, base.AbsStaticPath)
 
 	App.R(`/ping`, func(c *X.Context) error {
 		return c.String(200, `pong`)
