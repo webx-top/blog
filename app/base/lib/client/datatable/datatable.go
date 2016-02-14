@@ -181,13 +181,12 @@ func (a *DataTable) Init(c *X.Context, orm *database.Orm, m interface{}) client.
 		}
 		column = table.GetColumn(field)
 		if column != nil && column.FieldName == field {
-			continue
+			sort := c.Form(`order[` + idx + `][dir]`)
+			if sort != `asc` {
+				sort = `desc`
+			}
+			a.orders.Insert(com.Int(idx), field, column.Name, sort)
 		}
-		sort := c.Form(`order[` + idx + `][dir]`)
-		if sort != `asc` {
-			sort = `desc`
-		}
-		a.orders.Insert(com.Int(idx), field, column.Name, sort)
 	}
 	//a.Form(`search[regex]`)=="false"
 	//columns[0][search][regex]=false / columns[0][search][value]
@@ -248,7 +247,6 @@ func (a *DataTable) GenSearch(fields ...string) string {
 		if !ok {
 			continue
 		}
-		println(field, column.SQLType.Name)
 		if column.SQLType.IsText() {
 			switch column.SQLType.Name {
 			case core.Enum, core.Set, core.Char, core.Uuid:
