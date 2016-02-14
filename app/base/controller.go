@@ -21,6 +21,7 @@ import (
 	X "github.com/webx-top/webx"
 	C "github.com/webx-top/webx/lib/captcha"
 	"github.com/webx-top/webx/lib/i18n"
+	"github.com/webx-top/webx/lib/validation"
 )
 
 func NewController(c *X.Context) *Controller {
@@ -72,4 +73,12 @@ func (a *Controller) VerifyCaptcha(captchaSolution string) bool {
 		return false
 	}
 	return true
+}
+
+func (a *Controller) Valid(m interface{}, args ...string) (b bool, errs map[string]string, v *validation.Validation) {
+	v = &validation.Validation{}
+	if m != nil {
+		b, errs = v.ValidResult(m, args...)
+	}
+	return
 }

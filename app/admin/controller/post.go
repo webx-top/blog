@@ -63,27 +63,34 @@ func (a *Post) Index() error {
 func (a *Post) Add() error {
 	m := &D.Post{}
 	other := &D.Ocontent{}
+	errs := make(map[string]string)
 	if a.IsPost() {
 		err := a.Bind(m)
 		if err != nil {
 			return err
 		}
-		m.Uid = a.User.Id
-		m.Uname = a.User.Uname
-		t := time.Now().Local()
-		m.Year = t.Year()
-		m.Month = com.Int(t.Month().String())
-		affected, err := a.postM.Add(m)
-		if err != nil {
-			a.SetErr(err.Error())
-		} else if affected < 1 {
-			a.NotModified()
+
+		if ok, es, _ := a.Valid(m); !ok {
+			errs = es
 		} else {
-			a.Done()
+			m.Uid = a.User.Id
+			m.Uname = a.User.Uname
+			t := time.Now().Local()
+			m.Year = t.Year()
+			m.Month = com.Int(t.Month().String())
+			affected, err := a.postM.Add(m)
+			if err != nil {
+				a.SetErr(err.Error())
+			} else if affected < 1 {
+				a.NotModified()
+			} else {
+				a.Done()
+			}
 		}
 	}
 	a.Assign(`Detail`, m)
 	a.Assign(`Other`, other)
+	a.Assign(`Errors`, errs)
 	return a.Display(a.TmplPath(`Edit`))
 }
 

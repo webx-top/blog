@@ -47,13 +47,13 @@
 							<div class="g_3"><span class="label">{{"标题"|T}}
 							<span class="must">*</span></span><div class="field_notice">{{"文章标题"}}</div></div>
 							<div class="g_9">
-								<input class="simple_field" required="required" type="text" name="title" value="{{.Detail.Title}}" />
+								<input class="simple_field" required="required" type="text" name="Title" value="{{.Detail.Title}}" />
 							</div>
 						</div>
 						<div class="line_grid">
 							<div class="g_3"><span class="label">{{"分类"|T}}<span class="must">*</span></span></div>
 							<div class="g_9">
-								<select name="catid" required="required" class="simple_form">
+								<select name="Catid" required="required" class="simple_form">
 								<option value="">- {{"请选择"|T}} -</option>
 								<option value="1"{{if eq .Detail.Catid 1}} selected="selected" {{end}}>{{"默认"|T}}</option>
 								</select>
@@ -62,14 +62,14 @@
 						<div class="line_grid">
 							<div class="g_3"><span class="label">{{"简介"|T}}</span></div>
 							<div class="g_9">
-								<textarea class="simple_field elastic twMaxChars">{{.Detail.Description}}</textarea>
+								<textarea class="simple_field elastic twMaxChars" name="Description">{{.Detail.Description}}</textarea>
 							</div>
 						</div>
 						<div class="line_grid">
 							<div class="g_3"><span class="label">{{"编辑器"|T}}<span class="must">*</span></span></div>
 							<div class="g_9">
-								<label><input type="radio" name="etype" class="simple_form" value="html"{{if or (eq .Detail.Etype "") (eq .Detail.Etype "html")}} checked="checked"{{end}}><span class="label ilC">{{"HTML可视化编辑器"|T}}</span></label>
-								<label><input type="radio" name="etype" class="simple_form" value="markdown"{{if eq .Detail.Etype "markdown"}} checked="checked"{{end}}><span class="label ilC">{{"Markdown编辑器"|T}}</span></label>
+								<label><input type="radio" name="Etype" class="simple_form" value="html"{{if or (eq .Detail.Etype "") (eq .Detail.Etype "html")}} checked="checked"{{end}}><span class="label ilC">{{"HTML可视化编辑器"|T}}</span></label>
+								<label><input type="radio" name="Etype" class="simple_form" value="markdown"{{if eq .Detail.Etype "markdown"}} checked="checked"{{end}}><span class="label ilC">{{"Markdown编辑器"|T}}</span></label>
 								<div class="field_notice">{{"请注意"|T}}: {{"从HTML向Markdown编辑器切换时，您在\"HTML可视化编辑器\"中所做的修改会丢失，而后者向前者切换则不会。"}}</div>
 								<textarea id="etype-markdown-content" style="display:none">{{.Other.Content}}</textarea>
 								<textarea id="etype-html-content" style="display:none">{{.Detail.Content}}</textarea>
@@ -79,7 +79,7 @@
 							<div class="g_3"><span class="label">{{"内容"|T}}<span class="must">*</span></span></div>
 							<div class="g_9">
 								<div id="editor-container" style="z-index:99">
-								<textarea class="simple_field" required="required" name="content" style="height:600px" data-content-elem="#etype-{=type=}-content">{{.Detail.Content}}</textarea>
+								<textarea class="simple_field" name="Content" style="height:600px" data-content-elem="#etype-{=type=}-content">{{.Detail.Content}}</textarea>
 								</div>
 								<div class="field_notice"></div>
 							</div>
@@ -87,35 +87,35 @@
 						<div class="line_grid">
 							<div class="g_3"><span class="label">{{"权限"|T}}<span class="must">*</span></span></div>
 							<div class="g_9">
-								<label><input type="radio" name="display" class="simple_form" value="ALL"{{if or (eq .Detail.Display "") (eq .Detail.Display "ALL")}} checked="checked"{{end}}><span class="label ilC">完全公开</span></label>
-								<label><input type="radio" name="display" class="simple_form" value="SELF"{{if eq .Detail.Display "SELF"}} checked="checked"{{end}}><span class="label ilC">自己可见</span></label>
-								<label><input type="radio" name="display" class="simple_form" value="FRIEND"{{if eq .Detail.Display "FRIEND"}} checked="checked"{{end}}><span class="label ilC">好友可见</span></label>
-								<label><input type="radio" name="display" class="simple_form" value="PWD"{{if eq .Detail.Display "PWD"}} checked="checked"{{end}}><span class="label ilC">需要密码</span></label>
+								<label><input type="radio" name="Display" class="simple_form" value="ALL"{{if or (eq .Detail.Display "") (eq .Detail.Display "ALL")}} checked="checked"{{end}}><span class="label ilC">完全公开</span></label>
+								<label><input type="radio" name="Display" class="simple_form" value="SELF"{{if eq .Detail.Display "SELF"}} checked="checked"{{end}}><span class="label ilC">自己可见</span></label>
+								<label><input type="radio" name="Display" class="simple_form" value="FRIEND"{{if eq .Detail.Display "FRIEND"}} checked="checked"{{end}}><span class="label ilC">好友可见</span></label>
+								<label><input type="radio" name="Display" class="simple_form" value="PWD"{{if eq .Detail.Display "PWD"}} checked="checked"{{end}}><span class="label ilC">需要密码</span></label>
 							</div>
 						</div>
 						<div class="line_grid" id="inputPasswd">
 							<div class="g_3"><span class="label">{{"访问密码"|T}}</span></div>
 							<div class="g_9">
-								<input type="text" placeholder="" title="" disabled="disabled" name="passwd" class="simple_field tooltip" value="{{.Detail.Passwd}}">
+								<input type="text" placeholder="" title="" disabled="disabled" name="Passwd" class="simple_field tooltip" value="{{.Detail.Passwd}}">
 							</div>
 						</div>
 						<div class="line_grid">
 							<div class="g_3"><span class="label">{{"允许评论"|T}}</span></div>
 							<div class="g_9">
-								<label><input type="checkbox" name="allowComment" class="simple_form" value="1"{{if or (eq .Detail.AllowComment "") (eq .Detail.AllowComment "Y")}} checked="checked"{{end}}></label>
+								<label><input type="checkbox" name="AllowComment" class="simple_form" value="1"{{if or (eq .Detail.AllowComment "") (eq .Detail.AllowComment "Y")}} checked="checked"{{end}}></label>
 							</div>
 						</div>
 						<div class="line_grid">
 							<div class="g_3"><span class="label">{{"标签"|T}}</span></div>
 							<div class="g_9">
-								<input type="text" name="tags" class="simple_field tooltip" value="{{.Detail.Tags}}" placeholder="" title="多个标签用逗号隔开">
+								<input type="text" name="Tags" class="simple_field tooltip" value="{{.Detail.Tags}}" placeholder="" title="多个标签用逗号隔开">
 							</div>
 						</div>
 							<div class="line_grid">
 								<div class="g_3"><span class="label">提交</span></div>
 								<div class="g_9">
-									<input type="hidden" name="editorId" value="editor-container">
-									<input type="hidden" name="id" value="{{.Detail.Id}}">
+									<input type="hidden" name="EditorId" value="editor-container">
+									<input type="hidden" name="Id" value="{{.Detail.Id}}">
 									{{XsrfForm}}
 									<input type="submit" value="保存" class="submitIt simple_buttons" />
 								</div>
@@ -126,5 +126,8 @@
 
 			</div>		
 		</div>
-<script>webx.pageJs=webx.jsFile("Edit");</script>
+<script>
+webx.pageJs=webx.jsFile("Edit");
+var errors={{JsonEncode .Errors|Js}};
+</script>
 {{/Block}}
