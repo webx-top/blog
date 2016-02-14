@@ -97,7 +97,7 @@ func (this *Captcha) Reload() (err error) {
 		this.Output.Data = d
 		return nil
 	})
-	return err
+	return
 }
 
 func (this *Captcha) checkAllowedDomain(refer string, allowedUrl string) bool {

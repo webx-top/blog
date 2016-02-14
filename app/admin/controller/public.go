@@ -49,11 +49,11 @@ func (a *Public) Login() error {
 	if a.IsPost() {
 		var uname, passwd = a.Form(`uname`), a.Form(`passwd`)
 		if !a.VerifyCaptcha(a.Form(`captcha`)) {
-			return a.SetErr(a.T(`验证码错误`))
+			return a.SetErr(a.T(`验证码错误`)).Display()
 		}
 		u, err := a.user.Login(uname, passwd)
 		if err != nil {
-			return a.SetErr(err)
+			return a.SetErr(err).Display()
 		}
 		ss.Set(`user`, u).Save()
 		return a.Redirect(a.Url(`Index`, `Index`))
@@ -62,26 +62,26 @@ func (a *Public) Login() error {
 		ss.Save()
 		a.SetErr(err)
 	}
-	return nil
+	return a.Display()
 }
 
 func (a *Public) Register() error {
 	if a.IsPost() {
 		var uname, passwd = a.Form(`uname`), a.Form(`passwd`)
 		if !a.VerifyCaptcha(a.Form(`captcha`)) {
-			return a.SetErr(a.T(`验证码错误`))
+			return a.SetErr(a.T(`验证码错误`)).Display()
 		}
 		var active = false
 		u, err := a.user.Register(uname, passwd, active)
 		if err != nil {
-			return a.SetErr(err)
+			return a.SetErr(err).Display()
 		}
 		if active {
 			a.Session().Set(`user`, u).Save()
 		}
 		return a.Redirect(a.Url(`Index`, `Index`))
 	}
-	return nil
+	return a.Display()
 }
 
 func (a *Public) Logout() error {

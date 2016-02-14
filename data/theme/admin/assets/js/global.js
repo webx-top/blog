@@ -89,6 +89,12 @@
 			webx.includes(key);
 			if (callback != null) return callback();
 		},
+		jsFile:function(act,ctl,app){
+			if(app==null)app=webx.appName;
+			if(ctl==null)ctl=webx.controllerName;
+			if(act==null)act=webx.actionName;
+			return "pages/"+app+"/"+ctl+"/"+act+".js";
+		},
 		includes: function(js) {
 			if (!js) return;
 			switch (typeof(js)) {

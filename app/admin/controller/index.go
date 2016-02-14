@@ -42,5 +42,5 @@ func (a *Index) Before() error {
 }
 
 func (a *Index) Index() error {
-	return nil
+	return a.Display()
 }

@@ -79,7 +79,7 @@
 							<div class="g_3"><span class="label">{{"内容"|T}}<span class="must">*</span></span></div>
 							<div class="g_9">
 								<div id="editor-container" style="z-index:99">
-								<textarea class="simple_field" required="required" name="content" style="height:600px" data-content-elem="#etype-{%type%}-content">{{.Detail.Content}}</textarea>
+								<textarea class="simple_field" required="required" name="content" style="height:600px" data-content-elem="#etype-{=type=}-content">{{.Detail.Content}}</textarea>
 								</div>
 								<div class="field_notice"></div>
 							</div>
@@ -123,10 +123,8 @@
 						</form>
 					</div>
 				</div>
-				
-				
 
 			</div>		
 		</div>
-<script>webx.pageJs=true;</script>
+<script>webx.pageJs=webx.jsFile("Edit");</script>
 {{/Block}}

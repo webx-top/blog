@@ -40,9 +40,5 @@ func (a *Base) Before() error {
 			a.Exit = true
 		}
 	*/
-	return a.Controller.Before()
-}
-
-func (a *Base) After() error {
-	return a.Controller.After()
+	return nil
 }

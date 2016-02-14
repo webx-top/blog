@@ -20,6 +20,7 @@ package controller
 import (
 	//"fmt"
 	//"strings"
+	"time"
 
 	"github.com/webx-top/blog/app/admin/lib"
 	D "github.com/webx-top/blog/app/base/dbschema"
@@ -34,6 +35,7 @@ func init() {
 
 type Post struct {
 	index  X.Mapper
+	add    X.Mapper
 	edit   X.Mapper
 	delete X.Mapper
 	view   X.Mapper
@@ -55,7 +57,34 @@ func (a *Post) Index() error {
 		countFn, data, _ := a.postM.List(sel)
 		sel.Client.SetCount(countFn).Data(data)
 	}
-	return nil
+	return a.Display()
+}
+
+func (a *Post) Add() error {
+	m := &D.Post{}
+	other := &D.Ocontent{}
+	if a.IsPost() {
+		err := a.Bind(m)
+		if err != nil {
+			return err
+		}
+		m.Uid = a.User.Id
+		m.Uname = a.User.Uname
+		t := time.Now().Local()
+		m.Year = t.Year()
+		m.Month = com.Int(t.Month().String())
+		affected, err := a.postM.Add(m)
+		if err != nil {
+			a.SetErr(err.Error())
+		} else if affected < 1 {
+			a.NotModified()
+		} else {
+			a.Done()
+		}
+	}
+	a.Assign(`Detail`, m)
+	a.Assign(`Other`, other)
+	return a.Display(a.TmplPath(`Edit`))
 }
 
 func (a *Post) Edit() error {
@@ -64,7 +93,7 @@ func (a *Post) Edit() error {
 	if err != nil {
 		return err
 	} else if !has {
-		return a.NotFoundData()
+		return a.NotFoundData().Display()
 	}
 	if a.IsPost() {
 		err = a.Bind(m)
@@ -86,13 +115,13 @@ func (a *Post) Edit() error {
 	}
 	a.Assign(`Detail`, m)
 	a.Assign(`Other`, other)
-	return nil
+	return a.Display()
 }
 
 func (a *Post) Delete() error {
-	return nil
+	return a.Display()
 }
 
 func (a *Post) View() error {
-	return nil
+	return a.Display()
 }

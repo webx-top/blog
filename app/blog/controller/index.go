@@ -43,9 +43,5 @@ func (a *Index) Index() error {
 		"test": "times---",
 		"r":    []string{"one", "two", "three"},
 	})
-	return nil
-}
-
-func (a *Index) After() error {
-	return a.Controller.After()
+	return a.Display()
 }

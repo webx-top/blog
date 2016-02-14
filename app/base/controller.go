@@ -38,14 +38,6 @@ func (a *Controller) Init(c *X.Context) error {
 	return nil
 }
 
-func (a *Controller) Before() error {
-	return a.Controller.Before()
-}
-
-func (a *Controller) After() error {
-	return a.Controller.After()
-}
-
 func (a *Controller) Lang() string {
 	if a.Language == `` {
 		a.Language = DefaultLang
@@ -57,19 +49,19 @@ func (a *Controller) T(key string, args ...interface{}) string {
 	return i18n.T(a.Lang(), key, args...)
 }
 
-func (a *Controller) NotFoundData() error {
+func (a *Controller) NotFoundData() *X.Context {
 	return a.SetErr(a.T(`数据不存在`))
 }
 
-func (a *Controller) NotModified() error {
+func (a *Controller) NotModified() *X.Context {
 	return a.SetErr(a.T(`没有修改任何内容`))
 }
 
-func (a *Controller) Failed() error {
+func (a *Controller) Failed() *X.Context {
 	return a.SetErr(a.T(`操作失败`))
 }
 
-func (a *Controller) Done() error {
+func (a *Controller) Done() *X.Context {
 	return a.SetSuc(a.T(`操作成功`))
 }
 

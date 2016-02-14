@@ -2,9 +2,9 @@ package dbschema
 
 type Post struct {
 	Id           int    `xorm:"not null pk autoincr INT(10)"`
-	Title        string `xorm:"not null VARCHAR(180)"`
+	Title        string `xorm:"not null VARCHAR(180)" validate:"required"`
 	Description  string `xorm:"not null VARCHAR(200)"`
-	Content      string `xorm:"not null TEXT"`
+	Content      string `xorm:"not null TEXT" validate:"required"`
 	Etype        string `xorm:"not null default 'html' ENUM('html','markdown')"`
 	Created      int    `xorm:"not null default 0 created INT(10)"`
 	Updated      int    `xorm:"not null default 0 updated INT(10)"`

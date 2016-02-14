@@ -56,5 +56,5 @@ func (a *Base) Before() error {
 		user.Salt = `[HIDE]`
 		a.Assign(`User`, user)
 	}
-	return a.Controller.Before()
+	return nil
 }
