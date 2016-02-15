@@ -1,0 +1,23 @@
+package: github.com/webx-top/blog
+import:
+- package: github.com/admpub/confl
+- package: github.com/coscms/xorm
+  subpackages:
+  - core
+- package: github.com/go-sql-driver/mysql
+- package: github.com/webx-top/echo
+- package: github.com/webx-top/webx
+  subpackages:
+  - lib/cachestore
+  - lib/captcha
+  - lib/com
+  - lib/htmlcache
+  - lib/i18n
+  - lib/middleware/jwt
+  - lib/middleware/language
+  - lib/middleware/session
+  - lib/session/ssi
+  - lib/tplex/pongo2
+  - lib/tplfunc
+  - lib/validation
+  - lib/xsrf
