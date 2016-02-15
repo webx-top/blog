@@ -26,38 +26,32 @@ import (
 	//"github.com/webx-top/webx/lib/com"
 )
 
-func NewOcontent(ctx *X.Context) *Ocontent {
-	return &Ocontent{M: NewM(ctx)}
+func NewAttathment(ctx *X.Context) *Attathment {
+	return &Attathment{M: NewM(ctx)}
 }
 
-type Ocontent struct {
+type Attathment struct {
 	*M
 }
 
-func (a *Ocontent) Add(m *D.Ocontent) (affected int64, err error) {
+func (a *Attathment) Add(m *D.Attathment) (affected int64, err error) {
 	affected, err = a.Sess().Insert(m)
 	return
 }
 
-func (a *Ocontent) Edit(id int, m *D.Ocontent) (affected int64, err error) {
+func (a *Attathment) Edit(id int, m *D.Attathment) (affected int64, err error) {
 	affected, err = a.Sess().Id(id).Update(m)
 	return
 }
 
-func (a *Ocontent) GetByMaster(rid int, rtype string) (m *D.Ocontent, has bool, err error) {
-	m = &D.Ocontent{}
-	has, err = a.DB.Where(`rc_id=? AND rc_type=?`, rid, rtype).Get(m)
+func (a *Attathment) Del(id int) (affected int64, err error) {
+	m := &D.Attathment{}
+	affected, err = a.Sess().Where(`id=?`, id).Delete(m)
 	return
 }
 
-func (a *Ocontent) DelByMaster(rid int, rtype string) (affected int64, err error) {
-	m := &D.Ocontent{}
-	affected, err = a.Sess().Where(`rc_id=? AND rc_type=?`, rid, rtype).Delete(m)
-	return
-}
-
-func (a *Ocontent) Get(id int) (m *D.Ocontent, has bool, err error) {
-	m = &D.Ocontent{}
+func (a *Attathment) Get(id int) (m *D.Attathment, has bool, err error) {
+	m = &D.Attathment{}
 	has, err = a.DB.Id(id).Get(m)
 	return
 }

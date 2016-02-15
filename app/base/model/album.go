@@ -26,38 +26,32 @@ import (
 	//"github.com/webx-top/webx/lib/com"
 )
 
-func NewOcontent(ctx *X.Context) *Ocontent {
-	return &Ocontent{M: NewM(ctx)}
+func NewAlbum(ctx *X.Context) *Album {
+	return &Album{M: NewM(ctx)}
 }
 
-type Ocontent struct {
+type Album struct {
 	*M
 }
 
-func (a *Ocontent) Add(m *D.Ocontent) (affected int64, err error) {
+func (a *Album) Add(m *D.Album) (affected int64, err error) {
 	affected, err = a.Sess().Insert(m)
 	return
 }
 
-func (a *Ocontent) Edit(id int, m *D.Ocontent) (affected int64, err error) {
+func (a *Album) Edit(id int, m *D.Album) (affected int64, err error) {
 	affected, err = a.Sess().Id(id).Update(m)
 	return
 }
 
-func (a *Ocontent) GetByMaster(rid int, rtype string) (m *D.Ocontent, has bool, err error) {
-	m = &D.Ocontent{}
-	has, err = a.DB.Where(`rc_id=? AND rc_type=?`, rid, rtype).Get(m)
+func (a *Album) Del(id int) (affected int64, err error) {
+	m := &D.Album{}
+	affected, err = a.Sess().Where(`id=?`, id).Delete(m)
 	return
 }
 
-func (a *Ocontent) DelByMaster(rid int, rtype string) (affected int64, err error) {
-	m := &D.Ocontent{}
-	affected, err = a.Sess().Where(`rc_id=? AND rc_type=?`, rid, rtype).Delete(m)
-	return
-}
-
-func (a *Ocontent) Get(id int) (m *D.Ocontent, has bool, err error) {
-	m = &D.Ocontent{}
+func (a *Album) Get(id int) (m *D.Album, has bool, err error) {
+	m = &D.Album{}
 	has, err = a.DB.Id(id).Get(m)
 	return
 }
