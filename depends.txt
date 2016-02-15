@@ -1,3 +1,7 @@
 github.com/admpub/confl
 github.com/araddon/gou
 github.com/webx-top/webx
+github.com/boltdb/bolt
+github.com/yosssi/boltstore
+github.com/gogo/protobuf
+github.com/admpub/pongo2
