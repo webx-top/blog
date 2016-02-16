@@ -51,7 +51,7 @@ func (a *DB) Dsn() string {
 	case `mymysql`: //tcp:localhost:3306*gotest/root/root
 		var host string
 		if strings.HasPrefix(a.Host, `unix:`) {
-			host = "unix:" + strings.TrimPrefix(a.Host, `unix:`)
+			host = a.Host
 		} else {
 			if a.Port == `` {
 				a.Port = "3306"
