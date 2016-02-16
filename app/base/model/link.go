@@ -26,44 +26,44 @@ import (
 	//"github.com/webx-top/webx/lib/com"
 )
 
-func NewConfig(ctx *X.Context) *Config {
-	return &Config{M: NewM(ctx)}
+func NewLink(ctx *X.Context) *Link {
+	return &Link{M: NewM(ctx)}
 }
 
-type Config struct {
+type Link struct {
 	*M
 }
 
-func (a *Config) List(s *Select) (countFn func() int64, m []*D.Config, err error) {
-	m = []*D.Config{}
+func (a *Link) List(s *Select) (countFn func() int64, m []*D.Link, err error) {
+	m = []*D.Link{}
 	err = s.Do().Find(&m)
 	if err != nil {
 		return
 	}
 	countFn = func() int64 {
-		return s.Count(D.Config{})
+		return s.Count(D.Link{})
 	}
 	return
 }
 
-func (a *Config) Add(m *D.Config) (affected int64, err error) {
+func (a *Link) Add(m *D.Link) (affected int64, err error) {
 	affected, err = a.Sess().Insert(m)
 	return
 }
 
-func (a *Config) Edit(id int, m *D.Config) (affected int64, err error) {
+func (a *Link) Edit(id int, m *D.Link) (affected int64, err error) {
 	affected, err = a.Sess().Id(id).Update(m)
 	return
 }
 
-func (a *Config) Del(id int) (affected int64, err error) {
-	m := &D.Config{}
+func (a *Link) Del(id int) (affected int64, err error) {
+	m := &D.Link{}
 	affected, err = a.Sess().Where(`id=?`, id).Delete(m)
 	return
 }
 
-func (a *Config) Get(id int) (m *D.Config, has bool, err error) {
-	m = &D.Config{}
+func (a *Link) Get(id int) (m *D.Link, has bool, err error) {
+	m = &D.Link{}
 	has, err = a.DB.Id(id).Get(m)
 	return
 }

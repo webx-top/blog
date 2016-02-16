@@ -34,6 +34,18 @@ type Attathment struct {
 	*M
 }
 
+func (a *Attathment) List(s *Select) (countFn func() int64, m []*D.Attathment, err error) {
+	m = []*D.Attathment{}
+	err = s.Do().Find(&m)
+	if err != nil {
+		return
+	}
+	countFn = func() int64 {
+		return s.Count(D.Attathment{})
+	}
+	return
+}
+
 func (a *Attathment) Add(m *D.Attathment) (affected int64, err error) {
 	affected, err = a.Sess().Insert(m)
 	return

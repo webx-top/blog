@@ -34,23 +34,35 @@ type Comment struct {
 	*M
 }
 
+func (a *Comment) List(s *Select) (countFn func() int64, m []*D.Comment, err error) {
+	m = []*D.Comment{}
+	err = s.Do().Find(&m)
+	if err != nil {
+		return
+	}
+	countFn = func() int64 {
+		return s.Count(D.Comment{})
+	}
+	return
+}
+
 func (a *Comment) Add(m *D.Comment) (affected int64, err error) {
 	affected, err = a.Sess().Insert(m)
 	return
 }
 
-func (a *Comment) Edit(id int, m *D.Comment) (affected int64, err error) {
+func (a *Comment) Edit(id int64, m *D.Comment) (affected int64, err error) {
 	affected, err = a.Sess().Id(id).Update(m)
 	return
 }
 
-func (a *Comment) Del(id int) (affected int64, err error) {
+func (a *Comment) Del(id int64) (affected int64, err error) {
 	m := &D.Comment{}
 	affected, err = a.Sess().Where(`id=?`, id).Delete(m)
 	return
 }
 
-func (a *Comment) Get(id int) (m *D.Comment, has bool, err error) {
+func (a *Comment) Get(id int64) (m *D.Comment, has bool, err error) {
 	m = &D.Comment{}
 	has, err = a.DB.Id(id).Get(m)
 	return

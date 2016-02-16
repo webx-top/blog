@@ -20,7 +20,6 @@ package controller
 import (
 	//"fmt"
 	//"strings"
-	"time"
 
 	"github.com/webx-top/blog/app/admin/lib"
 	D "github.com/webx-top/blog/app/base/dbschema"
@@ -72,11 +71,6 @@ func (a *Category) Add() error {
 		if ok, es, _ := a.Valid(m); !ok {
 			errs = es
 		} else {
-			m.Uid = a.User.Id
-			m.Uname = a.User.Uname
-			t := time.Now().Local()
-			m.Year = t.Year()
-			m.Month = com.Int(t.Month().String())
 			affected, err := a.cateM.Add(m)
 			if err != nil {
 				a.SetErr(err.Error())
