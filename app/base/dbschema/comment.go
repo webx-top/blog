@@ -18,7 +18,7 @@ type Comment struct {
 	Updated      int    `xorm:"not null default 0 updated INT(10)"`
 	Status       int    `xorm:"not null default 0 INT(1)"`
 	RcId         int64  `xorm:"not null default 0 BIGINT(20)"`
-	RcType       string `xorm:"not null default 'article' CHAR(30)"`
+	RcType       string `xorm:"not null default 'post' CHAR(30)"`
 	ForUname     string `xorm:"VARCHAR(30)"`
 	ForUid       int64  `xorm:"not null default 0 BIGINT(20)"`
 }

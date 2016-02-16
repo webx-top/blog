@@ -45,7 +45,7 @@ type Setting struct {
 
 func (a *Setting) Init(c *X.Context) error {
 	a.Base = New(c)
-	a.confM = model.NewSetting(c)
+	a.confM = model.NewConfig(c)
 	return nil
 }
 
