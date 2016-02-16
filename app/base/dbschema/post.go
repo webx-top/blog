@@ -18,7 +18,7 @@ type Post struct {
 	Deleted      int    `xorm:"not null default 0 INT(10)"`
 	Year         int    `xorm:"not null INT(5)"`
 	Month        int    `xorm:"not null TINYINT(1)"`
-	AllowComment string `xorm:"not null default 'Y' ENUM('N','Y')"`
+	AllowComment string `xorm:"not null default 'Y' ENUM('Y','N')"`
 	Tags         string `xorm:"not null default '' VARCHAR(255)"`
 	Catid        int    `xorm:"not null default 0 INT(10)"`
 }

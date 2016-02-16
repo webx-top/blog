@@ -5,7 +5,7 @@ type Link struct {
 	Name     string `xorm:"not null VARCHAR(30)"`
 	Url      string `xorm:"not null VARCHAR(200)"`
 	Logo     string `xorm:"not null VARCHAR(200)"`
-	Show     string `xorm:"not null default 'N' ENUM('N','Y')"`
+	Show     string `xorm:"not null default 'N' ENUM('Y','N')"`
 	Verified int    `xorm:"not null default 0 INT(10)"`
 	Created  int    `xorm:"not null default 0 created INT(10)"`
 	Updated  int    `xorm:"not null default 0 updated INT(10)"`

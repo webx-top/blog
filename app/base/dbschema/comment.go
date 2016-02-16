@@ -7,7 +7,7 @@ type Comment struct {
 	Etype        string `xorm:"not null default 'html' CHAR(10)"`
 	RootId       int64  `xorm:"not null default 0 BIGINT(20)"`
 	RId          int64  `xorm:"not null default 0 BIGINT(20)"`
-	RType        string `xorm:"ENUM('reply','append')"`
+	RType        string `xorm:"ENUM('append','reply')"`
 	RelatedTimes int    `xorm:"not null default 0 INT(10)"`
 	RootTimes    int    `xorm:"not null default 0 INT(10)"`
 	Uid          int64  `xorm:"not null default 0 BIGINT(20)"`

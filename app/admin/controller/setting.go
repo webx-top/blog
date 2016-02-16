@@ -20,7 +20,6 @@ package controller
 import (
 	//"fmt"
 	//"strings"
-	"time"
 
 	"github.com/webx-top/blog/app/admin/lib"
 	D "github.com/webx-top/blog/app/base/dbschema"
@@ -40,7 +39,7 @@ type Setting struct {
 	delete X.Mapper
 	view   X.Mapper
 	*Base
-	confM *model.Setting
+	confM *model.Config
 }
 
 func (a *Setting) Init(c *X.Context) error {
@@ -51,7 +50,7 @@ func (a *Setting) Init(c *X.Context) error {
 
 func (a *Setting) Index() error {
 	if a.Format != `html` {
-		sel := a.confM.NewSelect(&D.Setting{})
+		sel := a.confM.NewSelect(&D.Config{})
 		sel.Condition = `uid=?`
 		sel.AddParam(a.User.Id).FromClient(true, "title")
 		countFn, data, _ := a.confM.List(sel)
@@ -61,7 +60,7 @@ func (a *Setting) Index() error {
 }
 
 func (a *Setting) Add() error {
-	m := &D.Setting{}
+	m := &D.Config{}
 	errs := make(map[string]string)
 	if a.IsPost() {
 		err := a.Bind(m)
@@ -72,11 +71,6 @@ func (a *Setting) Add() error {
 		if ok, es, _ := a.Valid(m); !ok {
 			errs = es
 		} else {
-			m.Uid = a.User.Id
-			m.Uname = a.User.Uname
-			t := time.Now().Local()
-			m.Year = t.Year()
-			m.Month = com.Int(t.Month().String())
 			affected, err := a.confM.Add(m)
 			if err != nil {
 				a.SetErr(err.Error())

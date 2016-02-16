@@ -34,6 +34,18 @@ type Tag struct {
 	*M
 }
 
+func (a *Tag) List(s *Select) (countFn func() int64, m []*D.Tag, err error) {
+	m = []*D.Tag{}
+	err = s.Do().Find(&m)
+	if err != nil {
+		return
+	}
+	countFn = func() int64 {
+		return s.Count(D.Tag{})
+	}
+	return
+}
+
 func (a *Tag) Add(m *D.Tag) (affected int64, err error) {
 	affected, err = a.Sess().Insert(m)
 	return

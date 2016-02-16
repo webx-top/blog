@@ -34,6 +34,18 @@ type Album struct {
 	*M
 }
 
+func (a *Album) List(s *Select) (countFn func() int64, m []*D.Album, err error) {
+	m = []*D.Album{}
+	err = s.Do().Find(&m)
+	if err != nil {
+		return
+	}
+	countFn = func() int64 {
+		return s.Count(D.Album{})
+	}
+	return
+}
+
 func (a *Album) Add(m *D.Album) (affected int64, err error) {
 	affected, err = a.Sess().Insert(m)
 	return
