@@ -53,7 +53,7 @@ func (a *Post) Index() error {
 	if a.Format != `html` {
 		sel := a.postM.NewSelect(&D.Post{})
 		sel.Condition = `uid=?`
-		sel.AddP(a.User.Id).FromClient(true, "title")
+		sel.AddParam(a.User.Id).FromClient(true, "title")
 		countFn, data, _ := a.postM.List(sel)
 		sel.Client.SetCount(countFn).Data(data)
 	}

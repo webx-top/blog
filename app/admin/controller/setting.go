@@ -40,21 +40,21 @@ type Setting struct {
 	delete X.Mapper
 	view   X.Mapper
 	*Base
-	cmtM *model.Setting
+	confM *model.Setting
 }
 
 func (a *Setting) Init(c *X.Context) error {
 	a.Base = New(c)
-	a.cmtM = model.NewSetting(c)
+	a.confM = model.NewSetting(c)
 	return nil
 }
 
 func (a *Setting) Index() error {
 	if a.Format != `html` {
-		sel := a.cmtM.NewSelect(&D.Setting{})
+		sel := a.confM.NewSelect(&D.Setting{})
 		sel.Condition = `uid=?`
-		sel.AddP(a.User.Id).FromClient(true, "title")
-		countFn, data, _ := a.cmtM.List(sel)
+		sel.AddParam(a.User.Id).FromClient(true, "title")
+		countFn, data, _ := a.confM.List(sel)
 		sel.Client.SetCount(countFn).Data(data)
 	}
 	return a.Display()
@@ -77,7 +77,7 @@ func (a *Setting) Add() error {
 			t := time.Now().Local()
 			m.Year = t.Year()
 			m.Month = com.Int(t.Month().String())
-			affected, err := a.cmtM.Add(m)
+			affected, err := a.confM.Add(m)
 			if err != nil {
 				a.SetErr(err.Error())
 			} else if affected < 1 {
@@ -94,7 +94,7 @@ func (a *Setting) Add() error {
 
 func (a *Setting) Edit() error {
 	id := com.Int(a.Form(`id`))
-	m, has, err := a.cmtM.Get(id)
+	m, has, err := a.confM.Get(id)
 	if err != nil {
 		return err
 	} else if !has {
@@ -105,7 +105,7 @@ func (a *Setting) Edit() error {
 		if err != nil {
 			return err
 		}
-		affected, err := a.cmtM.Edit(m.Id, m)
+		affected, err := a.confM.Edit(m.Id, m)
 		if err != nil {
 			a.SetErr(err.Error())
 		} else if affected < 1 {
@@ -114,12 +114,7 @@ func (a *Setting) Edit() error {
 			a.Done()
 		}
 	}
-	other, _, err := a.cmtM.GetOtherContent(m.Id)
-	if err != nil {
-		return err
-	}
 	a.Assign(`Detail`, m)
-	a.Assign(`Other`, other)
 	return a.Display()
 }
 

@@ -157,10 +157,10 @@ type Select struct {
 }
 
 func (a *Select) Do(args ...interface{}) *xorm.Session {
-	return a.GenSS(args...).OrderBy(a.OrderBy).Limit(int(a.Limit), int(a.Offset))
+	return a.GenSess(args...).OrderBy(a.OrderBy).Limit(int(a.Limit), int(a.Offset))
 }
 
-func (a *Select) AddP(args ...interface{}) *Select {
+func (a *Select) AddParam(args ...interface{}) *Select {
 	a.Params = append(a.Params, args...)
 	return a
 }
@@ -184,7 +184,7 @@ func (a *Select) FromClient(gen bool, fields ...string) *Select {
 	return a
 }
 
-func (a *Select) GenSS(args ...interface{}) *xorm.Session {
+func (a *Select) GenSess(args ...interface{}) *xorm.Session {
 	var s *xorm.Session = a.Orm.NewSession()
 	s.IsAutoClose = true
 	switch len(args) {
@@ -216,7 +216,7 @@ func (a *Select) GenSS(args ...interface{}) *xorm.Session {
 }
 
 func (a *Select) Count(m interface{}) int64 {
-	count, err := a.GenSS().Count(m)
+	count, err := a.GenSess().Count(m)
 	if err != nil {
 		fmt.Println(err)
 	}

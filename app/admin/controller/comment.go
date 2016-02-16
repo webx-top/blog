@@ -53,7 +53,7 @@ func (a *Comment) Index() error {
 	if a.Format != `html` {
 		sel := a.cmtM.NewSelect(&D.Comment{})
 		sel.Condition = `uid=?`
-		sel.AddP(a.User.Id).FromClient(true, "title")
+		sel.AddParam(a.User.Id).FromClient(true, "title")
 		countFn, data, _ := a.cmtM.List(sel)
 		sel.Client.SetCount(countFn).Data(data)
 	}
@@ -114,12 +114,7 @@ func (a *Comment) Edit() error {
 			a.Done()
 		}
 	}
-	other, _, err := a.cmtM.GetOtherContent(m.Id)
-	if err != nil {
-		return err
-	}
 	a.Assign(`Detail`, m)
-	a.Assign(`Other`, other)
 	return a.Display()
 }
 
