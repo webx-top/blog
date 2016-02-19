@@ -120,7 +120,7 @@ func (this *Captcha) checkRefer(f func() error) (err error, ret bool) {
 	r := this.Refer()
 	logger := this.Server.Core.Logger()
 	//println("[Refer]", r, this.IsAjax(), this.Request.Host)
-	if r == "" || (strings.Contains(r, "://") && !this.checkAllowedDomain(r, allowedDomain) && !strings.Contains(r, "://"+this.Request().Host+"/")) {
+	if r == "" || (strings.Contains(r, "://") && !this.checkAllowedDomain(r, allowedDomain) && !strings.Contains(r, "://"+this.Request().Host()+"/")) {
 		logger.Errorf("[IP:%s]Update captcha from [%s] => Denied!", this.IP(), r)
 		err = this.NotFound()
 	} else {

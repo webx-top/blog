@@ -55,7 +55,7 @@ func (this *M) Begin() *xorm.Session {
 	ss = this.DB.NewSession()
 	err := ss.Begin()
 	if err != nil {
-		this.Context.X().Echo().Logger().Error(err)
+		this.Context.Object().Echo().Logger().Error(err)
 	}
 	this.Context.Set(`webx:transSession`, ss)
 	return ss
@@ -116,7 +116,7 @@ func (this *M) End(result bool, args ...*xorm.Session) (err error) {
 		err = ss.Rollback()
 	}
 	if err != nil {
-		this.Context.X().Echo().Logger().Error(err)
+		this.Context.Object().Echo().Logger().Error(err)
 	}
 	ss.Close()
 	this.Context.Set(`webx:transSession`, nil)

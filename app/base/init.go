@@ -80,6 +80,7 @@ func init() {
 	// 初始化默认Server
 	// ======================
 	Server = X.Serv(Project).ResetTmpl(AbsThemePath, Config.FrontendTemplate.Engine)
+	Server.Core.PreUse(Language.Middleware())
 	ApplyConfig()
 	SessionMW = session.Middleware(&ssi.Options{
 		Engine:   Server.SessionStoreEngine,
@@ -110,7 +111,6 @@ func init() {
 
 	Server.Pprof()
 	Server.Debug(true)
-	Server.SetHook(Language.DetectURI)
 
 	FuncMap = Server.FuncMap()
 	Server.TemplateEngine.SetFuncMapFn(func() map[string]interface{} {

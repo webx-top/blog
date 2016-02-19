@@ -145,8 +145,7 @@ func (a *DataTable) Init(c *X.Context, orm *database.Orm, m interface{}) client.
 		}
 	}
 	var fm []string = strings.Split(`columns[0][data]`, `0`)
-	c.AutoParseForm()
-	for k, _ := range c.Request().Form {
+	for k, _ := range c.Request().Form().All() {
 		if !strings.HasPrefix(k, fm[0]) || !strings.HasSuffix(k, fm[1]) {
 			continue
 		}

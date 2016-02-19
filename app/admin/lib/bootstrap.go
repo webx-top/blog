@@ -19,12 +19,13 @@ package lib
 
 import (
 	"github.com/webx-top/blog/app/base"
+	"github.com/webx-top/echo/handler"
 	"github.com/webx-top/webx/lib/tplfunc"
 )
 
 var (
 	Name          = `admin`
-	App           = base.Server.NewApp(Name, base.Language.Store(), base.SessionMW, base.Xsrf.Middleware() /*, base.Jwt.Validate()*/)
+	App           = base.Server.NewApp(Name, base.SessionMW, base.Xsrf.Middleware() /*, base.Jwt.Validate()*/)
 	FuncMap       = base.Server.FuncMap()
 	StaticPath    = `/assets`
 	Static        *tplfunc.Static
@@ -43,5 +44,9 @@ func init() {
 	te.MonitorEvent(Static.OnUpdate(AbsThemePath))
 	x := App.Webx()
 	x.SetRenderer(te)
-	x.Static(StaticPath, AbsStaticPath)
+	base.Server.Core.Get("/"+Name+StaticPath+"/*", &handler.Static{
+		Root:   AbsStaticPath,
+		Browse: false,
+		Index:  `index.html`,
+	})
 }
