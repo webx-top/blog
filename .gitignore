@@ -4,3 +4,4 @@
 /data/bolt/*.db
 /data/theme/admin/assets/combine/*.js
 /data/theme/admin/assets/combine/*.css
+/data/theme/admin/assets/combine/*.gz
