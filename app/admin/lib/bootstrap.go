@@ -42,8 +42,7 @@ func init() {
 		return FuncMap
 	})
 	te.MonitorEvent(Static.OnUpdate(AbsThemePath))
-	x := App.Webx()
-	x.SetRenderer(te)
+	App.Renderer = te
 	base.Server.Core.Get("/"+Name+StaticPath+"/*", &handler.Static{
 		Root:   AbsStaticPath,
 		Browse: false,
