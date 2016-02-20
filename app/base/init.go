@@ -22,10 +22,10 @@ import (
 	"io/ioutil"
 	"strings"
 
-	"github.com/webx-top/blog/app/base/lib/database"
 	"github.com/webx-top/echo"
 	X "github.com/webx-top/webx"
 	"github.com/webx-top/webx/lib/com"
+	"github.com/webx-top/webx/lib/database"
 	"github.com/webx-top/webx/lib/htmlcache"
 	"github.com/webx-top/webx/lib/i18n"
 	"github.com/webx-top/webx/lib/middleware/jwt"
@@ -35,10 +35,10 @@ import (
 	"github.com/webx-top/webx/lib/tplfunc"
 	"github.com/webx-top/webx/lib/xsrf"
 
-	_ "github.com/webx-top/blog/app/base/lib/client/datatable"
+	_ "github.com/webx-top/webx/lib/client/datatable"
 	_ "github.com/webx-top/webx/lib/tplex/pongo2"
 
-	"github.com/webx-top/blog/app/base/lib/config"
+	"github.com/webx-top/webx/lib/config"
 
 	"github.com/admpub/confl"
 )
