@@ -77,7 +77,7 @@ func (a *Post) Add() error {
 			m.Uname = a.User.Uname
 			t := time.Now().Local()
 			m.Year = t.Year()
-			m.Month = com.Int(t.Month().String())
+			m.Month = int(t.Month())
 			affected, err := a.postM.Add(m)
 			if err != nil {
 				a.SetErr(err.Error())
