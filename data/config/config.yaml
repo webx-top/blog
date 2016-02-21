@@ -32,10 +32,14 @@ FrontendTemplate : {
   Theme   : "default"
   Engine  : "default"
   Style   : ""
+  # 如果模板有修改，自动重新加载模板
+  Reload : true
 }
 
 BackendTemplate : {
   Theme   : "admin"
   Engine  : "default"
   Style   : ""
+  # 如果模板有修改，自动重新加载模板
+  Reload : true
 }
