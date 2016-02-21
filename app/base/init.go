@@ -44,10 +44,9 @@ var (
 	Jwt       *jwt.JWT
 	DB        *database.Orm
 
-	DefaultLang = `zh-cn`
-	Project     = `blog`
-	Language    = language.New()
-	Config      = &config.Config{}
+	Project  = `blog`
+	Language = language.New()
+	Config   = &config.Config{}
 )
 
 func init() {

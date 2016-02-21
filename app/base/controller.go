@@ -41,7 +41,7 @@ func (a *Controller) Init(c *X.Context) error {
 
 func (a *Controller) Lang() string {
 	if a.Language == `` {
-		a.Language = DefaultLang
+		a.Language = `zh-cn`
 	}
 	return a.Language
 }
