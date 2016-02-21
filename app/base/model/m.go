@@ -25,7 +25,7 @@ import (
 
 func NewM(ctx *X.Context) *M {
 	return &M{
-		Model: NewModel(base.DB, ctx),
+		Model: New(base.DB, ctx),
 	}
 }
 
