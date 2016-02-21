@@ -19,7 +19,6 @@ package lib
 
 import (
 	"github.com/webx-top/blog/app/base"
-	"github.com/webx-top/echo/handler"
 	X "github.com/webx-top/webx"
 )
 
@@ -28,12 +27,6 @@ var (
 )
 
 func init() {
-	base.Server.Core.Get(base.StaticPath+"/*", &handler.Static{
-		Root:   base.AbsStaticPath,
-		Browse: false,
-		Index:  `index.html`,
-	})
-
 	App.R(`/ping`, func(c *X.Context) error {
 		return c.String(200, `pong`)
 	})

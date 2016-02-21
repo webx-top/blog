@@ -19,33 +19,19 @@ package lib
 
 import (
 	"github.com/webx-top/blog/app/base"
-	"github.com/webx-top/echo/handler"
-	"github.com/webx-top/webx/lib/tplfunc"
 )
 
 var (
 	Name          = `admin`
 	App           = base.Server.NewApp(Name, base.SessionMW, base.Xsrf.Middleware() /*, base.Jwt.Validate()*/)
-	FuncMap       = base.Server.FuncMap()
+	FuncMap       = base.Server.DefaultFuncMap()
 	StaticPath    = `/assets`
-	Static        *tplfunc.Static
-	AbsStaticPath string
-	AbsThemePath  string
+	StaticAbsPath string
+	ThemeAbsPath  string
 )
 
 func init() {
-	AbsThemePath = base.ThemePath(base.Config.BackendTemplate.Theme)
-	AbsStaticPath = AbsThemePath + StaticPath
-	var te = base.Server.InitTmpl(AbsThemePath, base.Config.BackendTemplate.Engine)
-	Static = base.Server.Static(`/`+Name+StaticPath, AbsStaticPath, &FuncMap)
-	te.SetFuncMapFn(func() map[string]interface{} {
-		return FuncMap
-	})
-	te.MonitorEvent(Static.OnUpdate(AbsThemePath))
-	App.Renderer = te
-	base.Server.Core.Get("/"+Name+StaticPath+"/*", &handler.Static{
-		Root:   AbsStaticPath,
-		Browse: false,
-		Index:  `index.html`,
-	})
+	ThemeAbsPath = base.Server.ThemeDir(base.Config.BackendTemplate.Theme)
+	StaticAbsPath = ThemeAbsPath + StaticPath
+	App.Renderer = base.Server.NewRenderer(ThemeAbsPath, base.Config.BackendTemplate.Engine, `/`+Name+StaticPath, StaticAbsPath, FuncMap)
 }

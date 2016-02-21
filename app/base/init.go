@@ -18,12 +18,8 @@
 package base
 
 import (
-	//"fmt"
-	"io/ioutil"
-
 	"github.com/webx-top/echo"
 	X "github.com/webx-top/webx"
-	"github.com/webx-top/webx/lib/com"
 	"github.com/webx-top/webx/lib/database"
 	"github.com/webx-top/webx/lib/htmlcache"
 	"github.com/webx-top/webx/lib/i18n"
@@ -31,55 +27,58 @@ import (
 	"github.com/webx-top/webx/lib/middleware/language"
 	"github.com/webx-top/webx/lib/middleware/session"
 	"github.com/webx-top/webx/lib/session/ssi"
-	"github.com/webx-top/webx/lib/tplfunc"
 	"github.com/webx-top/webx/lib/xsrf"
 
 	_ "github.com/webx-top/webx/lib/client/datatable"
 	_ "github.com/webx-top/webx/lib/tplex/pongo2"
 
 	"github.com/webx-top/webx/lib/config"
-
-	"github.com/admpub/confl"
 )
 
 var (
-	Server        *X.Server
-	SessionMW     echo.MiddlewareFunc
-	HtmlCache     *htmlcache.Config
-	I18n          *i18n.I18n
-	Xsrf          *xsrf.Xsrf
-	Jwt           *jwt.JWT
-	DB            *database.Orm
-	Static        *tplfunc.Static
-	FuncMap       map[string]interface{}
-	AbsThemePath  string
-	AbsStaticPath string
+	Server    *X.Server
+	SessionMW echo.MiddlewareFunc
+	HtmlCache *htmlcache.Config
+	I18n      *i18n.I18n
+	Xsrf      *xsrf.Xsrf
+	Jwt       *jwt.JWT
+	DB        *database.Orm
 
 	DefaultLang = `zh-cn`
 	Project     = `blog`
-	RootDir     = com.SelfDir()
 	Language    = language.New()
-	theme       = `default`
-	templateDir = RootDir + `/data/theme/`
 	Config      = &config.Config{}
-	configFile  = RootDir + `/data/config/config.yaml`
-	StaticPath  = `/assets`
 )
 
 func init() {
-	LoadConfig(configFile)
-
-	theme = Config.FrontendTemplate.Theme
-
-	AbsThemePath = ThemePath()
-	AbsStaticPath = AbsThemePath + StaticPath
 
 	// ======================
 	// 初始化默认Server
 	// ======================
-	Server = X.Serv(Project).ResetTmpl(AbsThemePath, Config.FrontendTemplate.Engine)
+	Server = X.Serv(Project)
+	err := Server.LoadConfig(Server.RootDir()+`/data/config/config.yaml`, Config)
+	if err != nil {
+		panic(err)
+	}
+	if Config.FrontendTemplate.Theme == `` {
+		Config.FrontendTemplate.Theme = `default`
+	}
+	if Config.BackendTemplate.Theme == `` {
+		Config.FrontendTemplate.Theme = `admin`
+	}
+	Server.TemplateDir = Server.RootDir() + `/data/theme/`
+	Server.SetTheme(Config.FrontendTemplate.Theme, Config.FrontendTemplate.Engine)
+	Server.InitStatic()
+	Server.Pprof().Debug(true)
 	Server.Core.PreUse(Language.Middleware())
-	ApplyConfig()
+
+	Server.Session = &Config.Session
+	Server.Cookie = &Config.Cookie
+	Server.InitCodec([]byte(Server.Cookie.AuthKey), []byte(Server.Cookie.BlockKey))
+
+	// ======================
+	// 设置Session中间件
+	// ======================
 	SessionMW = session.Middleware(&ssi.Options{
 		Engine:   Server.Session.StoreEngine,
 		Path:     `/`,
@@ -96,72 +95,29 @@ func init() {
 		})
 	*/
 
+	// ======================
+	// 设置静态页缓存
+	// ======================
 	HtmlCache = &htmlcache.Config{
-		HtmlCacheDir:   RootDir + `/data/html`,
+		HtmlCacheDir:   Server.RootDir() + `/data/html`,
 		HtmlCacheOn:    true,
 		HtmlCacheRules: make(map[string]interface{}),
 		HtmlCacheTime:  86400,
 	}
+
+	// ======================
+	// 设置其它常用功能组件
+	// ======================
 	I18n = i18n.New(Config.Language)
 	Xsrf = xsrf.New()
 	Jwt = jwt.New(Server.Cookie.AuthKey)
-
-	Server.Pprof()
-	Server.Debug(true)
-
-	FuncMap = Server.FuncMap()
-	Server.TemplateEngine.SetFuncMapFn(func() map[string]interface{} {
-		return FuncMap
-	})
-	Static = Server.Static(StaticPath, AbsStaticPath, &FuncMap)
-	Server.TemplateEngine.MonitorEvent(Static.OnUpdate(AbsThemePath))
+	Language.Init(Config.Language)
 
 	// ======================
 	// 连接数据库
 	// ======================
-	var err error
 	DB, err = database.NewOrm(Config.DB.Engine, Config.DB.Dsn())
 	if err == nil {
 		DB.SetPrefix(Config.DB.Prefix)
 	}
-}
-
-func ThemePath(args ...string) string {
-	if len(args) < 1 {
-		return templateDir + theme
-	}
-	return templateDir + args[0]
-}
-
-func SetTheme(args ...string) {
-	if len(args) > 1 && args[0] == `admin` {
-		return
-	}
-	Server.ResetTmpl(ThemePath(args...))
-}
-
-func LoadConfig(file string) {
-	content, err := ioutil.ReadFile(file)
-	if err != nil {
-		panic(err)
-	} else {
-		err = confl.Unmarshal(content, Config)
-		if err != nil {
-			panic(err)
-		}
-	}
-	if Config.FrontendTemplate.Theme == `` {
-		Config.FrontendTemplate.Theme = `default`
-	}
-	if Config.BackendTemplate.Theme == `` {
-		Config.BackendTemplate.Theme = `admin`
-	}
-	//fmt.Printf("%#v\n", Config)
-}
-
-func ApplyConfig() {
-	Server.Session = &Config.Session
-	Server.Cookie = &Config.Cookie
-	Server.InitCodec([]byte(Server.Cookie.AuthKey), []byte(Server.Cookie.BlockKey))
-	Language.Init(Config.Language)
 }
