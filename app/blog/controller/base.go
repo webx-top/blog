@@ -37,7 +37,7 @@ func (a *Base) Before() error {
 	/*
 		if uid, ok := a.GetSession(`uid`).(int64); !ok || uid < 1 {
 			a.Redirect(a.App.Url+`login`)
-			a.Exit = true
+			a.Exit()
 		}
 	*/
 	return nil

@@ -44,7 +44,7 @@ func (a *Captcha) Init(c *X.Context) error {
 
 func (this *Captcha) Show() error {
 	defer func() {
-		this.Exit = true
+		this.Exit()
 	}()
 	if _, ok := this.checkRefer(func() error { return nil }); !ok {
 		return nil
