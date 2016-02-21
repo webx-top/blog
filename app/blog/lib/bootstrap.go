@@ -24,7 +24,7 @@ import (
 )
 
 var (
-	App = base.Server.NewApp("", base.SessionMW, base.HtmlCacheMW)
+	App = base.Server.NewApp("", base.SessionMW, base.HtmlCache.Middleware())
 )
 
 func init() {

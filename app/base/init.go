@@ -20,7 +20,6 @@ package base
 import (
 	//"fmt"
 	"io/ioutil"
-	"strings"
 
 	"github.com/webx-top/echo"
 	X "github.com/webx-top/webx"
@@ -47,7 +46,6 @@ var (
 	Server        *X.Server
 	SessionMW     echo.MiddlewareFunc
 	HtmlCache     *htmlcache.Config
-	HtmlCacheMW   echo.MiddlewareFunc
 	I18n          *i18n.I18n
 	Xsrf          *xsrf.Xsrf
 	Jwt           *jwt.JWT
@@ -60,7 +58,7 @@ var (
 	DefaultLang = `zh-cn`
 	Project     = `blog`
 	RootDir     = com.SelfDir()
-	Language    = language.NewLanguage()
+	Language    = language.New()
 	theme       = `default`
 	templateDir = RootDir + `/data/theme/`
 	Config      = &config.Config{}
@@ -83,13 +81,13 @@ func init() {
 	Server.Core.PreUse(Language.Middleware())
 	ApplyConfig()
 	SessionMW = session.Middleware(&ssi.Options{
-		Engine:   Server.SessionStoreEngine,
+		Engine:   Server.Session.StoreEngine,
 		Path:     `/`,
-		Domain:   Server.CookieDomain,
-		MaxAge:   int(Server.CookieExpires),
+		Domain:   Server.Cookie.Domain,
+		MaxAge:   int(Server.Cookie.Expires),
 		Secure:   false,
-		HttpOnly: Server.CookieHttpOnly,
-	}, Server.SessionStoreConfig)
+		HttpOnly: Server.Cookie.HttpOnly,
+	}, Server.Session.StoreConfig)
 	/*
 		map[string]string{
 			"file": RootDir + `/data/bolt/session.db`,
@@ -104,10 +102,9 @@ func init() {
 		HtmlCacheRules: make(map[string]interface{}),
 		HtmlCacheTime:  86400,
 	}
-	HtmlCacheMW = HtmlCache.Middleware()
-	I18n = i18n.New(RootDir+`/data/lang/rules`, RootDir+`/data/lang/messages`, DefaultLang, DefaultLang)
+	I18n = i18n.New(Config.Language)
 	Xsrf = xsrf.New()
-	Jwt = jwt.New(Server.CookieAuthKey)
+	Jwt = jwt.New(Server.Cookie.AuthKey)
 
 	Server.Pprof()
 	Server.Debug(true)
@@ -120,11 +117,6 @@ func init() {
 	Server.TemplateEngine.MonitorEvent(Static.OnUpdate(AbsThemePath))
 
 	// ======================
-	// 监控语言文件更改
-	// ======================
-	monitorLanguageResource()
-
-	// ======================
 	// 连接数据库
 	// ======================
 	var err error
@@ -132,19 +124,6 @@ func init() {
 	if err == nil {
 		DB.SetPrefix(Config.DB.Prefix)
 	}
-}
-
-func monitorLanguageResource() {
-	var callback = com.MonitorEventFunc{
-		Modify: func(file string) {
-			Server.Core.Logger().Info("reload language:", file)
-			I18n.Reload(file)
-		},
-	}
-	go com.Monitor(RootDir+`/data/lang/messages`, callback, func(f string) bool {
-		Server.Core.Logger().Info("changed:", f)
-		return strings.HasSuffix(f, `.yaml`)
-	})
 }
 
 func ThemePath(args ...string) string {
@@ -181,26 +160,8 @@ func LoadConfig(file string) {
 }
 
 func ApplyConfig() {
-
-	Server.SessionStoreEngine = Config.Session.StoreEngine
-	Server.SessionStoreConfig = Config.Session.StoreConfig
-
-	Server.CookieDomain = Config.Cookie.Domain
-	Server.CookieExpires = Config.Cookie.Expires
-	Server.CookieHttpOnly = Config.Cookie.HttpOnly
-	Server.CookiePrefix = Config.Cookie.Prefix
-	Server.CookieAuthKey = Config.Cookie.AuthKey
-	Server.CookieBlockKey = Config.Cookie.BlockKey
-
-	Server.InitCodec([]byte(Server.CookieAuthKey), []byte(Server.CookieBlockKey))
-
-	if Config.Language.AllList != nil {
-		for _, lang := range Config.Language.AllList {
-			Language.Set(lang, true, lang == Config.Language.Default)
-		}
-	} else {
-		Language.Set(Config.Language.Default, true, true)
-		Language.Set(`en`, true)
-	}
-
+	Server.Session = &Config.Session
+	Server.Cookie = &Config.Cookie
+	Server.InitCodec([]byte(Server.Cookie.AuthKey), []byte(Server.Cookie.BlockKey))
+	Language.Init(Config.Language)
 }
