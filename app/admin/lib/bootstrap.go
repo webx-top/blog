@@ -31,7 +31,5 @@ var (
 )
 
 func init() {
-	ThemeAbsPath = base.Server.ThemeDir(base.Config.BackendTemplate.Theme)
-	StaticAbsPath = ThemeAbsPath + StaticPath
-	App.Renderer = base.Server.NewRenderer(ThemeAbsPath, base.Config.BackendTemplate.Engine, `/`+Name+StaticPath, StaticAbsPath, FuncMap)
+	App.InitRenderer(base.Config.BackendTemplate.Theme, base.Config.BackendTemplate.Engine, FuncMap)
 }
