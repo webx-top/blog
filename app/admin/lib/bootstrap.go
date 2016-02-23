@@ -22,12 +22,9 @@ import (
 )
 
 var (
-	Name          = `admin`
-	App           = base.Server.NewApp(Name, base.SessionMW, base.Xsrf.Middleware() /*, base.Jwt.Validate()*/)
-	FuncMap       = base.Server.DefaultFuncMap()
-	StaticPath    = `/assets`
-	StaticAbsPath string
-	ThemeAbsPath  string
+	Name    = `admin`
+	App     = base.Server.NewApp(Name, base.SessionMW, base.Xsrf.Middleware() /*, base.Jwt.Validate()*/)
+	FuncMap = base.Server.DefaultFuncMap()
 )
 
 func init() {
