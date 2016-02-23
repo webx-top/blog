@@ -23,14 +23,15 @@ if (typeof(errors)=='object'&&errors) {
   for(var i in errors){
     $("form [name='"+i+"']").parent().append('<div class="field_notice error_tips" rel="'+i+'">'+errors[i]+'</div>');
   }
-  if($("form div.error_tips").length){
-    var ipt=$("form [name='"+i+"']:first");
+  if(errorFor&&$("form div.error_tips").length){
+    var ipt=$("form [name='"+errorField+"']:first");
+    if (ipt.length>0) {
     if (!ipt.is(":visible")) {
       webx.scrollTo(ipt.parent());
     }else{
       webx.scrollTo(ipt);
     }
-    webx.noty({text:errors[i],type:'warning'});
+  };
   }
 };
 });

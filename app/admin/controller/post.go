@@ -64,6 +64,10 @@ func (a *Post) validate(m *D.Post) (bool, map[string]string) {
 	valid.Required(m.Catid, `Catid`)
 	ok = valid.HasErrors() == false
 	es = valid.ErrMap()
+	for key, msg := range es {
+		a.SetErr(msg, key)
+		break
+	}
 	return ok, es
 }
 
