@@ -19,13 +19,9 @@ package controller
 
 import (
 	//"github.com/webx-top/blog/app/base"
-	"github.com/webx-top/blog/app/blog/lib"
+	//"github.com/webx-top/blog/app/blog/lib"
 	X "github.com/webx-top/webx"
 )
-
-func init() {
-	lib.App.Reg(&Index{}).Auto()
-}
 
 type Index struct {
 	index X.Mapper

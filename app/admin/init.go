@@ -18,9 +18,10 @@
 package blog
 
 import (
-	_ "github.com/webx-top/blog/app/admin/controller"
+	. "github.com/webx-top/blog/app/admin/controller"
+	"github.com/webx-top/blog/app/admin/lib"
 )
 
 func init() {
-
+	lib.App.Use(&Category{}, &Comment{}, &Index{}, &Link{}, &Post{}, &Public{}, &Setting{})
 }

@@ -20,15 +20,11 @@ package controller
 import (
 	//"fmt"
 
-	"github.com/webx-top/blog/app/admin/lib"
+	//"github.com/webx-top/blog/app/admin/lib"
 	"github.com/webx-top/blog/app/base"
 	"github.com/webx-top/blog/app/base/model"
 	X "github.com/webx-top/webx"
 )
-
-func init() {
-	lib.App.Reg(&Public{}).Auto()
-}
 
 type Public struct {
 	login    X.Mapper

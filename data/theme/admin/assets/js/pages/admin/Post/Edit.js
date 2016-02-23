@@ -21,17 +21,4 @@ $("#formPost input[name='Etype']").click(function(){
 	};
 });
 $("#formPost input[name='Etype']:checked").trigger('click');
-if (errors) {
-	for(var i in errors){
-		$("#formPost [name='"+i+"']").parent().append('<div class="field_notice error_tips" rel="'+i+'">'+errors[i]+'</div>');
-	}
-	if($("#formPost div.error_tips").length){
-		var ipt=$("#formPost [name='"+i+"']:first");
-		if (!ipt.is(":visible")) {
-			webx.scrollTo(ipt.parent());
-		}else{
-			webx.scrollTo(ipt);
-		}
-	}
-};
 });

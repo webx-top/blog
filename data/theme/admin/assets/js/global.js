@@ -331,27 +331,13 @@
 		showMsgs: function(once) {
 			if (once == null) once = false;
 			if (webx.msgs.err && webx.msgs.suc) {
-				webx.dialog().msg('<div>' + webx.msgs.err + '</div><div>' + webx.msgs.suc + '</div>', {
-					offset: '10px',
-					shift: 6,
-					icon: 0,
-					time: 10000
-				});
+				webx.noty({text:'<div>' + webx.msgs.err + '</div><div>' + webx.msgs.suc + '</div>',timeout:10000});
 				if (once) webx.resetMsgs();
 			} else if (webx.msgs.err) {
-				webx.dialog().msg(webx.msgs.err, {
-					offset: '10px',
-					shift: 6,
-					icon: 5,
-					time: 8000
-				});
+				webx.noty({text:webx.msgs.err,type:'error',timeout:8000});
 				if (once) webx.resetMsgs();
 			} else if (webx.msgs.suc) {
-				webx.dialog().msg(webx.msgs.suc, {
-					offset: '10px',
-					icon: 6,
-					time: 5000
-				});
+				webx.noty({text:webx.msgs.suc,type:'success',timeout:5000});
 				if (once) webx.resetMsgs();
 			}
 		},

@@ -21,16 +21,12 @@ import (
 	//"fmt"
 	//"strings"
 
-	"github.com/webx-top/blog/app/admin/lib"
+	//"github.com/webx-top/blog/app/admin/lib"
 	D "github.com/webx-top/blog/app/base/dbschema"
 	"github.com/webx-top/blog/app/base/model"
 	X "github.com/webx-top/webx"
 	"github.com/webx-top/webx/lib/com"
 )
-
-func init() {
-	lib.App.Reg(&Comment{}).Auto()
-}
 
 type Comment struct {
 	index  X.Mapper

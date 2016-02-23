@@ -21,15 +21,11 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/webx-top/blog/app/blog/lib"
+	//"github.com/webx-top/blog/app/blog/lib"
 	E "github.com/webx-top/echo"
 	X "github.com/webx-top/webx"
 	C "github.com/webx-top/webx/lib/captcha"
 )
-
-func init() {
-	lib.App.Reg(&Captcha{}).Auto()
-}
 
 type Captcha struct {
 	*Base

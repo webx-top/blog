@@ -18,9 +18,10 @@
 package blog
 
 import (
-	_ "github.com/webx-top/blog/app/blog/controller"
+	. "github.com/webx-top/blog/app/blog/controller"
+	"github.com/webx-top/blog/app/blog/lib"
 )
 
 func init() {
-
+	lib.App.Use(&Captcha{}, &Index{})
 }

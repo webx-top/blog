@@ -22,16 +22,12 @@ import (
 	//"strings"
 	"time"
 
-	"github.com/webx-top/blog/app/admin/lib"
+	//"github.com/webx-top/blog/app/admin/lib"
 	D "github.com/webx-top/blog/app/base/dbschema"
 	"github.com/webx-top/blog/app/base/model"
 	X "github.com/webx-top/webx"
 	"github.com/webx-top/webx/lib/com"
 )
-
-func init() {
-	lib.App.Reg(&Post{}).Auto()
-}
 
 type Post struct {
 	index  X.Mapper
@@ -60,6 +56,17 @@ func (a *Post) Index() error {
 	return a.Display()
 }
 
+func (a *Post) validate(m *D.Post) (bool, map[string]string) {
+	ok, es, valid := a.Valid(nil)
+	valid.Required(m.Title, `Title`)
+	valid.Required(m.Content, `Content`)
+	//valid.Required(m.Description, `Description`)
+	valid.Required(m.Catid, `Catid`)
+	ok = valid.HasErrors() == false
+	es = valid.ErrMap()
+	return ok, es
+}
+
 func (a *Post) Add() error {
 	m := &D.Post{}
 	other := &D.Ocontent{}
@@ -70,7 +77,7 @@ func (a *Post) Add() error {
 			return err
 		}
 
-		if ok, es, _ := a.Valid(m); !ok {
+		if ok, es := a.validate(m); !ok {
 			errs = es
 		} else {
 			m.Uid = a.User.Id
@@ -102,18 +109,23 @@ func (a *Post) Edit() error {
 	} else if !has {
 		return a.NotFoundData().Display()
 	}
+	errs := make(map[string]string)
 	if a.IsPost() {
 		err = a.Bind(m)
 		if err != nil {
 			return err
 		}
-		affected, err := a.postM.Edit(m.Id, m)
-		if err != nil {
-			a.SetErr(err.Error())
-		} else if affected < 1 {
-			a.NotModified()
+		if ok, es := a.validate(m); !ok {
+			errs = es
 		} else {
-			a.Done()
+			affected, err := a.postM.Edit(m.Id, m)
+			if err != nil {
+				a.SetErr(err.Error())
+			} else if affected < 1 {
+				a.NotModified()
+			} else {
+				a.Done()
+			}
 		}
 	}
 	other, _, err := a.postM.GetOtherContent(m.Id)
@@ -122,6 +134,7 @@ func (a *Post) Edit() error {
 	}
 	a.Assign(`Detail`, m)
 	a.Assign(`Other`, other)
+	a.Assign(`Errors`, errs)
 	return a.Display()
 }
 
