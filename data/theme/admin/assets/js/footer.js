@@ -23,8 +23,9 @@ if (typeof(errors)=='object'&&errors) {
   for(var i in errors){
     $("form [name='"+i+"']").parent().append('<div class="field_notice error_tips" rel="'+i+'">'+errors[i]+'</div>');
   }
-  if(errorFor&&$("form div.error_tips").length){
-    var ipt=$("form [name='"+errorField+"']:first");
+  if($("form div.error_tips").length){
+    if (errorFor=='') errorFor=i;
+    var ipt=$("form [name='"+errorFor+"']:first");
     if (ipt.length>0) {
     if (!ipt.is(":visible")) {
       webx.scrollTo(ipt.parent());
