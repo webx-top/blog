@@ -1,5 +1,5 @@
 # blog
-用golang写的blog系统。基于webx框架开发。
+用golang写的blog系统。基于webx框架开发。http双核支持(fasthttp和标准库http)。
 
 # 预览
 [![](https://github.com/webx-top/blog/blob/master/preview.png)](https://github.com/webx-top/blog/blob/master/preview.png)
