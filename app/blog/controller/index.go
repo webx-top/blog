@@ -72,7 +72,7 @@ func (a *Index) Upload() error {
 	}
 	t := time.Now().Local()
 	fileDir := a.Server.RootDir() + `/data/upload/`
-	fileName := fmt.Sprintf(`%d/%v/%d/`, t.Year(), t.Month(), t.Day())
+	fileName := fmt.Sprintf(`%d/%d/%d/`, t.Year(), t.Month(), t.Day())
 	if !com.IsDir(fileDir + fileName) {
 		os.Mkdir(fileDir+fileName, os.ModePerm)
 	}
