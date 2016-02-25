@@ -19,6 +19,7 @@ package base
 
 import (
 	"github.com/webx-top/echo"
+	mw "github.com/webx-top/echo/middleware"
 	X "github.com/webx-top/webx"
 	"github.com/webx-top/webx/lib/database"
 	"github.com/webx-top/webx/lib/htmlcache"
@@ -29,7 +30,7 @@ import (
 	"github.com/webx-top/webx/lib/session/ssi"
 	"github.com/webx-top/webx/lib/xsrf"
 
-	_ "github.com/webx-top/webx/lib/client/datatable"
+	_ "github.com/webx-top/webx/lib/client/list/datatable"
 	_ "github.com/webx-top/webx/lib/tplex/pongo2"
 
 	"github.com/webx-top/webx/lib/config"
@@ -74,6 +75,7 @@ func init() {
 	Server.Session = &Config.Session
 	Server.Cookie = &Config.Cookie
 	Server.InitCodec([]byte(Server.Cookie.AuthKey), []byte(Server.Cookie.BlockKey))
+	Server.Core.Use(mw.Static(&mw.StaticOptions{Path: `/upload`, Root: Server.RootDir() + `/data/upload/`}))
 
 	// ======================
 	// 设置Session中间件

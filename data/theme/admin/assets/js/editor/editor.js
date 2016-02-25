@@ -38,7 +38,7 @@ function initEditorMarkdown(editorElement,uploadUrl,options){
 			uploadUrl+='?';
 		}
 		uploadUrl+='format=json';
-		uploadUrl+='&editor=markdown';
+		uploadUrl+='&client=markdown';
 	}
 	var container=$(editorElement).parent();
 	var containerId=container.attr('id');
@@ -85,7 +85,7 @@ function initEditorX(editorElement,uploadUrl,uploadType){
 	}else{
 		uploadUrl+='?';
 	}
-	uploadUrl+='format=json';
+	uploadUrl+='format=json&client=xheditor';
 	var plugins={
 		Code:{c:'xhe_btnCode',t:'插入代码',h:1,e:function(){
 			var that=this;
