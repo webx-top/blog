@@ -18,12 +18,6 @@
 package controller
 
 import (
-	"fmt"
-	"io/ioutil"
-	"os"
-	"path/filepath"
-	"time"
-
 	//"github.com/webx-top/blog/app/base"
 	//"github.com/webx-top/blog/app/blog/lib"
 	X "github.com/webx-top/webx"
@@ -32,7 +26,8 @@ import (
 	_ "github.com/webx-top/webx/lib/client/upload/client/simple"
 	_ "github.com/webx-top/webx/lib/client/upload/client/webuploader"
 	_ "github.com/webx-top/webx/lib/client/upload/client/xheditor"
-	"github.com/webx-top/webx/lib/com"
+	//"github.com/webx-top/webx/lib/com"
+	fileStore "github.com/webx-top/webx/lib/store/file"
 )
 
 type Index struct {
@@ -65,22 +60,11 @@ func (a *Index) Upload() error {
 		return err
 	}
 	defer f.Close()
-	var b []byte
-	b, err = ioutil.ReadAll(f)
-	if err != nil {
+	store := fileStore.Get("local")
+	if r, err := store.Put(f, rs.FileName); err != nil {
 		return err
-	}
-	t := time.Now().Local()
-	fileDir := a.Server.RootDir() + `/data/upload/`
-	fileName := fmt.Sprintf(`%d/%d/%d/`, t.Year(), t.Month(), t.Day())
-	if !com.IsDir(fileDir + fileName) {
-		os.Mkdir(fileDir+fileName, os.ModePerm)
-	}
-	fileName += com.RandomAlphanumeric(32) + filepath.Ext(rs.FileName)
-	rs.FileUrl = `/upload/` + fileName
-	err = com.WriteFile(fileDir+fileName, b)
-	if err != nil {
-		return err
+	} else {
+		rs.FileUrl = r.Path
 	}
 	res := uc.Result(``)
 	return a.JSONBlob(200, []byte(res))

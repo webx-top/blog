@@ -31,6 +31,7 @@ import (
 	"github.com/webx-top/webx/lib/xsrf"
 
 	_ "github.com/webx-top/webx/lib/client/list/datatable"
+	localStore "github.com/webx-top/webx/lib/store/file/local"
 	_ "github.com/webx-top/webx/lib/tplex/pongo2"
 
 	"github.com/webx-top/webx/lib/config"
@@ -75,7 +76,6 @@ func init() {
 	Server.Session = &Config.Session
 	Server.Cookie = &Config.Cookie
 	Server.InitCodec([]byte(Server.Cookie.AuthKey), []byte(Server.Cookie.BlockKey))
-	Server.Core.Use(mw.Static(&mw.StaticOptions{Path: `/upload`, Root: Server.RootDir() + `/data/upload/`}))
 
 	// ======================
 	// 设置Session中间件
@@ -121,4 +121,12 @@ func init() {
 	if err == nil {
 		DB.SetPrefix(Config.DB.Prefix)
 	}
+
+	store := localStore.New(map[string]string{
+		"SavePath":  Server.RootDir() + `/data/upload/`,
+		"PublicUrl": `/upload/`,
+		"RootPath":  Server.RootDir(),
+	})
+	localStore.RegStore(store)
+	Server.Core.Use(mw.Static(&mw.StaticOptions{Path: `/upload`, Root: Server.RootDir() + `/data/upload/`}))
 }
