@@ -109,10 +109,10 @@ func init() {
 	// ======================
 	// 设置其它常用功能组件
 	// ======================
-	I18n = i18n.New(Config.Language)
+	I18n = i18n.New(&Config.Language)
 	Xsrf = xsrf.New()
 	Jwt = jwt.New(Server.Cookie.AuthKey)
-	Language.Init(Config.Language)
+	Language.Init(&Config.Language)
 
 	// ======================
 	// 连接数据库

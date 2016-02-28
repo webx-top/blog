@@ -25,9 +25,10 @@ Session : {
 
 Language : {
   Default      : "zh-cn"
+  Fallback     : ""
   AllList      : ["zh-cn","en"]
-  RulesPath    : ["./data/lang/rules"]
-  MessagesPath : ["./data/lang/messages"]
+  RulesPath    : ["data/lang/rules"]
+  MessagesPath : ["data/lang/messages"]
 }
 
 FrontendTemplate : {
