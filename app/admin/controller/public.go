@@ -54,10 +54,6 @@ func (a *Public) Login() error {
 		ss.Set(`user`, u).Save()
 		return a.Redirect(a.Url(`Index`, `Index`))
 	}
-	if err := a.Flash(`errMsg`); err != nil {
-		ss.Save()
-		a.SetErr(err)
-	}
 	return a.Display()
 }
 

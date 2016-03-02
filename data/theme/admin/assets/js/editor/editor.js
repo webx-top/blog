@@ -157,7 +157,7 @@ function initEditorX(editorElement,uploadUrl,uploadType){
 function switchEditor(texta,cancelFn){
 	var upurl=texta.data("upload-url");
 	var etype=texta.data("editor");
-	var ctype=texta.attr("data-current-editor");
+	var ctype=texta.data("current-editor");
 	if (ctype==etype) return;
 	var className=texta.data("class");
 	if (className===undefined) {
@@ -187,7 +187,7 @@ function switchEditor(texta,cancelFn){
 			texta.val($(cElem).val());
 		}
 		initEditorMarkdown(obj,upurl);
-		texta.attr("data-current-editor",etype);
+		texta.data("current-editor",etype);
 		break;
 		default:
 		if(cElem&&$(cElem).length>0){
@@ -206,7 +206,7 @@ function switchEditor(texta,cancelFn){
 		texta.parent().removeAttr('class');
 		texta.attr('class',className).siblings().remove();
 		initEditorX(obj,upurl);
-		texta.attr("data-current-editor","html");
+		texta.data("current-editor","html");
 	};
 	return true;
 }

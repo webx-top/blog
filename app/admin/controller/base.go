@@ -45,9 +45,6 @@ func (a *Base) Before() error {
 	ss := a.Session()
 	if user, ok := ss.Get(`user`).(*dbschema.User); !ok || user == nil || user.Id < 1 {
 		var errMsg = a.T(`请先登录`)
-		if a.Format == `html` {
-			ss.AddFlash(errMsg, `errMsg`).Save()
-		}
 		a.SetNoAuth(errMsg)
 		return a.Redirect(a.App.Url + `public/login`)
 	} else {

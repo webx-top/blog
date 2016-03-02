@@ -295,8 +295,8 @@
 		},
 		autoValidateForm: function() {
 			$('form[data-validate="true"]').each(function() {
-				var sucFn = $(this).attr('data-validate-callback'),
-					option = $(this).attr('data-validate-option');
+				var sucFn = $(this).data('validate-callback'),
+					option = $(this).data('validate-option');
 				if (sucFn == undefined) sucFn = null;
 				if (option == undefined) option = null;
 				if (option) {

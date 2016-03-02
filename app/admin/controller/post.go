@@ -96,6 +96,7 @@ func (a *Post) Add() error {
 				a.NotModified()
 			} else {
 				a.Done()
+				return a.Redirect(a.Url(`Post`, `Index`))
 			}
 		}
 	}
