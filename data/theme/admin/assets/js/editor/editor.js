@@ -154,7 +154,7 @@ function initEditorX(editorElement,uploadUrl,uploadType){
 }
 
 //例如：switchEditor($('textarea'))
-function switchEditor(texta,cancelFn){
+function switchEditor(texta,cancelFn,tips){
 	var upurl=texta.data("upload-url");
 	var etype=texta.data("editor");
 	var ctype=texta.data("current-editor");
@@ -171,15 +171,15 @@ function switchEditor(texta,cancelFn){
 	switch(etype){
 		case 'markdown':
 		if(typeof(texta.xheditor)!='undefined'){
-			/*
+			if (tips) {
 			var cc=webx.parseTmpl(content,{type:ctype});
 			if (cc&&$(cc).length>0) {
 				if (texta.val()!=$(cc).val()&&!confirm('确定要切换吗？切换编辑器将会丢失您当前所做的修改。')) {
 					if (cancelFn!=null) cancelFn();
 					return false;
-				};
-			};
-			*/
+				}
+			}
+			}
 			texta.xheditor(false);
 		}
 		if(cElem&&$(cElem).length>0){

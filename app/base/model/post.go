@@ -18,9 +18,6 @@
 package model
 
 import (
-	//"errors"
-	//"strings"
-
 	D "github.com/webx-top/blog/app/base/dbschema"
 	X "github.com/webx-top/webx"
 	. "github.com/webx-top/webx/lib/model"
@@ -101,7 +98,7 @@ func (a *Post) EditorContent(m *D.Post) (otherContent string) {
 	switch m.Etype {
 	case `markdown`:
 		otherContent = m.Content
-		editorId := a.M.Context.Form(`editorId`)
+		editorId := a.M.Context.Form(`EditorId`)
 		if editorId != `` {
 			m.Content = a.M.Context.Form(editorId + `-html-code`)
 		} else {

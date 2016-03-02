@@ -497,7 +497,9 @@
 			}
 			return object.html5Validate(function() {
 				if (sucFn != null) sucFn();
-				if (params.submit && $(this).get(0).tagName.toLowerCase() == 'form') this.submit();
+				if (params.submit && object.get(0).tagName.toLowerCase() == 'form') {
+					object.submit();
+				}
 				return true;
 			}, params);
 		},
