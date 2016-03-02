@@ -46,13 +46,26 @@ func (a *Category) Init(c *X.Context) error {
 
 func (a *Category) Index() error {
 	if a.Format != `html` {
+		pid := com.Int(a.Query(`pid`))
 		sel := a.cateM.NewSelect(&D.Category{})
-		sel.Condition = `uid=?`
-		sel.AddParam(a.User.Id).FromClient(true, "title")
+		sel.Condition = `pid=?`
+		sel.AddParam(pid).FromClient(true, "Name")
 		countFn, data, _ := a.cateM.List(sel)
 		sel.Client.SetCount(countFn).Data(data)
 	}
 	return a.Display()
+}
+
+func (a *Category) validate(m *D.Category) (bool, map[string]string) {
+	ok, es, valid := a.Valid(nil)
+	valid.Required(m.Name, `Name`)
+	ok = valid.HasErrors() == false
+	es = valid.ErrMap()
+	for key, msg := range es {
+		a.SetErr(msg, key)
+		break
+	}
+	return ok, es
 }
 
 func (a *Category) Add() error {
@@ -64,7 +77,7 @@ func (a *Category) Add() error {
 			return err
 		}
 
-		if ok, es, _ := a.Valid(m); !ok {
+		if ok, es := a.validate(m); !ok {
 			errs = es
 		} else {
 			affected, err := a.cateM.Add(m)
@@ -74,6 +87,7 @@ func (a *Category) Add() error {
 				a.NotModified()
 			} else {
 				a.Done()
+				return a.Redirect(a.Url("Category", "Index"))
 			}
 		}
 	}
@@ -90,25 +104,43 @@ func (a *Category) Edit() error {
 	} else if !has {
 		return a.NotFoundData().Display()
 	}
+	errs := make(map[string]string)
 	if a.IsPost() {
 		err = a.Bind(m)
 		if err != nil {
 			return err
 		}
-		affected, err := a.cateM.Edit(m.Id, m)
-		if err != nil {
-			a.SetErr(err.Error())
-		} else if affected < 1 {
-			a.NotModified()
+		if ok, es := a.validate(m); !ok {
+			errs = es
 		} else {
-			a.Done()
+			affected, err := a.cateM.Edit(m.Id, m)
+			if err != nil {
+				a.SetErr(err.Error())
+			} else if affected < 1 {
+				a.NotModified()
+			} else {
+				a.Done()
+			}
 		}
 	}
 	a.Assign(`Detail`, m)
+	a.Assign(`Errors`, errs)
 	return a.Display()
 }
 
 func (a *Category) Delete() error {
+	id := com.Int(a.Form(`id`))
+	if id < 1 {
+		return a.NotFoundData().Display()
+	}
+	affected, err := a.cateM.Delete(id)
+	if err != nil {
+		return err
+	}
+	if affected < 1 {
+		return a.NotFoundData().Display()
+	}
+	a.Done()
 	return a.Display()
 }
 

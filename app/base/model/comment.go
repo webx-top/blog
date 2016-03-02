@@ -56,7 +56,7 @@ func (a *Comment) Edit(id int64, m *D.Comment) (affected int64, err error) {
 	return
 }
 
-func (a *Comment) Del(id int64) (affected int64, err error) {
+func (a *Comment) Delete(id int64) (affected int64, err error) {
 	m := &D.Comment{}
 	affected, err = a.Sess().Where(`id=?`, id).Delete(m)
 	return

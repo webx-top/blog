@@ -109,6 +109,18 @@ func (a *Comment) Edit() error {
 }
 
 func (a *Comment) Delete() error {
+	id := com.Int64(a.Form(`id`))
+	if id < 1 {
+		return a.NotFoundData().Display()
+	}
+	affected, err := a.cmtM.Delete(id)
+	if err != nil {
+		return err
+	}
+	if affected < 1 {
+		return a.NotFoundData().Display()
+	}
+	a.Done()
 	return a.Display()
 }
 

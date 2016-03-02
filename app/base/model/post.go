@@ -52,6 +52,11 @@ func (a *Post) Add(m *D.Post) (affected int64, err error) {
 	return
 }
 
+func (a *Post) Delete(id int) (affected int64, err error) {
+	affected, err = a.Sess().Id(id).Delete(&D.Post{})
+	return
+}
+
 func (a *Post) Edit(id int, m *D.Post) (affected int64, err error) {
 	oc, has, err := a.C.GetByMaster(id, `post`)
 	otherContent := a.EditorContent(m)

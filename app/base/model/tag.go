@@ -56,7 +56,7 @@ func (a *Tag) Edit(id int, m *D.Tag) (affected int64, err error) {
 	return
 }
 
-func (a *Tag) Del(id int) (affected int64, err error) {
+func (a *Tag) Delete(id int) (affected int64, err error) {
 	m := &D.Tag{}
 	affected, err = a.Sess().Where(`id=?`, id).Delete(m)
 	return

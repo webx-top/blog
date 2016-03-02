@@ -56,7 +56,7 @@ func (a *Category) Edit(id int, m *D.Category) (affected int64, err error) {
 	return
 }
 
-func (a *Category) Del(id int) (affected int64, err error) {
+func (a *Category) Delete(id int) (affected int64, err error) {
 	m := &D.Category{}
 	affected, err = a.Sess().Where(`id=?`, id).Delete(m)
 	return

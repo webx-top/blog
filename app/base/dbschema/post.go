@@ -5,7 +5,7 @@ type Post struct {
 	Title        string `xorm:"not null VARCHAR(180)"`
 	Description  string `xorm:"not null VARCHAR(200)"`
 	Content      string `xorm:"not null TEXT"`
-	Etype        string `xorm:"not null default 'html' ENUM('html','markdown')"`
+	Etype        string `xorm:"not null default 'html' ENUM('markdown','html')"`
 	Created      int    `xorm:"not null default 0 created INT(10)"`
 	Updated      int    `xorm:"not null default 0 updated INT(10)"`
 	Display      string `xorm:"not null default 'ALL' ENUM('ALL','SELF','FRIEND','PWD')"`

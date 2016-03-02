@@ -5,7 +5,7 @@ type Attathment struct {
 	Name      string `xorm:"not null VARCHAR(100)"`
 	Path      string `xorm:"not null VARCHAR(255)"`
 	Extension string `xorm:"not null VARCHAR(5)"`
-	Type      string `xorm:"not null default 'image' ENUM('media','other','image')"`
+	Type      string `xorm:"not null default 'image' ENUM('image','media','other')"`
 	Size      int64  `xorm:"not null BIGINT(20)"`
 	Uid       int    `xorm:"not null INT(10)"`
 	Deleted   int    `xorm:"not null default 0 INT(10)"`

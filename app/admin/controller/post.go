@@ -144,6 +144,18 @@ func (a *Post) Edit() error {
 }
 
 func (a *Post) Delete() error {
+	id := com.Int(a.Form(`id`))
+	if id < 1 {
+		return a.NotFoundData().Display()
+	}
+	affected, err := a.postM.Delete(id)
+	if err != nil {
+		return err
+	}
+	if affected < 1 {
+		return a.NotFoundData().Display()
+	}
+	a.Done()
 	return a.Display()
 }
 

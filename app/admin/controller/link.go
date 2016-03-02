@@ -109,6 +109,18 @@ func (a *Link) Edit() error {
 }
 
 func (a *Link) Delete() error {
+	id := com.Int(a.Form(`id`))
+	if id < 1 {
+		return a.NotFoundData().Display()
+	}
+	affected, err := a.lnkM.Delete(id)
+	if err != nil {
+		return err
+	}
+	if affected < 1 {
+		return a.NotFoundData().Display()
+	}
+	a.Done()
 	return a.Display()
 }
 

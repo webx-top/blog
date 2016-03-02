@@ -10,7 +10,7 @@ type Album struct {
 	Views        int    `xorm:"not null default 0 INT(10)"`
 	Comments     int    `xorm:"not null default 0 INT(10)"`
 	Likes        int    `xorm:"not null default 0 INT(10)"`
-	Display      string `xorm:"not null default 'ALL' ENUM('FRIEND','PWD','ALL','SELF')"`
+	Display      string `xorm:"not null default 'ALL' ENUM('SELF','FRIEND','PWD','ALL')"`
 	Deleted      int    `xorm:"not null default 0 INT(10)"`
 	AllowComment string `xorm:"not null default 'Y' ENUM('Y','N')"`
 	Tags         string `xorm:"not null default '' VARCHAR(255)"`

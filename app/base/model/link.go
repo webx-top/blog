@@ -56,7 +56,7 @@ func (a *Link) Edit(id int, m *D.Link) (affected int64, err error) {
 	return
 }
 
-func (a *Link) Del(id int) (affected int64, err error) {
+func (a *Link) Delete(id int) (affected int64, err error) {
 	m := &D.Link{}
 	affected, err = a.Sess().Where(`id=?`, id).Delete(m)
 	return

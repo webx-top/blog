@@ -81,3 +81,8 @@ func (a *User) Register(uname string, passwd string, active bool) (u *D.User, er
 
 	return
 }
+
+func (a *User) Delete(id int) (affected int64, err error) {
+	affected, err = a.DB.Id(id).Delete(&D.User{})
+	return
+}
