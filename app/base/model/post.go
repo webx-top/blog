@@ -18,18 +18,22 @@
 package model
 
 import (
+	"strings"
+
 	D "github.com/webx-top/blog/app/base/dbschema"
 	X "github.com/webx-top/webx"
 	. "github.com/webx-top/webx/lib/model"
 )
 
 func NewPost(ctx *X.Context) *Post {
-	return &Post{M: NewM(ctx), C: NewOcontent(ctx)}
+	return &Post{M: NewM(ctx), C: NewOcontent(ctx), typeName: `post`}
 }
 
 type Post struct {
 	*M
-	C *Ocontent
+	C        *Ocontent
+	Uid      int
+	typeName string
 }
 
 func (a *Post) List(s *Select) (countFn func() int64, m []*D.Post, err error) {
@@ -45,11 +49,42 @@ func (a *Post) List(s *Select) (countFn func() int64, m []*D.Post, err error) {
 }
 
 func (a *Post) Add(m *D.Post) (affected int64, err error) {
-	affected, err = a.DB.Insert(m)
+	tag := NewTag(a.M.Model.Context)
+	if m.Tags != `` {
+		tags := strings.SplitN(m.Tags, `,`, 5)
+		var data []*D.Tag
+		data, err = tag.AddNotExists(a.Uid, a.typeName, tags...)
+		if err != nil {
+			return
+		}
+		for _, v := range data {
+			_, err = tag.UpdateTimes(v.Id, 1)
+			if err != nil {
+				return
+			}
+		}
+	}
+	affected, err = a.Sess().Insert(m)
 	return
 }
 
 func (a *Post) Delete(id int) (affected int64, err error) {
+	m, has, err := a.Get(id)
+	if err != nil {
+		return
+	}
+	if !has {
+		err = a.Context.Atoe(a.T(`数据不存在`))
+		return
+	}
+	if m.Tags != `` {
+		tag := NewTag(a.M.Model.Context)
+		tags := strings.SplitN(m.Tags, `,`, -1)
+		err = tag.DelExists(a.typeName, tags...)
+		if err != nil {
+			return
+		}
+	}
 	affected, err = a.Sess().Id(id).Delete(&D.Post{})
 	return
 }
@@ -57,6 +92,14 @@ func (a *Post) Delete(id int) (affected int64, err error) {
 func (a *Post) Edit(id int, m *D.Post) (affected int64, err error) {
 	oc, has, err := a.C.GetByMaster(id, `post`)
 	otherContent := a.EditorContent(m)
+	old, has2, err := a.Get(id)
+	if err != nil {
+		return
+	}
+	if !has2 {
+		err = a.Context.Atoe(a.T(`数据不存在`))
+		return
+	}
 	a.Trans(func() error {
 		affected, err = a.Sess().Id(id).Update(m)
 		if err != nil {
@@ -79,6 +122,31 @@ func (a *Post) Edit(id int, m *D.Post) (affected int64, err error) {
 				_, err = a.C.DelByMaster(id, `post`)
 			}
 		}
+		if err != nil {
+			return err
+		}
+		tag := NewTag(a.M.Model.Context)
+		tags := strings.SplitN(m.Tags, `,`, 5)
+		if old.Tags != `` {
+			oldTags := strings.Split(old.Tags, `,`)
+			delTags := make([]string, 0)
+			for _, t := range oldTags {
+				exists := false
+				for _, v := range tags {
+					if v == t {
+						exists = true
+						break
+					}
+				}
+				if !exists {
+					delTags = append(delTags, t)
+				}
+			}
+			if len(delTags) > 0 {
+				tag.DelExists(a.typeName, delTags...)
+			}
+		}
+		_, err = tag.AddNotExists(a.Uid, a.typeName, tags...)
 		return err
 	})
 	return

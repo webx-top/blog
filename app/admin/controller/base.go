@@ -31,14 +31,20 @@ func init() {
 }
 
 func New(c *X.Context) *Base {
-	return &Base{
-		Controller: base.NewController(c),
-	}
+	a := &Base{}
+	a.Init(c)
+	return a
 }
 
 type Base struct {
 	*base.Controller
 	*dbschema.User
+}
+
+func (a *Base) Init(c *X.Context) error {
+	a.Controller = base.NewController(c)
+	a.User = &dbschema.User{}
+	return nil
 }
 
 func (a *Base) Before() error {

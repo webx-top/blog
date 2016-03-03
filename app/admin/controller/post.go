@@ -45,6 +45,15 @@ func (a *Post) Init(c *X.Context) error {
 	return nil
 }
 
+func (a *Post) Before() error {
+	err := a.Base.Before()
+	if err != nil {
+		return err
+	}
+	a.postM.Uid = a.User.Id
+	return nil
+}
+
 func (a *Post) Index() error {
 	if a.Format != `html` {
 		sel := a.postM.NewSelect(&D.Post{})

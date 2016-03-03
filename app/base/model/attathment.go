@@ -56,7 +56,7 @@ func (a *Attathment) Edit(id int, m *D.Attathment) (affected int64, err error) {
 	return
 }
 
-func (a *Attathment) Del(id int) (affected int64, err error) {
+func (a *Attathment) Delete(id int) (affected int64, err error) {
 	m := &D.Attathment{}
 	affected, err = a.Sess().Where(`id=?`, id).Delete(m)
 	return

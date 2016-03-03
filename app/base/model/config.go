@@ -56,7 +56,7 @@ func (a *Config) Edit(id int, m *D.Config) (affected int64, err error) {
 	return
 }
 
-func (a *Config) Del(id int) (affected int64, err error) {
+func (a *Config) Delete(id int) (affected int64, err error) {
 	m := &D.Config{}
 	affected, err = a.Sess().Where(`id=?`, id).Delete(m)
 	return

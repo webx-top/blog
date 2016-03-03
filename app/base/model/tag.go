@@ -20,6 +20,7 @@ package model
 import (
 	//"errors"
 	//"strings"
+	"math"
 
 	D "github.com/webx-top/blog/app/base/dbschema"
 	X "github.com/webx-top/webx"
@@ -59,6 +60,83 @@ func (a *Tag) Edit(id int, m *D.Tag) (affected int64, err error) {
 func (a *Tag) Delete(id int) (affected int64, err error) {
 	m := &D.Tag{}
 	affected, err = a.Sess().Where(`id=?`, id).Delete(m)
+	return
+}
+
+func (a *Tag) UpdateTimes(id int, n int) (affected int64, err error) {
+	m := &D.Tag{}
+	if n > 0 {
+		affected, err = a.Sess().Id(id).Incr(`times`, n).Update(m)
+	} else {
+		affected, err = a.Sess().Id(id).Decr(`times`, math.Abs(float64(id))).Update(m)
+	}
+	return
+}
+
+func (a *Tag) AddNotExists(uid int, rcType string, tags ...string) (m []*D.Tag, err error) {
+	m = []*D.Tag{}
+	params := make([]interface{}, len(tags))
+	for k, v := range tags {
+		params[k] = v
+	}
+	err = a.Sess().Where(`rc_type=?`, rcType).In(`name`, params...).Find(&m)
+	rs := make([]string, 0)
+	if err != nil {
+		return
+	}
+	for _, tag := range tags {
+		exists := false
+		for _, v := range m {
+			if v.Name == tag {
+				exists = true
+				break
+			}
+		}
+		if !exists {
+			rs = append(rs, tag)
+		}
+	}
+	for _, tag := range rs {
+		if tag == `` {
+			continue
+		}
+		_m := &D.Tag{
+			Name:   tag,
+			Uid:    uid,
+			RcType: rcType,
+			Times:  1,
+		}
+		_, err = a.Add(_m)
+		if err != nil {
+			return
+		}
+	}
+	return
+}
+
+func (a *Tag) DelExists(rcType string, tags ...string) (err error) {
+	m := []*D.Tag{}
+	params := make([]interface{}, len(tags))
+	for k, v := range tags {
+		params[k] = v
+	}
+	err = a.Sess().Where(`rc_type=?`, rcType).In(`name`, params...).Find(&m)
+	if err != nil {
+		return
+	}
+	for _, v := range m {
+		if v.Times <= 1 {
+			_, err = a.Delete(v.Id)
+			if err != nil {
+				return
+			}
+			continue
+		}
+		_, err = a.UpdateTimes(v.Id, -1)
+		if err != nil {
+			return
+		}
+	}
 	return
 }
 

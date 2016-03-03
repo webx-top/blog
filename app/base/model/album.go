@@ -56,7 +56,7 @@ func (a *Album) Edit(id int, m *D.Album) (affected int64, err error) {
 	return
 }
 
-func (a *Album) Del(id int) (affected int64, err error) {
+func (a *Album) Delete(id int) (affected int64, err error) {
 	m := &D.Album{}
 	affected, err = a.Sess().Where(`id=?`, id).Delete(m)
 	return
