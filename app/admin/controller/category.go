@@ -45,14 +45,21 @@ func (a *Category) Init(c *X.Context) error {
 }
 
 func (a *Category) Index() error {
+	pid := com.Int(a.Query(`pid`))
 	if a.Format != `html` {
-		pid := com.Int(a.Query(`pid`))
+		nid := com.Int(a.Query(`ignore`))
 		sel := a.cateM.NewSelect(&D.Category{})
 		sel.Condition = `pid=?`
-		sel.AddParam(pid).FromClient(true, "Name")
+		sel.AddParam(pid)
+		if nid > 0 {
+			sel.Condition += ` AND id!=?`
+			sel.AddParam(nid)
+		}
+		sel.FromClient(true, "Name")
 		countFn, data, _ := a.cateM.List(sel)
 		sel.Client.SetCount(countFn).Data(data)
 	}
+	a.Assign(`Breadcrumbs`, a.cateM.Dir(pid))
 	return a.Display()
 }
 
@@ -125,6 +132,7 @@ func (a *Category) Edit() error {
 	}
 	a.Assign(`Detail`, m)
 	a.Assign(`Errors`, errs)
+	a.Assign(`Breadcrumbs`, a.cateM.Dir(m.Pid))
 	return a.Display()
 }
 

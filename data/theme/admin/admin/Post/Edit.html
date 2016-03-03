@@ -53,10 +53,26 @@
 						<div class="line_grid">
 							<div class="g_3"><span class="label">{{"分类"|T}}<span class="must">*</span></span></div>
 							<div class="g_9">
-								<select name="Catid" required="required" class="simple_form">
-								<option value="">- {{"请选择"|T}} -</option>
-								<option value="1"{{if eq .Detail.Catid 1}} selected="selected" {{end}}>{{"默认"|T}}</option>
+                                
+                                {{if .Breadcrumbs}}
+                                {{range $k,$v:=.Breadcrumbs}}
+                                {{if gt $k 0}}
+								<select id="select-rcategeries-{{$k}}" rel="{{$v.Id}}">
+									<option value="0">- {{"请选择"|T}} -</option>
 								</select>
+                                {{else}}
+								<select id="select-rcategeries" rel="{{$v.Id}}" data-sync="#cate-id" data-url="{{Url "Category" "Index"}}">
+									<option value="0">- {{"请选择"|T}} -</option>
+								</select>
+                                {{end}}
+                                {{end}}
+                                {{else}}
+								<select id="select-rcategeries" rel="" data-sync="#cate-id" data-url="{{Url "Category" "Index"}}">
+									<option value="0">- {{"请选择"|T}} -</option>
+								</select>
+                                {{end}}
+                                <input type="hidden" id="cate-id" name="Catid" value="{{.Detail.Catid}}">
+                                
 							</div>
 						</div>
 						<div class="line_grid">

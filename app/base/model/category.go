@@ -18,8 +18,7 @@
 package model
 
 import (
-	//"errors"
-	//"strings"
+	//"fmt"
 
 	D "github.com/webx-top/blog/app/base/dbschema"
 	X "github.com/webx-top/webx"
@@ -65,5 +64,26 @@ func (a *Category) Delete(id int) (affected int64, err error) {
 func (a *Category) Get(id int) (m *D.Category, has bool, err error) {
 	m = &D.Category{}
 	has, err = a.DB.Id(id).Get(m)
+	return
+}
+
+func (a *Category) Dir(pid int) (rs []D.Category) {
+	m := D.Category{}
+	var has bool
+	has, _ = a.DB.Id(pid).Get(&m)
+	r := make([]D.Category, 0)
+	for has {
+		r = append(r, m)
+		if m.Pid <= 0 {
+			break
+		}
+		pid := m.Pid
+		m = D.Category{}
+		has, _ = a.DB.Id(pid).Get(&m)
+	}
+	rs = make([]D.Category, 0)
+	for i := len(r) - 1; i >= 0; i-- {
+		rs = append(rs, r[i])
+	}
 	return
 }

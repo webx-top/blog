@@ -46,9 +46,24 @@
 						<div class="line_grid">
 							<div class="g_3"><span class="label">{{"上级分类"|T}}</span></div>
 							<div class="g_9">
-								<select name="Pid" id="select-rcategeries" rel="{{.Detail.Pid}}" data-url="{{Url "Category" "Index"}}">
+                                {{if .Breadcrumbs}}
+                                {{range $k,$v:=.Breadcrumbs}}
+                                {{if gt $k 0}}
+								<select id="select-rcategeries-{{$k}}" rel="{{$v.Id}}">
 									<option value="0">- {{"根分类"|T}} -</option>
 								</select>
+                                {{else}}
+								<select id="select-rcategeries" rel="{{$v.Id}}" data-sync="#parent-id" data-url="{{Url "Category" "Index"}}" data-ignore="{{$.Detail.Id}}">
+									<option value="0">- {{"根分类"|T}} -</option>
+								</select>
+                                {{end}}
+                                {{end}}
+                                {{else}}
+								<select id="select-rcategeries" rel="{{.Detail.Pid}}" data-sync="#parent-id" data-url="{{Url "Category" "Index"}}" data-ignore="{{.Detail.Id}}">
+									<option value="0">- {{"根分类"|T}} -</option>
+								</select>
+                                {{end}}
+                                <input type="hidden" id="parent-id" name="Pid" value="{{.Detail.Pid}}">
 							</div>
 						</div>
 						<div class="line_grid">

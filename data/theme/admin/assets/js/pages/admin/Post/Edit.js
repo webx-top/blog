@@ -1,4 +1,8 @@
 $(function(){
+    
+    webx.includes('select.js');
+	select('#select-rcategeries');
+    
 $("#formPost input[name='Display']").click(function(){
 	if($(this).prop('checked')&&$(this).val()=='PWD'){
 		$('#inputPasswd').show();

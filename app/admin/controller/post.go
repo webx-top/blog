@@ -140,6 +140,8 @@ func (a *Post) Edit() error {
 	a.Assign(`Detail`, m)
 	a.Assign(`Other`, other)
 	a.Assign(`Errors`, errs)
+	cateM := model.NewCategory(a.Context)
+	a.Assign(`Breadcrumbs`, cateM.Dir(m.Catid))
 	return a.Display()
 }
 

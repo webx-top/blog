@@ -409,7 +409,7 @@
 				if (!option.text.icon) {
 					switch (option.type) {
 					case 'success':
-						option.text.icon = 'ok';
+						option.text.icon = 'check';
 						break; //smile-o
 					case 'warning':
 						option.text.icon = 'warning';
