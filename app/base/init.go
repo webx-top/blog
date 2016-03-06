@@ -68,7 +68,7 @@ func init() {
 		Config.FrontendTemplate.Theme = `admin`
 	}
 	Server.TemplateDir = Server.RootDir() + `/data/theme/`
-	Server.SetTheme(Config.FrontendTemplate.Theme, Config.FrontendTemplate.Engine)
+	Server.SetTheme(&Config.FrontendTemplate)
 	Server.InitStatic()
 	Server.Pprof().Debug(true)
 	Server.Core.PreUse(Language.Middleware())

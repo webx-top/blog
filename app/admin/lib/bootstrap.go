@@ -28,5 +28,5 @@ var (
 )
 
 func init() {
-	App.InitRenderer(base.Config.BackendTemplate.Theme, base.Config.BackendTemplate.Engine, FuncMap)
+	App.InitRenderer(&base.Config.BackendTemplate, FuncMap)
 }
