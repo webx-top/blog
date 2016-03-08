@@ -1022,3 +1022,16 @@ function T(k, obj) {
 function D() {
 	return webx.dialog();
 }
+
+function XHR(url,param,fn,type,method){
+    if(!method)method='get';
+    var exec=jQuery[method];
+    exec(url,param,function(resp,textStatus,xhr){
+        var statusCode=xhr.status,contentType=xhr.getResponseHeader('Content-Type').split(';')[0];
+        if ((type!='json'&&type!='jsonp')||contentType=='application/json') {
+            webx.ajaxr(resp,fn,type);
+            return;
+        }
+        alert(resp);
+    },type);
+}
