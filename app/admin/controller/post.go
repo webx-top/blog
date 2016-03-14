@@ -55,13 +55,15 @@ func (a *Post) Before() error {
 }
 
 func (a *Post) Index() error {
-	if a.Format != `html` {
-		sel := a.postM.NewSelect(&D.Post{})
-		sel.Condition = `uid=?`
-		sel.AddParam(a.User.Id).FromClient(true, "title")
-		countFn, data, _ := a.postM.List(sel)
-		sel.Client.SetCount(countFn).Data(data)
-	}
+	sel := a.postM.NewSelect(&D.Post{})
+	sel.Condition = `uid=?`
+	sel.AddParam(a.User.Id).FromClient(true, "title")
+	countFn, data, _ := a.postM.List(sel)
+	sel.Client.SetCount(countFn).Data(data)
+	return a.Display()
+}
+
+func (a *Post) Index_HTML() error {
 	return a.Display()
 }
 
