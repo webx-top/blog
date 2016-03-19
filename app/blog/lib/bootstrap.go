@@ -23,11 +23,10 @@ import (
 )
 
 var (
-	App = base.Server.NewApp("", base.SessionMW, base.HtmlCache.Middleware())
+	App = base.Server.NewApp("blog", base.SessionMW, base.HtmlCache.Middleware())
 )
 
 func init() {
-	App.RealName = "blog"
 	App.R(`/ping`, func(c *X.Context) error {
 		return c.String(200, `pong`)
 	})

@@ -57,6 +57,7 @@ func init() {
 	// 初始化默认Server
 	// ======================
 	Server = X.Serv(Project)
+	Server.RootAppName = `blog`
 	err := Server.LoadConfig(Server.RootDir()+`/data/config/config.yaml`, Config)
 	if err != nil {
 		panic(err)
