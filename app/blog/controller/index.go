@@ -53,9 +53,9 @@ func (a *Index) Index() error {
 func (a *Index) Upload() error {
 	client := a.Form(`client`)
 	uc := uploadClient.Get(client)
-	uc.Init(a.Context)
 	rs := &uploadClient.Result{}
-	f, err := uc.Body(rs)
+	uc.Init(a.Context, rs)
+	f, err := uc.Body()
 	if err != nil {
 		return err
 	}
