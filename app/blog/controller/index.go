@@ -61,6 +61,8 @@ func (a *Index) Upload() error {
 	}
 	defer f.Close()
 	store := fileStore.Get("local")
+	store.Open()
+	defer store.Close()
 	if r, err := store.Put(f, rs.FileName); err != nil {
 		return err
 	} else {
