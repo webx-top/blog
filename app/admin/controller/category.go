@@ -33,7 +33,6 @@ type Category struct {
 	add    X.Mapper
 	edit   X.Mapper
 	delete X.Mapper
-	view   X.Mapper
 	*Base
 	cateM *model.Category
 }
@@ -143,19 +142,15 @@ func (a *Category) Edit() error {
 func (a *Category) Delete() error {
 	id := com.Int(a.Form(`id`))
 	if id < 1 {
-		return a.NotFoundData().Display()
+		return a.NotFoundData().Redir(a.NextUrl(`Index`))
 	}
 	affected, err := a.cateM.Delete(id)
 	if err != nil {
 		return err
 	}
 	if affected < 1 {
-		return a.NotFoundData().Display()
+		return a.NotFoundData().Redir(a.NextUrl(`Index`))
 	}
 	a.Done()
-	return a.Display()
-}
-
-func (a *Category) View() error {
-	return a.Display()
+	return a.Redir(a.NextUrl(`Index`))
 }

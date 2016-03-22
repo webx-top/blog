@@ -159,17 +159,17 @@ func (a *Post) Edit() error {
 func (a *Post) Delete() error {
 	id := com.Int(a.Form(`id`))
 	if id < 1 {
-		return a.NotFoundData().Display()
+		return a.NotFoundData().Redir(a.NextUrl(`Index`))
 	}
 	affected, err := a.postM.Delete(id)
 	if err != nil {
 		return err
 	}
 	if affected < 1 {
-		return a.NotFoundData().Display()
+		return a.NotFoundData().Redir(a.NextUrl(`Index`))
 	}
 	a.Done()
-	return a.Display()
+	return a.Redir(a.NextUrl(`Index`))
 }
 
 func (a *Post) View() error {
