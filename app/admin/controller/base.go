@@ -52,7 +52,7 @@ func (a *Base) Before() error {
 	if user, ok := ss.Get(`user`).(*dbschema.User); !ok || user == nil || user.Id < 1 {
 		var errMsg = a.T(`请先登录`)
 		a.SetNoAuth(errMsg)
-		return a.Redirect(a.App.Url + `public/login`)
+		return a.Redirect(a.Url(`Public`, `Login`))
 	} else {
 		a.User = user
 		user.Passwd = `[HIDE]`
