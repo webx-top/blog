@@ -73,7 +73,7 @@ func (a *Post) validate(m *D.Post) (bool, map[string]string) {
 	valid.Required(m.Content, `Content`)
 	//valid.Required(m.Description, `Description`)
 	valid.Required(m.Catid, `Catid`)
-	ok = valid.HasErrors() == false
+	ok = valid.HasError() == false
 	es = valid.ErrMap()
 	for key, msg := range es {
 		a.SetErr(msg, key)

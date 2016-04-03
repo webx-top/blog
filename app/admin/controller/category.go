@@ -69,7 +69,7 @@ func (a *Category) Index_HTML() error {
 func (a *Category) validate(m *D.Category) (bool, map[string]string) {
 	ok, es, valid := a.Valid(nil)
 	valid.Required(m.Name, `Name`)
-	ok = valid.HasErrors() == false
+	ok = valid.HasError() == false
 	es = valid.ErrMap()
 	for key, msg := range es {
 		a.SetErr(msg, key)
