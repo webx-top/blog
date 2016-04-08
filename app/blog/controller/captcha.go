@@ -60,12 +60,12 @@ func (this *Captcha) Show() error {
 	header := this.Response().Header()
 	download := this.Query("download") != ""
 	if download {
-		header.Set(E.ContentType, "application/octet-stream")
+		header.Set(E.HeaderContentType, "application/octet-stream")
 	}
 	switch ext {
 	case ".png":
 		if !download {
-			header.Set(E.ContentType, "image/png")
+			header.Set(E.HeaderContentType, "image/png")
 		}
 		return C.WriteImage(this.Response().Writer(), id, C.StdWidth, C.StdHeight)
 	case ".wav":
@@ -78,7 +78,7 @@ func (this *Captcha) Show() error {
 			return err
 		}
 		if !download {
-			header.Set(E.ContentType, "audio/x-wav")
+			header.Set(E.HeaderContentType, "audio/x-wav")
 		}
 		header.Set("Content-Length", strconv.Itoa(au.EncodedLen()))
 		_, err = au.WriteTo(this.Response().Writer())
