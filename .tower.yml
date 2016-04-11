@@ -19,7 +19,7 @@ watch             : "go"
 
 # 默认会自动监控上面main参数所指定的文件所在之文件夹，如果你还要监控其它文件夹，请在这里指定。
 # 如要指定多个文件夹路径，请用“|”分隔。
-watch_otherDir    : "../echo|../webx|../../admpub"
+watch_otherDir    : "../echo|../webx|../../admpub|../../coscms/xorm"
 
 # 忽略的路径(正则表达式)，不填则不限制(排除某个完整的文件夹名请用“/文件夹名/”的格式)
 watch_ignoredPath : "(/\.git|/data/)"

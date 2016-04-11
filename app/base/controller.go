@@ -20,6 +20,7 @@ package base
 import (
 	X "github.com/webx-top/webx"
 	C "github.com/webx-top/webx/lib/captcha"
+	"github.com/webx-top/webx/lib/database"
 	"github.com/webx-top/webx/lib/i18n"
 	"github.com/webx-top/webx/lib/validation"
 )
@@ -27,12 +28,14 @@ import (
 func NewController(c *X.Context) *Controller {
 	a := &Controller{
 		Controller: X.NewController(c),
+		DB:         DB,
 	}
 	return a
 }
 
 type Controller struct {
 	*X.Controller
+	DB *database.Orm
 }
 
 func (a *Controller) Init(c *X.Context) error {

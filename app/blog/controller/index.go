@@ -28,7 +28,15 @@ import (
 	_ "github.com/webx-top/webx/lib/client/upload/client/xheditor"
 	//"github.com/webx-top/webx/lib/com"
 	fileStore "github.com/webx-top/webx/lib/store/file"
+
+	D "github.com/webx-top/blog/app/base/dbschema"
 )
+
+type PostCollection struct {
+	Post     *D.Post     `xorm:"extends"`
+	User     *D.User     `xorm:"extends"`
+	Ocontent *D.Ocontent `xorm:"extends"`
+}
 
 type Index struct {
 	index  X.Mapper
@@ -47,6 +55,11 @@ func (a *Index) Index() error {
 		"test": "times---",
 		"r":    []string{"one", "two", "three"},
 	})
+	m := &D.Post{}
+	a.DB.Id(1).Get(m)
+	ms := []*PostCollection{}
+	a.DB.Where(`post.id=1`).Join(`LEFT`, `webx_user`, `user.id=post.uid`).
+		Join(`LEFT`, `webx_ocontent`, `oc.rc_id=post.id AND oc.rc_type=?`, `post`).Find(&ms)
 	return a.Display()
 }
 
