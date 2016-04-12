@@ -38,6 +38,13 @@ type PostCollection struct {
 	Ocontent *D.Ocontent `xorm:"extends"`
 }
 
+type Post2 struct {
+	*D.Post     `xorm:"extends"`
+	*D.User     `xorm:"extends"`
+	*D.Ocontent `xorm:"extends"`
+	Id          int64
+}
+
 type Index struct {
 	index  X.Mapper
 	upload X.Mapper `.JSON`
@@ -58,8 +65,11 @@ func (a *Index) Index() error {
 	m := &D.Post{}
 	a.DB.Id(1).Get(m)
 	ms := []*PostCollection{}
-	a.DB.Where(`post.id=1`).Join(`LEFT`, `webx_user`, `user.id=post.uid`).
-		Join(`LEFT`, `webx_ocontent`, `oc.rc_id=post.id AND oc.rc_type=?`, `post`).Find(&ms)
+	a.DB.Where(`Post.id=1`).Join(`LEFT`, `webx_user`, `User.id=Post.uid`).
+		Join(`LEFT`, `webx_ocontent`, `Ocontent.rc_id=Post.id AND Ocontent.rc_type=?`, `post`).Find(&ms)
+	ms2 := []*Post2{}
+	a.DB.Where(`Post.id=1`).Join(`LEFT`, `webx_user`, `User.id=Post.uid`).
+		Join(`LEFT`, `webx_ocontent`, `Ocontent.rc_id=Post.id AND Ocontent.rc_type=?`, `post`).Find(&ms2)
 	return a.Display()
 }
 
