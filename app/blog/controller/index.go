@@ -26,7 +26,7 @@ import (
 	_ "github.com/webx-top/webx/lib/client/upload/client/simple"
 	_ "github.com/webx-top/webx/lib/client/upload/client/webuploader"
 	_ "github.com/webx-top/webx/lib/client/upload/client/xheditor"
-	//"github.com/webx-top/webx/lib/com"
+	"github.com/webx-top/webx/lib/com"
 	fileStore "github.com/webx-top/webx/lib/store/file"
 
 	D "github.com/webx-top/blog/app/base/dbschema"
@@ -36,6 +36,12 @@ type PostCollection struct {
 	Post     *D.Post     `xorm:"extends"`
 	User     *D.User     `xorm:"extends"`
 	Ocontent *D.Ocontent `xorm:"extends"`
+}
+
+type PostCollection2 struct {
+	Post     *D.Post     `xorm:"extends" rel:""`
+	User     *D.User     `xorm:"extends" rel:"LEFT:User.id=Post.uid"`
+	Ocontent *D.Ocontent `xorm:"extends" rel:"LEFT:Ocontent.rc_id=Post.id AND Ocontent.rc_type='post'"`
 }
 
 type Post2 struct {
@@ -70,6 +76,13 @@ func (a *Index) Index() error {
 	ms2 := []*Post2{}
 	a.DB.Where(`Post.id=1`).Join(`LEFT`, `webx_user`, `User.id=Post.uid`).
 		Join(`LEFT`, `webx_ocontent`, `Ocontent.rc_id=Post.id AND Ocontent.rc_type=?`, `post`).Find(&ms2)
+	//自动加表前缀
+	a.DB.Omit(`Post.content`).Where(`Post.id=1`).Join(`LEFT`, `~user`, `User.id=Post.uid`).
+		Join(`LEFT`, `~ocontent`, `Ocontent.rc_id=Post.id AND Ocontent.rc_type=?`, `post`).Find(&ms2)
+	//使用rel标签
+	ms3 := []*PostCollection2{}
+	a.DB.Omit(`User.passwd`).Where(`Post.id=2`).Find(&ms3)
+	com.Dump(ms3)
 	return a.Display()
 }
 
