@@ -24,19 +24,13 @@ import (
 	_ "github.com/webx-top/blog/app/blog"
 
 	"github.com/webx-top/blog/app/base"
-	"github.com/webx-top/echo/engine/fasthttp"
 )
 
 func main() {
 	port := flag.String("p", "5000", "port of your blog.")
-	engine := flag.String("e", "http", "http engine")
+	engine := flag.String("e", "", "http engine")
 	flag.Parse()
 
-	addr := "127.0.0.1:" + *port
-	switch *engine {
-	case `http`:
-		base.Server.Run(addr)
-	default:
-		base.Server.Run(fasthttp.New(addr))
-	}
+	addr := ":" + *port
+	base.Server.Run(addr, *engine)
 }
