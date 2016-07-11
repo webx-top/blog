@@ -27,7 +27,7 @@ import (
 )
 
 func main() {
-	port := flag.String("p", "5000", "port of your blog.")
+	port := flag.String("p", "8080", "port of your blog.")
 	engine := flag.String("e", "", "http engine")
 	flag.Parse()
 
