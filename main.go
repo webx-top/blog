@@ -26,7 +26,10 @@ import (
 	"github.com/webx-top/blog/app/base"
 )
 
+var Version = `1.0.0`
+
 func main() {
+	base.Version = Version
 	port := flag.String("p", "8080", "port of your blog.")
 	engine := flag.String("e", "", "http engine")
 	flag.Parse()

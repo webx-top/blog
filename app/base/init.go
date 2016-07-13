@@ -49,6 +49,7 @@ var (
 	Project  = `blog`
 	Language = language.New()
 	Config   = &config.Config{}
+	Version  = `1.0.0`
 )
 
 func init() {

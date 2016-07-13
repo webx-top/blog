@@ -21,10 +21,12 @@ import (
 	//"github.com/webx-top/blog/app/admin/lib"
 	X "github.com/webx-top/webx"
 	//"github.com/webx-top/webx/lib/com"
+	"github.com/webx-top/blog/app/base"
 )
 
 type Index struct {
-	index X.Mapper
+	index   X.Mapper
+	version X.Mapper
 	*Base
 }
 
@@ -39,4 +41,8 @@ func (a *Index) Before() error {
 
 func (a *Index) Index() error {
 	return a.Display()
+}
+
+func (a *Index) Version() error {
+	return a.String(200, base.Version)
 }
