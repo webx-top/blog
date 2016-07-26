@@ -1,2 +1,2 @@
-tower -c .tower.yml
+tower -c tower.yml
 pause
