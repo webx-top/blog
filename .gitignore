@@ -8,3 +8,5 @@
 /data/theme/admin/assets/js/clEditor/*.gz
 /data/theme/admin/assets/js/colResizable/*.gz
 /.vscode
+*.gz
+/data/upload/*
