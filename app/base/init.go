@@ -22,12 +22,12 @@ import (
 	mw "github.com/webx-top/echo/middleware"
 	X "github.com/webx-top/webx"
 	"github.com/webx-top/webx/lib/database"
-	"github.com/webx-top/webx/lib/htmlcache"
 	"github.com/webx-top/webx/lib/i18n"
 	"github.com/webx-top/webx/lib/middleware/jwt"
 	"github.com/webx-top/webx/lib/middleware/language"
 	"github.com/webx-top/webx/lib/middleware/session"
 	"github.com/webx-top/webx/lib/session/ssi"
+	"github.com/webx-top/webx/lib/static/htmlcache"
 	"github.com/webx-top/webx/lib/xsrf"
 
 	_ "github.com/webx-top/webx/lib/client/list/datatable"
