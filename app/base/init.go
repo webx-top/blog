@@ -20,13 +20,12 @@ package base
 import (
 	"github.com/webx-top/echo"
 	mw "github.com/webx-top/echo/middleware"
+	"github.com/webx-top/echo/middleware/session"
 	X "github.com/webx-top/webx"
 	"github.com/webx-top/webx/lib/database"
 	"github.com/webx-top/webx/lib/i18n"
 	"github.com/webx-top/webx/lib/middleware/jwt"
 	"github.com/webx-top/webx/lib/middleware/language"
-	"github.com/webx-top/webx/lib/middleware/session"
-	"github.com/webx-top/webx/lib/session/ssi"
 	"github.com/webx-top/webx/lib/static/htmlcache"
 	"github.com/webx-top/webx/lib/xsrf"
 
@@ -82,13 +81,16 @@ func init() {
 	// ======================
 	// 设置Session中间件
 	// ======================
-	SessionMW = session.Middleware(&ssi.Options{
-		Engine:   Server.Session.StoreEngine,
-		Path:     `/`,
-		Domain:   Server.Cookie.Domain,
-		MaxAge:   int(Server.Cookie.Expires),
-		Secure:   false,
-		HttpOnly: Server.Cookie.HttpOnly,
+	SessionMW = session.Middleware(&echo.SessionOptions{
+		Engine: Server.Session.StoreEngine,
+		Name:   `SESSIONID`,
+		CookieOptions: &echo.CookieOptions{
+			Path:     `/`,
+			Domain:   Server.Cookie.Domain,
+			MaxAge:   Server.Cookie.MaxAge,
+			Secure:   false,
+			HttpOnly: Server.Cookie.HttpOnly,
+		},
 	}, Server.Session.StoreConfig)
 	/*
 		map[string]string{

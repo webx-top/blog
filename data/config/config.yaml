@@ -14,7 +14,7 @@ Cookie : {
   HttpOnly  : true
   AuthKey   : "p1234567890p12345678901234567890"
   BlockKey  : "p1234567890p12345678901234567890"
-  Expires   : 86400
+  MaxAge    : 86400
   Domain    : ""
 }
 
