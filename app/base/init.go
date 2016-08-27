@@ -38,7 +38,7 @@ import (
 
 var (
 	Server    *X.Server
-	SessionMW echo.MiddlewareFunc
+	SessionMW echo.MiddlewareFuncd
 	HtmlCache *htmlcache.Config
 	I18n      *i18n.I18n
 	Xsrf      *xsrf.Xsrf
