@@ -1,157 +1,201 @@
-plural: "1"
-direction: LTR
-numbers:
-  symbols:
-    decimal: .
-    group: ','
-    negative: '-'
-    percent: '%'
-    permille: "\u2030"
-  formats:
-    decimal: '#,##0.###'
-    currency: "\xA4#,##0.00;(\xA4#,##0.00)"
-    percent: '#,##0%'
-currencies:
-  AUD:
-    symbol: AU$
-  BRL:
-    symbol: R$
-  CAD:
-    symbol: CA$
-  CNY:
-    symbol: "\uFFE5"
-  EUR:
-    symbol: "\u20AC"
-  GBP:
-    symbol: "\xA3"
-  HKD:
-    symbol: HK$
-  ILS:
-    symbol: "\u20AA"
-  INR:
-    symbol: "\u20B9"
-  JPY:
-    symbol: "JP\xA5"
-  KRW:
-    symbol: "\uFFE6"
-  MXN:
-    symbol: MX$
-  NZD:
-    symbol: NZ$
-  THB:
-    symbol: "\u0E3F"
-  TWD:
-    symbol: NT$
-  USD:
-    symbol: US$
-  VND:
-    symbol: "\u20AB"
-  XAF:
-    symbol: FCFA
-  XCD:
-    symbol: EC$
-  XOF:
-    symbol: CFA
-  XPF:
-    symbol: CFPF
-datetime:
-  formats:
-    date:
-      full: "y\u5E74M\u6708d\u65E5EEEE"
-      long: "y\u5E74M\u6708d\u65E5"
-      medium: "y\u5E74M\u6708d\u65E5"
-      short: yy-M-d
-    time:
-      full: zzzzah:mm:ss
-      long: zah:mm:ss
-      medium: ah:mm:ss
-      short: ah:mm
-    datetime:
-      full: '{1}{0}'
-      long: '{1}{0}'
-      medium: '{1} {0}'
-      short: '{1} {0}'
-  formatNames:
-    months:
-      abbreviated:
-        "1": "1\u6708"
-        "2": "2\u6708"
-        "3": "3\u6708"
-        "4": "4\u6708"
-        "5": "5\u6708"
-        "6": "6\u6708"
-        "7": "7\u6708"
-        "8": "8\u6708"
-        "9": "9\u6708"
-        "10": "10\u6708"
-        "11": "11\u6708"
-        "12": "12\u6708"
-      narrow:
-        "1": "1"
-        "2": "2"
-        "3": "3"
-        "4": "4"
-        "5": "5"
-        "6": "6"
-        "7": "7"
-        "8": "8"
-        "9": "9"
-        "10": "10"
-        "11": "11"
-        "12": "12"
-      wide:
-        "1": "\u4E00\u6708"
-        "2": "\u4E8C\u6708"
-        "3": "\u4E09\u6708"
-        "4": "\u56DB\u6708"
-        "5": "\u4E94\u6708"
-        "6": "\u516D\u6708"
-        "7": "\u4E03\u6708"
-        "8": "\u516B\u6708"
-        "9": "\u4E5D\u6708"
-        "10": "\u5341\u6708"
-        "11": "\u5341\u4E00\u6708"
-        "12": "\u5341\u4E8C\u6708"
-    days:
-      abbreviated:
-        sun: "\u5468\u65E5"
-        mon: "\u5468\u4E00"
-        tue: "\u5468\u4E8C"
-        wed: "\u5468\u4E09"
-        thu: "\u5468\u56DB"
-        fri: "\u5468\u4E94"
-        sat: "\u5468\u516D"
-      narrow:
-        sun: "\u65E5"
-        mon: "\u4E00"
-        tue: "\u4E8C"
-        wed: "\u4E09"
-        thu: "\u56DB"
-        fri: "\u4E94"
-        sat: "\u516D"
-      short:
-        sun: "\u5468\u65E5"
-        mon: "\u5468\u4E00"
-        tue: "\u5468\u4E8C"
-        wed: "\u5468\u4E09"
-        thu: "\u5468\u56DB"
-        fri: "\u5468\u4E94"
-        sat: "\u5468\u516D"
-      wide:
-        sun: "\u661F\u671F\u65E5"
-        mon: "\u661F\u671F\u4E00"
-        tue: "\u661F\u671F\u4E8C"
-        wed: "\u661F\u671F\u4E09"
-        thu: "\u661F\u671F\u56DB"
-        fri: "\u661F\u671F\u4E94"
-        sat: "\u661F\u671F\u516D"
-    periods:
-      abbreviated:
-        am: "\u4E0A\u5348"
-        pm: "\u4E0B\u5348"
-      narrow:
-        am: "\u4E0A\u5348"
-        pm: "\u4E0B\u5348"
-      wide:
-        am: "\u4E0A\u5348"
-        pm: "\u4E0B\u5348"
+plural : "1"
+direction : "LTR"
+numbers {
+  symbols {
+    decimal : "."
+    group : ","
+    negative : "-"
+    percent : "%"
+    permille : "‰"
+  }
+  formats {
+    decimal : "#,##0.###"
+    currency : "¤#,##0.00;(¤#,##0.00)"
+    percent : "#,##0%"
+  }
+}
+currencies {
+  AUD {
+    symbol : "AU$"
+  }
+  BRL {
+    symbol : "R$"
+  }
+  CAD {
+    symbol : "CA$"
+  }
+  CNY {
+    symbol : "￥"
+  }
+  EUR {
+    symbol : "€"
+  }
+  GBP {
+    symbol : "£"
+  }
+  HKD {
+    symbol : "HK$"
+  }
+  ILS {
+    symbol : "₪"
+  }
+  INR {
+    symbol : "₹"
+  }
+  JPY {
+    symbol : "JP¥"
+  }
+  KRW {
+    symbol : "￦"
+  }
+  MXN {
+    symbol : "MX$"
+  }
+  NZD {
+    symbol : "NZ$"
+  }
+  THB {
+    symbol : "฿"
+  }
+  TWD {
+    symbol : "NT$"
+  }
+  USD {
+    symbol : "US$"
+  }
+  VND {
+    symbol : "₫"
+  }
+  XAF {
+    symbol : "FCFA"
+  }
+  XCD {
+    symbol : "EC$"
+  }
+  XOF {
+    symbol : "CFA"
+  }
+  XPF {
+    symbol : "CFPF"
+  }
+}
+datetime {
+  formats {
+    date {
+      full : "y年M月d日EEEE"
+      long : "y年M月d日"
+      medium : "y年M月d日"
+      short : "yy-M-d"
+    }
+    time {
+      full : "zzzzah:mm:ss"
+      long : "zah:mm:ss"
+      medium : "ah:mm:ss"
+      short : "ah:mm"
+    }
+    datetime {
+      full : "{1}{0}"
+      long : "{1}{0}"
+      medium : "{1} {0}"
+      short : "{1} {0}"
+    }
+  }
+  formatNames {
+    months {
+      abbreviated {
+        1 : "1月"
+        2 : "2月"
+        3 : "3月"
+        4 : "4月"
+        5 : "5月"
+        6 : "6月"
+        7 : "7月"
+        8 : "8月"
+        9 : "9月"
+        10 : "10月"
+        11 : "11月"
+        12 : "12月"
+      }
+      narrow {
+        1 : "1"
+        2 : "2"
+        3 : "3"
+        4 : "4"
+        5 : "5"
+        6 : "6"
+        7 : "7"
+        8 : "8"
+        9 : "9"
+        10 : "10"
+        11 : "11"
+        12 : "12"
+      }
+      wide {
+        1 : "一月"
+        2 : "二月"
+        3 : "三月"
+        4 : "四月"
+        5 : "五月"
+        6 : "六月"
+        7 : "七月"
+        8 : "八月"
+        9 : "九月"
+        10 : "十月"
+        11 : "十一月"
+        12 : "十二月"
+      }
+    }
+    days {
+      abbreviated {
+        sun : "周日"
+        mon : "周一"
+        tue : "周二"
+        wed : "周三"
+        thu : "周四"
+        fri : "周五"
+        sat : "周六"
+      }
+      narrow {
+        sun : "日"
+        mon : "一"
+        tue : "二"
+        wed : "三"
+        thu : "四"
+        fri : "五"
+        sat : "六"
+      }
+      short {
+        sun : "周日"
+        mon : "周一"
+        tue : "周二"
+        wed : "周三"
+        thu : "周四"
+        fri : "周五"
+        sat : "周六"
+      }
+      wide {
+        sun : "星期日"
+        mon : "星期一"
+        tue : "星期二"
+        wed : "星期三"
+        thu : "星期四"
+        fri : "星期五"
+        sat : "星期六"
+      }
+    }
+    periods {
+      abbreviated {
+        am : "上午"
+        pm : "下午"
+      }
+      narrow {
+        am : "上午"
+        pm : "下午"
+      }
+      wide {
+        am : "上午"
+        pm : "下午"
+      }
+    }
+  }
+}

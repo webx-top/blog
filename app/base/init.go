@@ -21,6 +21,7 @@ import (
 	"github.com/webx-top/echo"
 	mw "github.com/webx-top/echo/middleware"
 	"github.com/webx-top/echo/middleware/session"
+	cookieStore "github.com/webx-top/echo/middleware/session/engine/cookie"
 	X "github.com/webx-top/webx"
 	"github.com/webx-top/webx/lib/database"
 	"github.com/webx-top/webx/lib/i18n"
@@ -81,7 +82,7 @@ func init() {
 	// ======================
 	// 设置Session中间件
 	// ======================
-	SessionMW = session.Middleware(&echo.SessionOptions{
+	sessionOptions := &echo.SessionOptions{
 		Engine: Server.Session.StoreEngine,
 		Name:   `SESSIONID`,
 		CookieOptions: &echo.CookieOptions{
@@ -91,7 +92,14 @@ func init() {
 			Secure:   false,
 			HttpOnly: Server.Cookie.HttpOnly,
 		},
-	}, Server.Session.StoreConfig)
+	}
+	cookieStore.RegWithOptions(&cookieStore.CookieOptions{
+		KeyPairs: [][]byte{
+			[]byte(Server.Session.StoreConfig.(string)),
+		},
+		SessionOptions: sessionOptions,
+	})
+	SessionMW = session.Middleware(sessionOptions)
 	/*
 		map[string]string{
 			"file": RootDir + `/data/bolt/session.db`,
