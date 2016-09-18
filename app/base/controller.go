@@ -18,11 +18,11 @@
 package base
 
 import (
+	"github.com/webx-top/validation"
 	X "github.com/webx-top/webx"
 	C "github.com/webx-top/webx/lib/captcha"
 	"github.com/webx-top/webx/lib/database"
 	"github.com/webx-top/webx/lib/i18n"
-	"github.com/webx-top/webx/lib/validation"
 )
 
 func NewController(c *X.Context) *Controller {
