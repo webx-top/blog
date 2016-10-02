@@ -5,10 +5,10 @@
 
 				<div class="g_6 contents_header">
 					<h3 class="i_16_message tab_label">{{"分类"|T}}</h3>
-					<div><span class="label"><a href="{{Url "Category" "Index"}}">{{"顶级分类"|T}}</a>
+					<div><span class="label"><a href="{{BuildURL "Category" "Index"}}">{{"顶级分类"|T}}</a>
                     {{range .Breadcrumbs}}
                     &gt;
-                    <a href="{{Url "Category" "Index"}}?pid={{.Id}}">{{.Name}}</a>
+                    <a href="{{BuildURL "Category" "Index"}}?pid={{.Id}}">{{.Name}}</a>
                     {{end}}
                     </span></div>
 				</div>
@@ -22,18 +22,18 @@
 							<!-- Drop Menu -->
 							<ul class="drop_menu menu_with_icons right_direction">
 								<li>
-									<a class="i_16_add" href="{{Url "Post" "Add"}}" title="{{"添加文章"|T}}">
+									<a class="i_16_add" href="{{BuildURL "Post" "Add"}}" title="{{"添加文章"|T}}">
 										<span class="label">{{"添加文章"|T}}</span>
 									</a>									
 								</li>
 								<li>
-									<a class="i_16_tables" href="{{Url "Category" "Add"}}" title="{{"添加分类"|T}}">
+									<a class="i_16_tables" href="{{BuildURL "Category" "Add"}}" title="{{"添加分类"|T}}">
 										<span class="label">{{"添加分类"|T}}</span>
 										<!-- <span class="small_count">2</span> -->
 									</a>
 								</li>
 								<li>
-									<a class="i_16_files" href="{{Url "File" "Index"}}" title="{{"浏览文件"|T}}">
+									<a class="i_16_files" href="{{BuildURL "File" "Index"}}" title="{{"浏览文件"|T}}">
 										<span class="label">{{"浏览文件"|T}}</span>
 									</a>
 								</li>
@@ -49,14 +49,14 @@
 						<h4 class="widget_header_title wwIcon i_16_tooltip">{{"分类列表"|T}}</h4>
 					</div>
 					<div class="widget_contents noPadding twCheckbox">
-						<table data-table-url="{{Url "Category" "Index"}}?pid={{C.Form "pid"}}" data-table-order="[1,'asc']" data-table-oninit="eventer.onInit" data-table-ondraw="eventer.onDraw" class="tables noObOLine">
+						<table data-table-url="{{BuildURL "Category" "Index"}}?pid={{C.Form "pid"}}" data-table-order="[1,'asc']" data-table-oninit="eventer.onInit" data-table-ondraw="eventer.onDraw" class="tables noObOLine">
 							<thead>
 								<tr>
 									<th data-col-field="_" data-col-render='<input type="checkbox" class="simple_form" value="{=row.Id=}">' data-col-orderable="false">
 										<input type="checkbox" class="simple_form tMainC">
 									</th>
 									<th data-col-field="Id" width="30">ID</th>
-									<th data-col-field="Name" data-col-render='<a href="{{Url "Category" "Index"}}?pid={=row.Id=}" title="{{"点击查看子分类"|T}}">{=data=}</a>' width="240">{{"分类名"|T}}</th>
+									<th data-col-field="Name" data-col-render='<a href="{{BuildURL "Category" "Index"}}?pid={=row.Id=}" title="{{"点击查看子分类"|T}}">{=data=}</a>' width="240">{{"分类名"|T}}</th>
 									<th data-col-field="Description">{{"说明"|T}}</th>
 									<th data-col-field="Sort" width="50">{{"排序"|T}}</th>
 									<th data-col-field="Updated" data-col-render=":formater.date" width="130">{{"更新时间"|T}}</th>
@@ -84,6 +84,6 @@
 		</div>
 <!-- <script>webx.pageJs=true;</script> -->
 <template id="operate-template">
-<a title="{{"编辑"|T}}" href="{{Url "Category" "Edit"}}?id={=row.Id=}" class="fa fa-edit"></a> | <a title="{{"删除"|T}}" href="{{Url "Category" "Delete"}}?id={=row.Id=}" class="fa fa-trash" onclick="return confirm('{{"确定删除？"|T}}');"></a>
+<a title="{{"编辑"|T}}" href="{{BuildURL "Category" "Edit"}}?id={=row.Id=}" class="fa fa-edit"></a> | <a title="{{"删除"|T}}" href="{{BuildURL "Category" "Delete"}}?id={=row.Id=}" class="fa fa-trash" onclick="return confirm('{{"确定删除？"|T}}');"></a>
 </template>
 {{/Block}}

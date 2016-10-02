@@ -53,13 +53,13 @@
 									<option value="0">- {{"根分类"|T}} -</option>
 								</select>
                                 {{else}}
-								<select id="select-rcategeries" rel="{{$v.Id}}" data-sync="#parent-id" data-url="{{Url "Category" "Index"}}" data-ignore="{{$.Detail.Id}}">
+								<select id="select-rcategeries" rel="{{$v.Id}}" data-sync="#parent-id" data-url="{{BuildURL "Category" "Index"}}" data-ignore="{{$.Detail.Id}}">
 									<option value="0">- {{"根分类"|T}} -</option>
 								</select>
                                 {{end}}
                                 {{end}}
                                 {{else}}
-								<select id="select-rcategeries" rel="{{.Detail.Pid}}" data-sync="#parent-id" data-url="{{Url "Category" "Index"}}" data-ignore="{{.Detail.Id}}">
+								<select id="select-rcategeries" rel="{{.Detail.Pid}}" data-sync="#parent-id" data-url="{{BuildURL "Category" "Index"}}" data-ignore="{{.Detail.Id}}">
 									<option value="0">- {{"根分类"|T}} -</option>
 								</select>
                                 {{end}}

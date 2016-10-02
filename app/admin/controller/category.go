@@ -97,7 +97,7 @@ func (a *Category) Add() error {
 				a.NotModified()
 			} else {
 				a.Done()
-				return a.Redirect(a.Url("Category", "Index"))
+				return a.Redirect(a.BuildURL("Category", "Index"))
 			}
 		}
 	}
@@ -142,15 +142,15 @@ func (a *Category) Edit() error {
 func (a *Category) Delete() error {
 	id := com.Int(a.Form(`id`))
 	if id < 1 {
-		return a.NotFoundData().Redir(a.NextUrl(`Index`))
+		return a.NotFoundData().Redir(a.NextURL(`Index`))
 	}
 	affected, err := a.cateM.Delete(id)
 	if err != nil {
 		return err
 	}
 	if affected < 1 {
-		return a.NotFoundData().Redir(a.NextUrl(`Index`))
+		return a.NotFoundData().Redir(a.NextURL(`Index`))
 	}
 	a.Done()
-	return a.Redir(a.NextUrl(`Index`))
+	return a.Redir(a.NextURL(`Index`))
 }

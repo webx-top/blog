@@ -61,13 +61,13 @@
 									<option value="0">- {{"请选择"|T}} -</option>
 								</select>
                                 {{else}}
-								<select id="select-rcategeries" rel="{{$v.Id}}" data-sync="#cate-id" data-url="{{Url "Category" "Index"}}">
+								<select id="select-rcategeries" rel="{{$v.Id}}" data-sync="#cate-id" data-url="{{BuildURL "Category" "Index"}}">
 									<option value="0">- {{"请选择"|T}} -</option>
 								</select>
                                 {{end}}
                                 {{end}}
                                 {{else}}
-								<select id="select-rcategeries" rel="" data-sync="#cate-id" data-url="{{Url "Category" "Index"}}">
+								<select id="select-rcategeries" rel="" data-sync="#cate-id" data-url="{{BuildURL "Category" "Index"}}">
 									<option value="0">- {{"请选择"|T}} -</option>
 								</select>
                                 {{end}}

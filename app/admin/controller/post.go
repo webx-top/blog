@@ -107,7 +107,7 @@ func (a *Post) Add() error {
 				a.NotModified()
 			} else {
 				a.Done()
-				return a.Redirect(a.Url(`Post`, `Index`))
+				return a.Redirect(a.BuildURL(`Post`, `Index`))
 			}
 		}
 	}
@@ -159,17 +159,17 @@ func (a *Post) Edit() error {
 func (a *Post) Delete() error {
 	id := com.Int(a.Form(`id`))
 	if id < 1 {
-		return a.NotFoundData().Redir(a.NextUrl(`Index`))
+		return a.NotFoundData().Redir(a.NextURL(`Index`))
 	}
 	affected, err := a.postM.Delete(id)
 	if err != nil {
 		return err
 	}
 	if affected < 1 {
-		return a.NotFoundData().Redir(a.NextUrl(`Index`))
+		return a.NotFoundData().Redir(a.NextURL(`Index`))
 	}
 	a.Done()
-	return a.Redir(a.NextUrl(`Index`))
+	return a.Redir(a.NextURL(`Index`))
 }
 
 func (a *Post) View() error {

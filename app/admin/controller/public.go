@@ -52,7 +52,7 @@ func (a *Public) Login() error {
 			return a.SetErr(err).Display()
 		}
 		ss.Set(`user`, u).Save()
-		return a.Redirect(a.Url(`Index`, `Index`))
+		return a.Redirect(a.BuildURL(`Index`, `Index`))
 	}
 	return a.Display()
 }
@@ -71,12 +71,12 @@ func (a *Public) Register() error {
 		if active {
 			a.Session().Set(`user`, u).Save()
 		}
-		return a.Redirect(a.Url(`Index`, `Index`))
+		return a.Redirect(a.BuildURL(`Index`, `Index`))
 	}
 	return a.Display()
 }
 
 func (a *Public) Logout() error {
 	a.Session().Delete(`user`).Save()
-	return a.Redirect(a.Url(`Index`, `Index`))
+	return a.Redirect(a.BuildURL(`Index`, `Index`))
 }
