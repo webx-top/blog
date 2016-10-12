@@ -52,7 +52,7 @@
 						</div>
 						<div class="line_grid">
 							<div class="g_3"><span class="label">{{"分类"|T}}<span class="must">*</span></span></div>
-							<div class="g_9">
+							<div class="g_9" id="categorySelector">
                                 
                                 {{if .Breadcrumbs}}
                                 {{range $k,$v:=.Breadcrumbs}}
@@ -95,7 +95,7 @@
 							<div class="g_3"><span class="label">{{"内容"|T}}<span class="must">*</span></span></div>
 							<div class="g_9">
 								<div id="editor-container" style="z-index:99">
-								<textarea class="simple_field" name="Content" style="height:600px" data-content-elem="#etype-{=type=}-content" data-upload-url="{{AppUrlFor (printf "/Index/Upload?immediate=1&%v=%v" XsrfName XsrfValue)}}">{{.Detail.Content}}</textarea>
+								<textarea class="simple_field" name="Content" style="height:600px" data-content-elem="#etype-{=type=}-content" data-upload-url="{{AppURLFor (printf "/Index/Upload?immediate=1&%v=%v" XsrfName XsrfValue)}}">{{.Detail.Content}}</textarea>
 								</div>
 								<div class="field_notice"></div>
 							</div>
