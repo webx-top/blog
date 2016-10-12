@@ -57,19 +57,25 @@
                                 {{if .Breadcrumbs}}
                                 {{range $k,$v:=.Breadcrumbs}}
                                 {{if gt $k 0}}
+								<span class="selector">
 								<select id="select-rcategeries-{{$k}}" rel="{{$v.Id}}">
 									<option value="0">- {{"请选择"|T}} -</option>
 								</select>
+								<span>
                                 {{else}}
+								<span class="selector">
 								<select id="select-rcategeries" rel="{{$v.Id}}" data-sync="#cate-id" data-url="{{BuildURL "Category" "Index"}}">
 									<option value="0">- {{"请选择"|T}} -</option>
 								</select>
+								<span>
                                 {{end}}
                                 {{end}}
                                 {{else}}
+								<span class="selector">
 								<select id="select-rcategeries" rel="" data-sync="#cate-id" data-url="{{BuildURL "Category" "Index"}}">
 									<option value="0">- {{"请选择"|T}} -</option>
 								</select>
+								<span>
                                 {{end}}
                                 <input type="hidden" id="cate-id" name="Catid" value="{{.Detail.Catid}}">
                                 
