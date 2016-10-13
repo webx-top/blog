@@ -2383,7 +2383,7 @@ div.field_notice.error_tips{
 	color:red;font-size:1em;
 }
 
-.selector {
+.prettySelector {
   display: inline-block;
   position: relative;
   overflow: hidden;
@@ -2399,7 +2399,7 @@ div.field_notice.error_tips{
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
   width:auto;
 }
-.selector:before, .selector:after {
+.prettySelector:before, .prettySelector:after {
   content: '';
   position: absolute;
   right: 11px;
@@ -2408,15 +2408,15 @@ div.field_notice.error_tips{
   border-left: 3px outset transparent;
   border-right: 3px outset transparent;
 }
-.selector:before {
+.prettySelector:before {
   top: 10px;
   border-bottom: 3px solid #7f9298;
 }
-.selector:after {
+.prettySelector:after {
   top: 16px;
   border-top: 3px solid #7f9298;
 }
-.selector > select {
+.prettySelector > select {
   position: relative;
   z-index: 2;
   width: 125%;
@@ -2430,7 +2430,7 @@ div.field_notice.error_tips{
   border: 0;
   -webkit-appearance: none;
 }
-.selector > select:focus {
+.prettySelector > select:focus {
   color: #4d5a5e;
   outline: 0;
 }

@@ -1,7 +1,7 @@
 $(function(){
     
     webx.includes('select.js');
-	select('#select-rcategeries');
+	select('#select-rcategeries',50,'.prettySelector');
     
 $("#formPost input[name='Display']").click(function(){
 	if($(this).prop('checked')&&$(this).val()=='PWD'){

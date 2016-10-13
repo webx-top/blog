@@ -1,4 +1,4 @@
-function select(elem,pagerows){
+function select(elem,pagerows,wrapper){
     if(pagerows==null)pagerows=50;
 	var e=$(elem);
 	var url=e.data('url');
@@ -18,20 +18,21 @@ function select(elem,pagerows){
                 var v=$(this).val();
                 if(sync)$(sync).val(e.val());
 				if (v==''||v=='0') {
-					hideChildren($(this));
+					hideChildren($(this),wrapper);
 					return;
 				}
-				rselect(url,$(this),sync,ignore,pagerows);
+				rselect(url,$(this),sync,ignore,pagerows,wrapper);
 			});
 			if (rel) e.trigger('change');
 		});
 	},'json');
 }
-function hideChildren(e){
+function hideChildren(el,wrapper){
 	var elem;
-	if(e.parent('.selector').length>0){
-		e=e.parent('.selector');
-		elem='.selector:visible';
+	var e=el;
+	if(wrapper&&el.parent(wrapper).length>0){
+		e=el.parent(wrapper);
+		elem=wrapper+':visible';
 	}else{
 		elem='select:visible';
 	}
@@ -43,26 +44,26 @@ function hideChildren(e){
         ss.eq(index).hide();
     }
 }
-function rselect(url,e,sync,ignore,pagerows){
+function rselect(url,e,sync,ignore,pagerows,wrapper){
 	var pid=e.val();
 	$.get(url,{format:'json',pid:pid,ignore:ignore,pagerows:pagerows},function(r){
 		webx.ajaxr(r,function(res,done){
             if (res.Data.data.length<1) {
                 if(sync)$(sync).val(e.val());
-                hideChildren(e);
+                hideChildren(e,wrapper);
                 return;
             }
-			var ne=e.next('select');
+			var hasWrap=wrapper&&e.parent(wrapper).length>0;
+			var ne=hasWrap?e.parent(wrapper).next(wrapper):e.next('select');
 			if (ne.length<1) {
-				
 				var tag='<select></select>';
-				if(e.parent('.selector').length>0){
-					var tagName=e.parent('.selector').get(0).tagName.toLowerCase()
-					tag='<'+tagName+' class="'+e.parent('.selector').attr('class')+'">'+tag+'</'+tagName+'>';
+				if(hasWrap){
+					var tagName=e.parent(wrapper).get(0).tagName.toLowerCase();
+					tag='<'+tagName+' class="'+e.parent(wrapper).attr('class')+'">'+tag+'</'+tagName+'>';
 				}
 				ne=$(tag);
-				if(e.parent('.selector').length>0){
-					e.parent('.selector').after(ne);
+				if(hasWrap){
+					e.parent(wrapper).after(ne);
 				}else{
 					e.after(ne);
 				}
@@ -70,33 +71,31 @@ function rselect(url,e,sync,ignore,pagerows){
 			}else if(!ne.is(':visible')){
                 ne.show();
             }
+			var selectObj=hasWrap?ne.find('select'):ne;
             if (!ne.data('event')) {
                 ne.data('event','1');
-				ne.change(function(){
+				selectObj.change(function(){
                     var v=$(this).val();
 					if (v==''||v=='0') {
                         if(sync)$(sync).val(e.val());
-                        hideChildren($(this));
+                        hideChildren($(this),wrapper);
 						return;
 					}
                     if(sync)$(sync).val(v);
-					rselect(url,$(this),sync,ignore,pagerows);
+					rselect(url,$(this),sync,ignore,pagerows,wrapper);
 				});
             }
-			var opts='',rel=ne.attr('rel');
+			var opts='';
+			var rel=hasWrap?ne.find('select').attr('rel'):ne.attr('rel');
 			for(var i=0;i<res.Data.data.length;i++){
 				var v=res.Data.data[i];
 				var s=rel==v.Id?' selected="selected"':'';
 				opts+='<option value="'+v.Id+'"'+s+'>'+v.Name+'</option>';
 			}
 			opts='<option value="">- '+webx.t('请选择')+' -</option>'+opts;
-			if(e.parent('.selector').length>0){
-				ne.find('select').html(opts);
-			}else{
-				ne.html(opts);
-			}
+			selectObj.html(opts);
 			
-			if (rel) ne.trigger('change');
+			if (rel) selectObj.trigger('change');
 		});
 	},'json');
 }
