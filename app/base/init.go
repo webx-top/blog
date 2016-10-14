@@ -21,6 +21,7 @@ import (
 	"github.com/webx-top/echo"
 	mw "github.com/webx-top/echo/middleware"
 	"github.com/webx-top/echo/middleware/session"
+	boltStore "github.com/webx-top/echo/middleware/session/engine/bolt"
 	cookieStore "github.com/webx-top/echo/middleware/session/engine/cookie"
 	X "github.com/webx-top/webx"
 	"github.com/webx-top/webx/lib/database"
@@ -97,6 +98,14 @@ func init() {
 		KeyPairs: [][]byte{
 			[]byte(Server.Session.StoreConfig.(string)),
 		},
+		SessionOptions: sessionOptions,
+	})
+	boltStore.RegWithOptions(&boltStore.BoltOptions{
+		File: Server.RootDir() + `/data/bolt/session`,
+		KeyPairs: [][]byte{
+			[]byte(Server.Session.StoreConfig.(string)),
+		},
+		BucketName:     `session`,
 		SessionOptions: sessionOptions,
 	})
 	SessionMW = session.Middleware(sessionOptions)

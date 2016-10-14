@@ -19,7 +19,8 @@ Cookie : {
 }
 
 Session : {
-  StoreEngine : "cookie"
+  #StoreEngine : "cookie"
+  StoreEngine : "bolt"
   StoreConfig : "p1234567890p12345678901234567890"
 }
 
