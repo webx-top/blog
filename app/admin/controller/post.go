@@ -67,34 +67,31 @@ func (a *Post) Index_HTML() error {
 	return a.Display()
 }
 
-func (a *Post) validate(m *D.Post) (bool, map[string]string) {
-	ok, es, valid := a.Valid(nil)
-	valid.Required(m.Title, `Title`)
-	valid.Required(m.Content, `Content`)
-	//valid.Required(m.Description, `Description`)
-	valid.Required(m.Catid, `Catid`)
-	ok = valid.HasError() == false
-	es = valid.ErrMap()
-	for key, msg := range es {
-		a.SetErr(msg, key)
-		break
+func (a *Post) validOk(m *D.Post) bool {
+	valid := a.Valid()
+	if r := valid.Required(m.Title, `Title`); !r.Ok {
+		return false
 	}
-	return ok, es
+	if r := valid.Required(m.Content, `Content`); !r.Ok {
+		return false
+	}
+	//valid.Required(m.Description, `Description`)
+	if r := valid.Required(m.Catid, `Catid`); !r.Ok {
+		return false
+	}
+	return true
 }
 
 func (a *Post) Add() error {
 	m := &D.Post{}
 	other := &D.Ocontent{}
-	errs := make(map[string]string)
 	if a.IsPost() {
 		err := a.Bind(m)
 		if err != nil {
 			return err
 		}
 
-		if ok, es := a.validate(m); !ok {
-			errs = es
-		} else {
+		if a.validOk(m) {
 			m.Uid = a.User.Id
 			m.Uname = a.User.Uname
 			t := time.Now().Local()
@@ -113,7 +110,6 @@ func (a *Post) Add() error {
 	}
 	a.Assign(`Detail`, m)
 	a.Assign(`Other`, other)
-	a.Assign(`Errors`, errs)
 	return a.Display(a.TmplPath(`Edit`))
 }
 
@@ -125,15 +121,12 @@ func (a *Post) Edit() error {
 	} else if !has {
 		return a.NotFoundData().Display()
 	}
-	errs := make(map[string]string)
 	if a.IsPost() {
 		err = a.Bind(m)
 		if err != nil {
 			return err
 		}
-		if ok, es := a.validate(m); !ok {
-			errs = es
-		} else {
+		if a.validOk(m) {
 			affected, err := a.postM.Edit(m.Id, m)
 			if err != nil {
 				a.SetErr(err.Error())
@@ -150,7 +143,6 @@ func (a *Post) Edit() error {
 	}
 	a.Assign(`Detail`, m)
 	a.Assign(`Other`, other)
-	a.Assign(`Errors`, errs)
 	cateM := model.NewCategory(a.Context)
 	a.Assign(`Breadcrumbs`, cateM.Dir(m.Catid))
 	return a.Display()

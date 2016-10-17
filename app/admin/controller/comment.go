@@ -44,29 +44,28 @@ func (a *Comment) Init(c *X.Context) error {
 	return nil
 }
 
+func (a *Comment) Index_HTML() error {
+	return a.Display()
+}
+
 func (a *Comment) Index() error {
-	if a.Format != `html` {
-		sel := a.cmtM.NewSelect(&D.Comment{})
-		sel.Condition = `uid=?`
-		sel.AddParam(a.User.Id).FromClient(true, "title")
-		countFn, data, _ := a.cmtM.List(sel)
-		sel.Client.SetCount(countFn).Data(data)
-	}
+	sel := a.cmtM.NewSelect(&D.Comment{})
+	sel.Condition = `uid=?`
+	sel.AddParam(a.User.Id).FromClient(true, "title")
+	countFn, data, _ := a.cmtM.List(sel)
+	sel.Client.SetCount(countFn).Data(data)
 	return a.Display()
 }
 
 func (a *Comment) Add() error {
 	m := &D.Comment{}
-	errs := make(map[string]string)
 	if a.IsPost() {
 		err := a.Bind(m)
 		if err != nil {
 			return err
 		}
 
-		if ok, es, _ := a.Valid(m); !ok {
-			errs = es
-		} else {
+		if a.ValidOk(m) {
 			affected, err := a.cmtM.Add(m)
 			if err != nil {
 				a.SetErr(err.Error())
@@ -78,7 +77,6 @@ func (a *Comment) Add() error {
 		}
 	}
 	a.Assign(`Detail`, m)
-	a.Assign(`Errors`, errs)
 	return a.Display(a.TmplPath(`Edit`))
 }
 

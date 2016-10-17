@@ -21,7 +21,10 @@
 	webx.appName='{{AppName}}';
 	webx.controllerName='{{ControllerName}}';
 	webx.actionName='{{ActionName}}';
-	{{if Message}}webx.setMsgs({{Status}},'{{Message}}');{{end}}
+	{{if Message}}
+	webx.errFor='{{For}}';
+	webx.setMsgs({{Status}},'{{Message}}');
+	{{end}}
 	</script>
 </head>
 <body>
