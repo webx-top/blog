@@ -44,29 +44,28 @@ func (a *Setting) Init(c *X.Context) error {
 	return nil
 }
 
+func (a *Setting) Index_HTML() error {
+	return a.Display()
+}
+
 func (a *Setting) Index() error {
-	if a.Format != `html` {
-		sel := a.confM.NewSelect(&D.Config{})
-		sel.Condition = `uid=?`
-		sel.AddParam(a.User.Id).FromClient(true, "title")
-		countFn, data, _ := a.confM.List(sel)
-		sel.Client.SetCount(countFn).Data(data)
-	}
+	sel := a.confM.NewSelect(&D.Config{})
+	sel.Condition = `uid=?`
+	sel.AddParam(a.User.Id).FromClient(true, "title")
+	countFn, data, _ := a.confM.List(sel)
+	sel.Client.SetCount(countFn).Data(data)
 	return a.Display()
 }
 
 func (a *Setting) Add() error {
 	m := &D.Config{}
-	errs := make(map[string]string)
 	if a.IsPost() {
 		err := a.Bind(m)
 		if err != nil {
 			return err
 		}
 
-		if ok, es, _ := a.Valid(m); !ok {
-			errs = es
-		} else {
+		if a.ValidOk(m) {
 			affected, err := a.confM.Add(m)
 			if err != nil {
 				a.SetErr(err.Error())
@@ -78,7 +77,6 @@ func (a *Setting) Add() error {
 		}
 	}
 	a.Assign(`Detail`, m)
-	a.Assign(`Errors`, errs)
 	return a.Display(a.TmplPath(`Edit`))
 }
 

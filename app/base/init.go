@@ -100,6 +100,7 @@ func init() {
 		},
 		SessionOptions: sessionOptions,
 	})
+
 	boltStore.RegWithOptions(&boltStore.BoltOptions{
 		File: Server.RootDir() + `/data/bolt/session.db`,
 		KeyPairs: [][]byte{
@@ -109,13 +110,6 @@ func init() {
 		SessionOptions: sessionOptions,
 	})
 	SessionMW = session.Middleware(sessionOptions)
-	/*
-		map[string]string{
-			"file": RootDir + `/data/bolt/session.db`,
-			"key":  Server.CookieAuthKey,
-			"name": Server.Name,
-		})
-	*/
 
 	// ======================
 	// 设置静态页缓存

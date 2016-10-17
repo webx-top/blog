@@ -78,10 +78,20 @@ func (a *Controller) VerifyCaptcha(captchaSolution string) bool {
 	return true
 }
 
-func (a *Controller) Valid(m interface{}, args ...string) (b bool, errs map[string]string, v *validation.Validation) {
-	v = &validation.Validation{}
-	if m != nil {
-		b, errs = v.ValidResult(m, args...)
+func (a *Controller) Valid() (v *validation.Validation) {
+	v = &validation.Validation{
+		SendError: func(e *validation.ValidationError) {
+			a.SetErr(e.Message, e.Field)
+		},
 	}
 	return
+}
+
+func (a *Controller) ValidOk(m interface{}, args ...string) bool {
+	v := a.Valid()
+	ok := true
+	if m != nil {
+		ok, _ = v.Valid(m, args...)
+	}
+	return ok
 }
