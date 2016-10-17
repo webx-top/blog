@@ -101,7 +101,7 @@ func init() {
 		SessionOptions: sessionOptions,
 	})
 	boltStore.RegWithOptions(&boltStore.BoltOptions{
-		File: Server.RootDir() + `/data/bolt/session`,
+		File: Server.RootDir() + `/data/bolt/session.db`,
 		KeyPairs: [][]byte{
 			[]byte(Server.Session.StoreConfig.(string)),
 		},
