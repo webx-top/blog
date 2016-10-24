@@ -22,7 +22,6 @@ import (
 	X "github.com/webx-top/webx"
 	C "github.com/webx-top/webx/lib/captcha"
 	"github.com/webx-top/webx/lib/database"
-	"github.com/webx-top/webx/lib/i18n"
 )
 
 func NewController(c *X.Context) *Controller {
@@ -47,10 +46,6 @@ func (a *Controller) Lang() string {
 		a.Language = `zh-cn`
 	}
 	return a.Language
-}
-
-func (a *Controller) T(key string, args ...interface{}) string {
-	return i18n.T(a.Lang(), key, args...)
 }
 
 func (a *Controller) NotFoundData() *X.Context {

@@ -25,7 +25,6 @@ import (
 	cookieStore "github.com/webx-top/echo/middleware/session/engine/cookie"
 	X "github.com/webx-top/webx"
 	"github.com/webx-top/webx/lib/database"
-	"github.com/webx-top/webx/lib/i18n"
 	"github.com/webx-top/webx/lib/middleware/jwt"
 	"github.com/webx-top/webx/lib/middleware/language"
 	"github.com/webx-top/webx/lib/static/htmlcache"
@@ -42,7 +41,6 @@ var (
 	Server    *X.Server
 	SessionMW echo.MiddlewareFuncd
 	HtmlCache *htmlcache.Config
-	I18n      *i18n.I18n
 	Xsrf      *xsrf.Xsrf
 	Jwt       *jwt.JWT
 	DB        *database.Orm
@@ -124,7 +122,6 @@ func init() {
 	// ======================
 	// 设置其它常用功能组件
 	// ======================
-	I18n = i18n.New(&Config.Language)
 	Xsrf = xsrf.New()
 	Jwt = jwt.New(Server.Cookie.AuthKey)
 	Language.Init(&Config.Language)
