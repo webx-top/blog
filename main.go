@@ -23,9 +23,7 @@ import (
 	_ "github.com/webx-top/blog/app/admin"
 	_ "github.com/webx-top/blog/app/blog"
 
-	"github.com/admpub/overseer"
 	"github.com/webx-top/blog/app/base"
-	"github.com/webx-top/echo/engine"
 )
 
 var Version = `1.0.0`
@@ -33,20 +31,9 @@ var Version = `1.0.0`
 func main() {
 	base.Version = Version
 	port := flag.String("p", "8080", "port of your blog.")
-	ngin := flag.String("e", "", "http engine")
+	engine := flag.String("e", "", "http engine")
 	flag.Parse()
 
 	addr := ":" + *port
-
-	overseer.Run(overseer.Config{
-		Program: func(state overseer.State) {
-			conf := &engine.Config{
-				Address:  addr,
-				Listener: state.Listener,
-			}
-			base.Server.Run(conf, *ngin)
-		},
-		Address: addr,
-		Debug:   true,
-	})
+	base.Server.Run(addr, *engine)
 }
