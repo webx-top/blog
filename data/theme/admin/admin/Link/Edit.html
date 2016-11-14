@@ -5,8 +5,7 @@
 			<div class="grid_wrapper">
 
 				<div class="g_6 contents_header">
-					<h3 class="i_16_forms tab_label">{{"录入"|T}}</h3>
-					<div><span class="label">{{"文章录入"|T}}</span></div>
+					<h3 class="i_16_forms tab_label">{{if eq ActionName "Edit"}}{{"修改友情链接"|T}}{{else}}{{"添加友情链接"|T}}{{end}}</h3>
 				</div>
 				<div class="g_6 contents_options">
 					<div class="simple_buttons">
@@ -39,17 +38,11 @@
 
 				<div class="g_12">
 					<div class="widget_header">
-						<h4 class="widget_header_title wwIcon i_16_forms">{{if eq ActionName "Edit"}}{{"修改文章"|T}}{{else}}{{"添加文章"|T}}{{end}}</h4>
+						<h4 class="widget_header_title wwIcon i_16_forms">{{if eq ActionName "Edit"}}{{"修改友情链接"|T}}{{else}}{{"添加友情链接"|T}}{{end}}</h4>
 					</div>
 					<div class="widget_contents noPadding">
 					<form action="" method="post" id="formPost" data-validate="true">
-						<div class="line_grid">
-							<div class="g_3"><span class="label">{{"标题"|T}}
-							<span class="must">*</span></span><div class="field_notice">{{"文章标题"}}</div></div>
-							<div class="g_9">
-								<input class="simple_field" required="required" type="text" name="Title" value="{{.Detail.Title}}" />
-							</div>
-						</div>
+						
 						<div class="line_grid">
 							<div class="g_3"><span class="label">{{"分类"|T}}<span class="must">*</span></span></div>
 							<div class="g_9">
@@ -59,56 +52,38 @@
 								</select>
 							</div>
 						</div>
+
 						<div class="line_grid">
-							<div class="g_3"><span class="label">{{"简介"|T}}</span></div>
+							<div class="g_3"><span class="label">{{"网站名称"|T}}<span class="must">*</span></span></div>
 							<div class="g_9">
-								<textarea class="simple_field elastic twMaxChars" name="Description">{{.Detail.Description}}</textarea>
+								<input class="simple_field" required="required" type="text" name="Name" value="{{.Detail.Name}}" />
 							</div>
 						</div>
 						<div class="line_grid">
-							<div class="g_3"><span class="label">{{"编辑器"|T}}<span class="must">*</span></span></div>
+							<div class="g_3"><span class="label">{{"网站URL"|T}}<span class="must">*</span></span></div>
 							<div class="g_9">
-								<label><input type="radio" name="Etype" class="simple_form" value="html"{{if or (eq .Detail.Etype "") (eq .Detail.Etype "html")}} checked="checked"{{end}}><span class="label ilC">{{"HTML可视化编辑器"|T}}</span></label>
-								<label><input type="radio" name="Etype" class="simple_form" value="markdown"{{if eq .Detail.Etype "markdown"}} checked="checked"{{end}}><span class="label ilC">{{"Markdown编辑器"|T}}</span></label>
-								<div class="field_notice">{{"请注意"|T}}: {{"从HTML向Markdown编辑器切换时，您在\"HTML可视化编辑器\"中所做的修改会丢失，而后者向前者切换则不会。"}}</div>
-								<textarea id="etype-markdown-content" style="display:none">{{.Other.Content}}</textarea>
-								<textarea id="etype-html-content" style="display:none">{{.Detail.Content}}</textarea>
+								<input class="simple_field" required="required" type="url" name="Url" value="{{.Detail.Url}}" />
 							</div>
 						</div>
 						<div class="line_grid">
-							<div class="g_3"><span class="label">{{"内容"|T}}<span class="must">*</span></span></div>
+							<div class="g_3"><span class="label">{{"网站LOGO"|T}}
+							</span></div>
 							<div class="g_9">
-								<div id="editor-container" style="z-index:99">
-								<textarea class="simple_field" name="Content" style="height:600px" data-content-elem="#etype-{=type=}-content" data-upload-url="{{AppURLFor (printf "/Index/Upload?immediate=1&%v=%v" XsrfName XsrfValue)}}">{{.Detail.Content}}</textarea>
-								</div>
-								<div class="field_notice"></div>
+								<input class="simple_field" type="url" name="Logo" value="{{.Detail.Logo}}" />
 							</div>
 						</div>
 						<div class="line_grid">
-							<div class="g_3"><span class="label">{{"权限"|T}}<span class="must">*</span></span></div>
+							<div class="g_3"><span class="label">{{"可见性"|T}}<span class="must">*</span></span></div>
 							<div class="g_9">
-								<label><input type="radio" name="Display" class="simple_form" value="ALL"{{if or (eq .Detail.Display "") (eq .Detail.Display "ALL")}} checked="checked"{{end}}><span class="label ilC">完全公开</span></label>
-								<label><input type="radio" name="Display" class="simple_form" value="SELF"{{if eq .Detail.Display "SELF"}} checked="checked"{{end}}><span class="label ilC">自己可见</span></label>
-								<label><input type="radio" name="Display" class="simple_form" value="FRIEND"{{if eq .Detail.Display "FRIEND"}} checked="checked"{{end}}><span class="label ilC">好友可见</span></label>
-								<label><input type="radio" name="Display" class="simple_form" value="PWD"{{if eq .Detail.Display "PWD"}} checked="checked"{{end}}><span class="label ilC">需要密码</span></label>
-							</div>
-						</div>
-						<div class="line_grid" id="inputPasswd">
-							<div class="g_3"><span class="label">{{"访问密码"|T}}</span></div>
-							<div class="g_9">
-								<input type="text" placeholder="" title="" disabled="disabled" name="Passwd" class="simple_field tooltip" value="{{.Detail.Passwd}}">
+								<label><input type="radio" name="Show" class="simple_form" value="Y"{{if or (eq .Detail.Show "") (eq .Detail.Show "Y")}} checked="checked"{{end}}><span class="label ilC">{{"显示"|T}}</span></label>
+								<label><input type="radio" name="Show" class="simple_form" value="N"{{if eq .Detail.Show "N"}} checked="checked"{{end}}><span class="label ilC">{{"隐藏"|T}}</span></label>
+								
 							</div>
 						</div>
 						<div class="line_grid">
-							<div class="g_3"><span class="label">{{"允许评论"|T}}</span></div>
+							<div class="g_3"><span class="label">{{"排序"|T}}</span></div>
 							<div class="g_9">
-								<label><input type="checkbox" name="AllowComment" class="simple_form" value="1"{{if or (eq .Detail.AllowComment "") (eq .Detail.AllowComment "Y")}} checked="checked"{{end}}></label>
-							</div>
-						</div>
-						<div class="line_grid">
-							<div class="g_3"><span class="label">{{"标签"|T}}</span></div>
-							<div class="g_9">
-								<input type="text" name="Tags" class="simple_field tooltip" value="{{.Detail.Tags}}" placeholder="" title="多个标签用逗号隔开">
+								<input type="number" placeholder="" title="" name="Sort" class="simple_field tooltip" value="{{.Detail.Sort}}">
 							</div>
 						</div>
 							<div class="line_grid">

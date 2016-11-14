@@ -18,10 +18,8 @@
 package controller
 
 import (
-	//"github.com/webx-top/blog/app/admin/lib"
-	X "github.com/webx-top/webx"
-	//"github.com/webx-top/webx/lib/com"
 	"github.com/webx-top/blog/app/base"
+	X "github.com/webx-top/webx"
 )
 
 type Index struct {

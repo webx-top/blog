@@ -18,9 +18,6 @@
 package controller
 
 import (
-	//"fmt"
-
-	//"github.com/webx-top/blog/app/admin/lib"
 	"github.com/webx-top/blog/app/base"
 	"github.com/webx-top/blog/app/base/model"
 	X "github.com/webx-top/webx"
@@ -52,7 +49,7 @@ func (a *Public) Login() error {
 			return a.SetErr(err).Display()
 		}
 		ss.Set(`user`, u).Save()
-		return a.Redirect(a.BuildURL(`Index`, `Index`))
+		return a.GotoNext(`Index`, `Index`)
 	}
 	return a.Display()
 }
@@ -71,12 +68,12 @@ func (a *Public) Register() error {
 		if active {
 			a.Session().Set(`user`, u).Save()
 		}
-		return a.Redirect(a.BuildURL(`Index`, `Index`))
+		return a.GotoNext(`Index`, `Index`)
 	}
 	return a.Display()
 }
 
 func (a *Public) Logout() error {
 	a.Session().Delete(`user`).Save()
-	return a.Redirect(a.BuildURL(`Index`, `Index`))
+	return a.GotoNext(`Index`, `Index`)
 }

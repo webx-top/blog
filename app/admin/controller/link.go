@@ -18,10 +18,6 @@
 package controller
 
 import (
-	//"fmt"
-	//"strings"
-
-	//"github.com/webx-top/blog/app/admin/lib"
 	D "github.com/webx-top/blog/app/base/dbschema"
 	"github.com/webx-top/blog/app/base/model"
 	X "github.com/webx-top/webx"
@@ -73,6 +69,7 @@ func (a *Link) Add() error {
 				a.NotModified()
 			} else {
 				a.Done()
+				return a.GotoNext(`Index`)
 			}
 		}
 	}
@@ -100,6 +97,7 @@ func (a *Link) Edit() error {
 			a.NotModified()
 		} else {
 			a.Done()
+			return a.GotoNext(`Index`)
 		}
 	}
 	a.Assign(`Detail`, m)
@@ -109,17 +107,17 @@ func (a *Link) Edit() error {
 func (a *Link) Delete() error {
 	id := com.Int(a.Form(`id`))
 	if id < 1 {
-		return a.NotFoundData().Display()
+		return a.NotFoundData().GotoNext(`Index`)
 	}
 	affected, err := a.lnkM.Delete(id)
 	if err != nil {
 		return err
 	}
 	if affected < 1 {
-		return a.NotFoundData().Display()
+		return a.NotFoundData().GotoNext(`Index`)
 	}
 	a.Done()
-	return a.Display()
+	return a.GotoNext(`Index`)
 }
 
 func (a *Link) View() error {

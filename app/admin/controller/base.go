@@ -20,7 +20,6 @@ package controller
 import (
 	"encoding/gob"
 
-	//"github.com/webx-top/blog/app/admin/lib"
 	"github.com/webx-top/blog/app/base"
 	"github.com/webx-top/blog/app/base/dbschema"
 	X "github.com/webx-top/webx"
@@ -52,7 +51,7 @@ func (a *Base) Before() error {
 	if user, ok := ss.Get(`user`).(*dbschema.User); !ok || user == nil || user.Id < 1 {
 		var errMsg = a.T(`请先登录`)
 		a.SetNoAuth(errMsg)
-		return a.Redirect(a.BuildURL(`Public`, `Login`))
+		return a.GotoNext(`Public`, `Login`)
 	} else {
 		a.User = user
 		user.Passwd = `[HIDE]`

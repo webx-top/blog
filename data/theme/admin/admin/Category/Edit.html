@@ -10,24 +10,13 @@
 				</div>
 				<div class="g_6 contents_options">
 					<div class="simple_buttons">
-						<div class="bwIcon i_16_settings">&nbsp;</div>
+						<div class="bwIcon i_16_settings">{{"操作"|T}}</div>
 						<div class="buttons_arrow">
 							<!-- Drop Menu -->
 							<ul class="drop_menu menu_with_icons right_direction">
 								<li>
-									<a class="i_16_add" href="#" title="New Flie">
-										<span class="label">New File</span>
-									</a>									
-								</li>
-								<li>
-									<a class="i_16_progress" href="#" title="2 Files Left">
-										<span class="label">Files Left</span>
-										<span class="small_count">2</span>
-									</a>
-								</li>
-								<li>
-									<a class="i_16_files" href="#" title="Browse Files">
-										<span class="label">Browse Files</span>
+									<a class="i_16_tables" href="{{BuildURL "Category" "Add"}}" title="{{"添加分类"|T}}">
+										<span class="label">{{"添加分类"|T}}</span>
 									</a>
 								</li>
 							</ul>
@@ -49,19 +38,25 @@
                                 {{if .Breadcrumbs}}
                                 {{range $k,$v:=.Breadcrumbs}}
                                 {{if gt $k 0}}
+								<span class="prettySelector">
 								<select id="select-rcategeries-{{$k}}" rel="{{$v.Id}}">
 									<option value="0">- {{"根分类"|T}} -</option>
 								</select>
+								</span>
                                 {{else}}
+								<span class="prettySelector">
 								<select id="select-rcategeries" rel="{{$v.Id}}" data-sync="#parent-id" data-url="{{BuildURL "Category" "Index"}}" data-ignore="{{$.Detail.Id}}">
 									<option value="0">- {{"根分类"|T}} -</option>
 								</select>
+								</span>
                                 {{end}}
                                 {{end}}
                                 {{else}}
+								<span class="prettySelector">
 								<select id="select-rcategeries" rel="{{.Detail.Pid}}" data-sync="#parent-id" data-url="{{BuildURL "Category" "Index"}}" data-ignore="{{.Detail.Id}}">
 									<option value="0">- {{"根分类"|T}} -</option>
 								</select>
+								</span>
                                 {{end}}
                                 <input type="hidden" id="parent-id" name="Pid" value="{{.Detail.Pid}}">
 							</div>
