@@ -30,9 +30,9 @@ import (
 	"github.com/webx-top/webx/lib/static/htmlcache"
 	"github.com/webx-top/webx/lib/xsrf"
 
+	_ "github.com/webx-top/echo/middleware/render/pongo2"
 	_ "github.com/webx-top/webx/lib/client/list/datatable"
 	localStore "github.com/webx-top/webx/lib/store/file/local"
-	_ "github.com/webx-top/webx/lib/tplex/pongo2"
 
 	"github.com/webx-top/webx/lib/config"
 )
