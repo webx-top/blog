@@ -28,6 +28,6 @@ var (
 
 func init() {
 	App.R(`/ping`, func(c *X.Context) error {
-		return c.String(200, `pong`)
+		return c.String(`pong`)
 	})
 }

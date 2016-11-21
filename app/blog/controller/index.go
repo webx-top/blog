@@ -127,5 +127,5 @@ func (a *Index) Upload() error {
 		rs.FileUrl = r.Path
 	}
 	res := uc.Result(``)
-	return a.JSONBlob(200, []byte(res))
+	return a.JSONBlob([]byte(res))
 }

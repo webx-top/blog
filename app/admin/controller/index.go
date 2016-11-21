@@ -42,5 +42,5 @@ func (a *Index) Index() error {
 }
 
 func (a *Index) Version() error {
-	return a.String(200, base.Version)
+	return a.String(base.Version)
 }
