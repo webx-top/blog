@@ -30,6 +30,7 @@ Language : {
   AllList      : ["zh-cn","en"]
   RulesPath    : ["data/lang/rules"]
   MessagesPath : ["data/lang/messages"]
+  Reload       : true
 }
 
 FrontendTemplate : {
