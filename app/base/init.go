@@ -20,13 +20,13 @@ package base
 import (
 	"github.com/webx-top/echo"
 	mw "github.com/webx-top/echo/middleware"
+	"github.com/webx-top/echo/middleware/language"
 	"github.com/webx-top/echo/middleware/session"
 	boltStore "github.com/webx-top/echo/middleware/session/engine/bolt"
 	cookieStore "github.com/webx-top/echo/middleware/session/engine/cookie"
 	X "github.com/webx-top/webx"
 	"github.com/webx-top/webx/lib/database"
 	"github.com/webx-top/webx/lib/middleware/jwt"
-	"github.com/webx-top/webx/lib/middleware/language"
 	"github.com/webx-top/webx/lib/static/htmlcache"
 	"github.com/webx-top/webx/lib/xsrf"
 

@@ -20,8 +20,8 @@ package controller
 import (
 	D "github.com/webx-top/blog/app/base/dbschema"
 	"github.com/webx-top/blog/app/base/model"
+	"github.com/webx-top/com"
 	X "github.com/webx-top/webx"
-	"github.com/webx-top/webx/lib/com"
 )
 
 type Setting struct {

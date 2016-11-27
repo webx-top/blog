@@ -22,8 +22,8 @@ import (
 	"strings"
 
 	D "github.com/webx-top/blog/app/base/dbschema"
+	"github.com/webx-top/com"
 	X "github.com/webx-top/webx"
-	"github.com/webx-top/webx/lib/com"
 )
 
 func NewUser(ctx *X.Context) *User {

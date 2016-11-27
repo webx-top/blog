@@ -21,7 +21,7 @@ import (
 	D "github.com/webx-top/blog/app/base/dbschema"
 	"github.com/webx-top/blog/app/base/model"
 	X "github.com/webx-top/webx"
-	"github.com/webx-top/webx/lib/com"
+	"github.com/webx-top/com"
 )
 
 type Category struct {

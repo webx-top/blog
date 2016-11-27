@@ -20,13 +20,13 @@ package controller
 import (
 	//"github.com/webx-top/blog/app/base"
 	//"github.com/webx-top/blog/app/blog/lib"
+	"github.com/webx-top/com"
 	X "github.com/webx-top/webx"
 	uploadClient "github.com/webx-top/webx/lib/client/upload"
 	_ "github.com/webx-top/webx/lib/client/upload/client/markdown"
 	_ "github.com/webx-top/webx/lib/client/upload/client/simple"
 	_ "github.com/webx-top/webx/lib/client/upload/client/webuploader"
 	_ "github.com/webx-top/webx/lib/client/upload/client/xheditor"
-	"github.com/webx-top/webx/lib/com"
 	fileStore "github.com/webx-top/webx/lib/store/file"
 
 	"github.com/admpub/log"
