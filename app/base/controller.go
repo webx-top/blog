@@ -18,9 +18,9 @@
 package base
 
 import (
+	C "github.com/webx-top/captcha"
 	"github.com/webx-top/validation"
 	X "github.com/webx-top/webx"
-	C "github.com/webx-top/webx/lib/captcha"
 	"github.com/webx-top/webx/lib/database"
 )
 

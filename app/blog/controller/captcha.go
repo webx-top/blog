@@ -22,9 +22,9 @@ import (
 	"strings"
 
 	//"github.com/webx-top/blog/app/blog/lib"
+	C "github.com/webx-top/captcha"
 	E "github.com/webx-top/echo"
 	X "github.com/webx-top/webx"
-	C "github.com/webx-top/webx/lib/captcha"
 )
 
 type Captcha struct {
