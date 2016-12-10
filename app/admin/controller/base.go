@@ -22,14 +22,14 @@ import (
 
 	"github.com/webx-top/blog/app/base"
 	"github.com/webx-top/blog/app/base/dbschema"
-	X "github.com/webx-top/webx"
+	"github.com/webx-top/echo"
 )
 
 func init() {
 	gob.Register(&dbschema.User{})
 }
 
-func New(c *X.Context) *Base {
+func New(c echo.Context) *Base {
 	a := &Base{}
 	a.Init(c)
 	return a
@@ -40,7 +40,7 @@ type Base struct {
 	*dbschema.User
 }
 
-func (a *Base) Init(c *X.Context) error {
+func (a *Base) Init(c echo.Context) error {
 	a.Controller = base.NewController(c)
 	a.User = &dbschema.User{}
 	return nil

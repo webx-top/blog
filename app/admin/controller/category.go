@@ -20,8 +20,9 @@ package controller
 import (
 	D "github.com/webx-top/blog/app/base/dbschema"
 	"github.com/webx-top/blog/app/base/model"
-	X "github.com/webx-top/webx"
 	"github.com/webx-top/com"
+	"github.com/webx-top/echo"
+	X "github.com/webx-top/webx"
 )
 
 type Category struct {
@@ -33,9 +34,9 @@ type Category struct {
 	cateM *model.Category
 }
 
-func (a *Category) Init(c *X.Context) error {
+func (a *Category) Init(c echo.Context) error {
 	a.Base = New(c)
-	a.cateM = model.NewCategory(c)
+	a.cateM = model.NewCategory(a.Context)
 	return nil
 }
 

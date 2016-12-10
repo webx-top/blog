@@ -22,8 +22,9 @@ import (
 
 	D "github.com/webx-top/blog/app/base/dbschema"
 	"github.com/webx-top/blog/app/base/model"
-	X "github.com/webx-top/webx"
 	"github.com/webx-top/com"
+	"github.com/webx-top/echo"
+	X "github.com/webx-top/webx"
 )
 
 type Post struct {
@@ -36,9 +37,9 @@ type Post struct {
 	postM *model.Post
 }
 
-func (a *Post) Init(c *X.Context) error {
+func (a *Post) Init(c echo.Context) error {
 	a.Base = New(c)
-	a.postM = model.NewPost(c)
+	a.postM = model.NewPost(a.Context)
 	return nil
 }
 

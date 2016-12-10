@@ -23,7 +23,7 @@ import (
 
 var (
 	Name    = `admin`
-	App     = base.Server.NewApp(Name, base.SessionMW, base.Xsrf.Middleware() /*, base.Jwt.Validate()*/)
+	App     = base.Server.NewModule(Name, base.SessionMW, base.Xsrf.Middleware() /*, base.Jwt.Validate()*/)
 	FuncMap = base.Server.DefaultFuncMap()
 )
 

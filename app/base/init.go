@@ -73,41 +73,30 @@ func init() {
 	Server.InitStatic()
 	Server.Pprof().Debug(true)
 	Server.Core.PreUse(Language.Middleware())
-
-	Server.Session = &Config.Session
-	Server.Cookie = &Config.Cookie
-	Server.InitCodec([]byte(Server.Cookie.AuthKey), []byte(Server.Cookie.BlockKey))
+	Server.SetSessionOptions(&Config.Session.SessionOptions)
+	Server.InitCodec([]byte(Config.Session.AuthKey), []byte(Config.Session.BlockKey))
 
 	// ======================
 	// 设置Session中间件
 	// ======================
-	sessionOptions := &echo.SessionOptions{
-		Engine: Server.Session.StoreEngine,
-		Name:   `SESSIONID`,
-		CookieOptions: &echo.CookieOptions{
-			Path:     `/`,
-			Domain:   Server.Cookie.Domain,
-			MaxAge:   Server.Cookie.MaxAge,
-			Secure:   false,
-			HttpOnly: Server.Cookie.HttpOnly,
-		},
-	}
 	cookieStore.RegWithOptions(&cookieStore.CookieOptions{
 		KeyPairs: [][]byte{
-			[]byte(Server.Session.StoreConfig.(string)),
+			[]byte(Config.Session.AuthKey),
+			[]byte(Config.Session.BlockKey),
 		},
-		SessionOptions: sessionOptions,
+		SessionOptions: Server.SessionOptions,
 	})
 
 	boltStore.RegWithOptions(&boltStore.BoltOptions{
 		File: Server.RootDir() + `/data/bolt/session.db`,
 		KeyPairs: [][]byte{
-			[]byte(Server.Session.StoreConfig.(string)),
+			[]byte(Config.Session.AuthKey),
+			[]byte(Config.Session.BlockKey),
 		},
 		BucketName:     `session`,
-		SessionOptions: sessionOptions,
+		SessionOptions: Server.SessionOptions,
 	})
-	SessionMW = session.Middleware(sessionOptions)
+	SessionMW = session.Middleware(Server.SessionOptions)
 
 	// ======================
 	// 设置静态页缓存
@@ -123,7 +112,7 @@ func init() {
 	// 设置其它常用功能组件
 	// ======================
 	Xsrf = xsrf.New()
-	Jwt = jwt.New(Server.Cookie.AuthKey)
+	Jwt = jwt.New(Config.Session.AuthKey)
 	Language.Init(&Config.Language)
 
 	// ======================

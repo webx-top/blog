@@ -19,6 +19,7 @@ package controller
 
 import (
 	"github.com/webx-top/blog/app/base"
+	"github.com/webx-top/echo"
 	X "github.com/webx-top/webx"
 )
 
@@ -28,7 +29,7 @@ type Index struct {
 	*Base
 }
 
-func (a *Index) Init(c *X.Context) error {
+func (a *Index) Init(c echo.Context) error {
 	a.Base = New(c)
 	return nil
 }

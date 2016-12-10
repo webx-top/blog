@@ -20,6 +20,7 @@ package controller
 import (
 	"github.com/webx-top/blog/app/base"
 	"github.com/webx-top/blog/app/base/model"
+	"github.com/webx-top/echo"
 	X "github.com/webx-top/webx"
 )
 
@@ -31,9 +32,9 @@ type Public struct {
 	user *model.User
 }
 
-func (a *Public) Init(c *X.Context) error {
+func (a *Public) Init(c echo.Context) error {
 	a.Controller = base.NewController(c)
-	a.user = model.NewUser(c)
+	a.user = model.NewUser(a.Context)
 	return nil
 }
 

@@ -9,20 +9,19 @@ DB : {
   Prefix    : "webx_"
 }
 
-Cookie : {
+Session : {
+  #Engine : "cookie"
+  Engine : "bolt"
+
   Prefix    : "blog_"
   HttpOnly  : true
-  AuthKey   : "p1234567890p12345678901234567890"
-  BlockKey  : "p1234567890p12345678901234567890"
   MaxAge    : 86400
   Domain    : ""
+  
+  AuthKey   : "p1234567890p12345678901234567890"
+  BlockKey  : "p1234567890p12345678901234567890"
 }
 
-Session : {
-  #StoreEngine : "cookie"
-  StoreEngine : "bolt"
-  StoreConfig : "p1234567890p12345678901234567890"
-}
 
 Language : {
   Default      : "zh-cn"

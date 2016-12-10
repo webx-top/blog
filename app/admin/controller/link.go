@@ -20,8 +20,9 @@ package controller
 import (
 	D "github.com/webx-top/blog/app/base/dbschema"
 	"github.com/webx-top/blog/app/base/model"
-	X "github.com/webx-top/webx"
 	"github.com/webx-top/com"
+	"github.com/webx-top/echo"
+	X "github.com/webx-top/webx"
 )
 
 type Link struct {
@@ -34,9 +35,9 @@ type Link struct {
 	lnkM *model.Link
 }
 
-func (a *Link) Init(c *X.Context) error {
+func (a *Link) Init(c echo.Context) error {
 	a.Base = New(c)
-	a.lnkM = model.NewLink(c)
+	a.lnkM = model.NewLink(a.Context)
 	return nil
 }
 

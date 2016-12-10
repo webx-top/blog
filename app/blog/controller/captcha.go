@@ -23,6 +23,7 @@ import (
 
 	//"github.com/webx-top/blog/app/blog/lib"
 	C "github.com/webx-top/captcha"
+	"github.com/webx-top/echo"
 	E "github.com/webx-top/echo"
 	X "github.com/webx-top/webx"
 )
@@ -33,7 +34,7 @@ type Captcha struct {
 	reload X.Mapper `webx:".JSON"`
 }
 
-func (a *Captcha) Init(c *X.Context) error {
+func (a *Captcha) Init(c echo.Context) error {
 	a.Base = New(c)
 	return nil
 }
@@ -110,7 +111,7 @@ func (this *Captcha) checkRefer(f func() error) (err error, ret bool) {
 	app := this.Query("app")
 	allowedDomain := ""
 	if app != "" {
-		if domain := this.Server.App(app).Domain; domain != `` {
+		if domain := this.Server.Module(app).Domain; domain != `` {
 			allowedDomain = "http://" + domain
 			this.Response().Header().Set("Access-Control-Allow-Origin", allowedDomain)
 		}

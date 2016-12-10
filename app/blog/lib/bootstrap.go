@@ -19,15 +19,15 @@ package lib
 
 import (
 	"github.com/webx-top/blog/app/base"
-	X "github.com/webx-top/webx"
+	"github.com/webx-top/echo"
 )
 
 var (
-	App = base.Server.NewApp("blog", base.SessionMW, base.HtmlCache.Middleware())
+	App = base.Server.NewModule("blog", base.SessionMW, base.HtmlCache.Middleware())
 )
 
 func init() {
-	App.R(`/ping`, func(c *X.Context) error {
+	App.Register(`/ping`, func(c echo.Context) error {
 		return c.String(`pong`)
 	})
 }

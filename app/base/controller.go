@@ -19,12 +19,13 @@ package base
 
 import (
 	C "github.com/webx-top/captcha"
+	"github.com/webx-top/echo"
 	"github.com/webx-top/validation"
 	X "github.com/webx-top/webx"
 	"github.com/webx-top/webx/lib/database"
 )
 
-func NewController(c *X.Context) *Controller {
+func NewController(c echo.Context) *Controller {
 	a := &Controller{
 		Controller: X.NewController(c),
 		DB:         DB,
@@ -37,7 +38,7 @@ type Controller struct {
 	DB *database.Orm
 }
 
-func (a *Controller) Init(c *X.Context) error {
+func (a *Controller) Init(c echo.Context) error {
 	return nil
 }
 

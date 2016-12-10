@@ -21,6 +21,7 @@ import (
 	D "github.com/webx-top/blog/app/base/dbschema"
 	"github.com/webx-top/blog/app/base/model"
 	"github.com/webx-top/com"
+	"github.com/webx-top/echo"
 	X "github.com/webx-top/webx"
 )
 
@@ -34,9 +35,9 @@ type Setting struct {
 	confM *model.Config
 }
 
-func (a *Setting) Init(c *X.Context) error {
+func (a *Setting) Init(c echo.Context) error {
 	a.Base = New(c)
-	a.confM = model.NewConfig(c)
+	a.confM = model.NewConfig(a.Context)
 	return nil
 }
 

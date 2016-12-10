@@ -20,10 +20,10 @@ package controller
 import (
 	"github.com/webx-top/blog/app/base"
 	//"github.com/webx-top/blog/app/blog/lib"
-	X "github.com/webx-top/webx"
+	"github.com/webx-top/echo"
 )
 
-func New(c *X.Context) *Base {
+func New(c echo.Context) *Base {
 	return &Base{
 		Controller: base.NewController(c),
 	}

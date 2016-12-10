@@ -20,8 +20,9 @@ package controller
 import (
 	D "github.com/webx-top/blog/app/base/dbschema"
 	"github.com/webx-top/blog/app/base/model"
-	X "github.com/webx-top/webx"
 	"github.com/webx-top/com"
+	"github.com/webx-top/echo"
+	X "github.com/webx-top/webx"
 )
 
 type Comment struct {
@@ -34,9 +35,9 @@ type Comment struct {
 	cmtM *model.Comment
 }
 
-func (a *Comment) Init(c *X.Context) error {
+func (a *Comment) Init(c echo.Context) error {
 	a.Base = New(c)
-	a.cmtM = model.NewComment(c)
+	a.cmtM = model.NewComment(a.Context)
 	return nil
 }
 
