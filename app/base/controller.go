@@ -42,13 +42,6 @@ func (a *Controller) Init(c echo.Context) error {
 	return nil
 }
 
-func (a *Controller) Lang() string {
-	if a.Language == `` {
-		a.Language = `zh-cn`
-	}
-	return a.Language
-}
-
 func (a *Controller) NotFoundData() *X.Context {
 	return a.SetErr(a.T(`数据不存在`))
 }
