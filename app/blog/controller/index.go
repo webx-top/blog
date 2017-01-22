@@ -81,6 +81,13 @@ func (a *Index) Index() error {
 	defer log.Sync(false)
 	m := &D.Post{}
 	a.DB.Id(1).Get(m)
+
+	log.Info(`测试Update条件bean：`)
+	_, err := a.DB.Update(m, &D.Post{Id: 1})
+	if err != nil {
+		log.Error(err)
+	}
+
 	ms := []*PostCollection{}
 	log.Info(`测试extends查询：`)
 	a.DB.Where(`Post.id=1`).Join(`LEFT`, `webx_user`, `User.id=Post.uid`).

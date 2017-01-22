@@ -10,3 +10,4 @@
 /.vscode
 *.gz
 /data/upload/*
+/data/bolt/*
