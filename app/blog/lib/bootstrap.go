@@ -23,11 +23,11 @@ import (
 )
 
 var (
-	App = base.Server.NewModule("blog", base.SessionMW, base.HtmlCache.Middleware())
+	Module = base.Server.NewModule("blog", base.SessionMW, base.HtmlCache.Middleware())
 )
 
 func init() {
-	App.Register(`/ping`, func(c echo.Context) error {
+	Module.Register(`/ping`, func(c echo.Context) error {
 		return c.String(`pong`)
 	})
 }

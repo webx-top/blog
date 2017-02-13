@@ -23,5 +23,5 @@ import (
 )
 
 func init() {
-	lib.App.Use(&Captcha{}, &Index{})
+	lib.Module.Use(&Captcha{}, &Index{})
 }

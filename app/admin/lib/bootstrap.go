@@ -23,10 +23,10 @@ import (
 
 var (
 	Name    = `admin`
-	App     = base.Server.NewModule(Name, base.SessionMW, base.Xsrf.Middleware() /*, base.Jwt.Validate()*/)
+	Module  = base.Server.NewModule(Name, base.SessionMW, base.Xsrf.Middleware() /*, base.Jwt.Validate()*/)
 	FuncMap = base.Server.DefaultFuncMap()
 )
 
 func init() {
-	App.InitRenderer(&base.Config.BackendTemplate, FuncMap)
+	Module.InitRenderer(&base.Config.BackendTemplate, FuncMap)
 }
