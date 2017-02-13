@@ -1,0 +1,559 @@
+{
+	"comment": "",
+	"ignore": "test",
+	"package": [
+		{
+			"checksumSHA1": "82Cyqr2vWC/DuQ21uNOO0xZKJQU=",
+			"path": "github.com/admpub/boltstore/reaper",
+			"revision": "1987e402f93c5ed527340818c43ad79a84799f7a",
+			"revisionTime": "2016-02-19T14:36:12Z"
+		},
+		{
+			"checksumSHA1": "IcZZEterYOzTaYTN2Wql3oqF0Pc=",
+			"path": "github.com/admpub/boltstore/shared",
+			"revision": "1987e402f93c5ed527340818c43ad79a84799f7a",
+			"revisionTime": "2016-02-19T14:36:12Z"
+		},
+		{
+			"checksumSHA1": "mn5irbRLGIwedJinh57zS1Zcfyc=",
+			"path": "github.com/admpub/boltstore/shared/protobuf",
+			"revision": "1987e402f93c5ed527340818c43ad79a84799f7a",
+			"revisionTime": "2016-02-19T14:36:12Z"
+		},
+		{
+			"checksumSHA1": "wcOcbTGsvF+tXK336vWYaZBtuvg=",
+			"path": "github.com/admpub/boltstore/store",
+			"revision": "1987e402f93c5ed527340818c43ad79a84799f7a",
+			"revisionTime": "2016-02-19T14:36:12Z"
+		},
+		{
+			"checksumSHA1": "PlheIdua9wFDFgYPz/8MojmRngg=",
+			"path": "github.com/admpub/confl",
+			"revision": "b6d219459248aca9564b9d7a1576177490368365",
+			"revisionTime": "2017-02-07T04:10:40Z"
+		},
+		{
+			"checksumSHA1": "PEEBspOWHvaBDipmc67RauHRQOw=",
+			"path": "github.com/admpub/fasthttp",
+			"revision": "cb2a18fb7aac023dc37b01d4303b05fe859f6ed9",
+			"revisionTime": "2017-01-21T06:02:22Z"
+		},
+		{
+			"checksumSHA1": "K47ntz7Mmct1i3Qf0QvGzH2blG4=",
+			"path": "github.com/admpub/fasthttp/stackless",
+			"revision": "cb2a18fb7aac023dc37b01d4303b05fe859f6ed9",
+			"revisionTime": "2017-01-21T06:02:22Z"
+		},
+		{
+			"checksumSHA1": "BsCG71dqbMEgSPJ6JAOrmJ1DYa8=",
+			"path": "github.com/admpub/go-colortext",
+			"revision": "511bcaf42ccd42c38aba7427b6673277bf19e2a1",
+			"revisionTime": "2016-05-07T01:00:35Z"
+		},
+		{
+			"checksumSHA1": "6ZQqs9dPH6scB59SshZcB7H/axI=",
+			"path": "github.com/admpub/i18n",
+			"revision": "34afafb021d5a4eecb1656b7c6c6547f2cb92d49",
+			"revisionTime": "2016-09-04T09:48:08Z"
+		},
+		{
+			"checksumSHA1": "MtkF+qR08Yk9LD9Ytz0ixTuEV/Q=",
+			"path": "github.com/admpub/log",
+			"revision": "692c7accfa0f939591d96db663ee241bcc909adc",
+			"revisionTime": "2016-12-15T05:17:00Z"
+		},
+		{
+			"checksumSHA1": "pdmkkXcX7vjIBoAVjm/C+e8ZIzc=",
+			"path": "github.com/admpub/pongo2",
+			"revision": "a269242022ae534b052672d6a9326a40560a63e7",
+			"revisionTime": "2015-11-18T00:06:30Z"
+		},
+		{
+			"checksumSHA1": "3dC27bsMgkiW9veWrWvXh7zRZmc=",
+			"path": "github.com/admpub/queueChan",
+			"revision": "79908f7a499f379d32d1b1eabe1bf653129bb154",
+			"revisionTime": "2015-10-01T07:43:56Z"
+		},
+		{
+			"checksumSHA1": "LYppChr9BydQrH48gvRKjbzPXt8=",
+			"path": "github.com/admpub/sessions",
+			"revision": "7ce48c6de5e67f5ec9aa46e6cad2432addb49149",
+			"revisionTime": "2016-02-19T14:37:21Z"
+		},
+		{
+			"checksumSHA1": "5mK8liBYZFmBOYf8ayzw+M1N51I=",
+			"path": "github.com/araddon/gou",
+			"revision": "5e9110908156ae10fe90dd01d6c9fcbe058a6c9e",
+			"revisionTime": "2016-01-20T22:10:13Z"
+		},
+		{
+			"checksumSHA1": "3xjXDOTGivHzhWa0l9ULKpaLxE0=",
+			"path": "github.com/boltdb/bolt",
+			"revision": "074dffcc83e9f421e261526d297cd93f22a34080",
+			"revisionTime": "2016-10-08T15:24:23Z"
+		},
+		{
+			"checksumSHA1": "4J1QNaLqbuSuZ+Et1l2qYuP3pH4=",
+			"path": "github.com/coscms/xorm",
+			"revision": "e246004df5ca9af4326fd8c5ae1829dcb62d1dfe",
+			"revisionTime": "2017-02-13T03:47:32Z"
+		},
+		{
+			"checksumSHA1": "fkFQb6aidoKzVjfByrliimLiyVY=",
+			"path": "github.com/coscms/xorm/builder",
+			"revision": "e246004df5ca9af4326fd8c5ae1829dcb62d1dfe",
+			"revisionTime": "2017-02-13T03:47:32Z"
+		},
+		{
+			"checksumSHA1": "LEri3ka180IcKcFQgif+R2WOQ5Y=",
+			"path": "github.com/coscms/xorm/core",
+			"revision": "e246004df5ca9af4326fd8c5ae1829dcb62d1dfe",
+			"revisionTime": "2017-02-13T03:47:32Z"
+		},
+		{
+			"checksumSHA1": "II1+K+D8tkzRbNAM1CgTfxuspSA=",
+			"path": "github.com/dgrijalva/jwt-go",
+			"revision": "f0777076321ab64f6efc15a82d9d23b98539b943",
+			"revisionTime": "2016-06-17T17:01:58Z"
+		},
+		{
+			"checksumSHA1": "AZcW/5d7TKL2kYIjdMLL1LwPAeo=",
+			"path": "github.com/dgrijalva/jwt-go/request",
+			"revision": "f0777076321ab64f6efc15a82d9d23b98539b943",
+			"revisionTime": "2016-06-17T17:01:58Z"
+		},
+		{
+			"checksumSHA1": "7VjWBbxIJUYXCoFzUp8p1E4jvUo=",
+			"path": "github.com/go-sql-driver/mysql",
+			"revision": "0b58b37b664c21f3010e836f1b931e1d0b0b0685",
+			"revisionTime": "2016-08-02T11:38:42Z"
+		},
+		{
+			"checksumSHA1": "IKDbJwhVWaRsLSSIaqowZ16w2yc=",
+			"path": "github.com/gogo/protobuf/proto",
+			"revision": "82d16f734d6d871204a3feb1a73cb220cc92574c",
+			"revisionTime": "2016-02-01T14:25:51Z"
+		},
+		{
+			"checksumSHA1": "7ItTDpBnFYoDL3/cHCT8K3qyPH8=",
+			"path": "github.com/gorilla/securecookie",
+			"revision": "ff356348f74133a59d3e93aa24b5b4551b6fe90d",
+			"revisionTime": "2016-05-25T20:33:48Z"
+		},
+		{
+			"checksumSHA1": "fgO9qjMQTWdpSt8iCUOZ27yvLEc=",
+			"path": "github.com/howeyc/fsnotify",
+			"revision": "f0c08ee9c60704c1879025f2ae0ff3e000082c13",
+			"revisionTime": "2015-10-03T19:46:02Z"
+		},
+		{
+			"checksumSHA1": "TFSynLcilsKu6nj8sxS/3BtHeoY=",
+			"path": "github.com/klauspost/compress/flate",
+			"revision": "14eb9c4951195779ecfbec34431a976de7335b0a",
+			"revisionTime": "2016-04-21T08:16:54Z"
+		},
+		{
+			"checksumSHA1": "1wlhFFyKKkoL3X/S4TdT6vRQgfA=",
+			"path": "github.com/klauspost/compress/gzip",
+			"revision": "14eb9c4951195779ecfbec34431a976de7335b0a",
+			"revisionTime": "2016-04-21T08:16:54Z"
+		},
+		{
+			"checksumSHA1": "c0whSqlQKReeCty0nP52+HiTh5c=",
+			"path": "github.com/klauspost/compress/zlib",
+			"revision": "14eb9c4951195779ecfbec34431a976de7335b0a",
+			"revisionTime": "2016-04-21T08:16:54Z"
+		},
+		{
+			"checksumSHA1": "4NJpn9HW2Rh1i+wD5hYQLY94wDI=",
+			"path": "github.com/klauspost/cpuid",
+			"revision": "09cded8978dc9e80714c4d85b0322337b0a1e5e0",
+			"revisionTime": "2016-03-02T07:53:16Z"
+		},
+		{
+			"checksumSHA1": "GzRhW6f3yGSR0t2+qde/aHROdEQ=",
+			"path": "github.com/klauspost/crc32",
+			"revision": "19b0b332c9e4516a6370a0456e6182c3b5036720",
+			"revisionTime": "2016-02-19T14:26:09Z"
+		},
+		{
+			"checksumSHA1": "QZl555Wx76pS7rY+xhz59dKBTT4=",
+			"path": "github.com/valyala/bytebufferpool",
+			"revision": "a517d2d1537f5b02e9f6c23d4794160c6c2bc157",
+			"revisionTime": "2016-07-01T19:46:08Z"
+		},
+		{
+			"checksumSHA1": "5uRoLFE7IJG1AWHQ6q4wAs2V8Vg=",
+			"path": "github.com/valyala/fasthttp/fasthttputil",
+			"revision": "2ada93a6dff49eb212acf5d7faf2f6d9cfca729b",
+			"revisionTime": "2017-01-18T17:20:47Z"
+		},
+		{
+			"checksumSHA1": "r+f70yWgbUAVqTYMGTi2x5ODFoE=",
+			"path": "github.com/webx-top/captcha",
+			"revision": "29e9e7f30aa0e9dc1452af910cbd6f0f9a3b0cce",
+			"revisionTime": "2016-12-02T06:11:15Z"
+		},
+		{
+			"checksumSHA1": "2bcbk05QFmUDj1f8P1lw4zHGOw8=",
+			"path": "github.com/webx-top/com",
+			"revision": "e03dacc231e032a3595390f6a4f3b93ebb155775",
+			"revisionTime": "2017-01-24T10:07:31Z"
+		},
+		{
+			"checksumSHA1": "E1B7ftGsLO3OYE0WFnEoQ5heUo4=",
+			"path": "github.com/webx-top/echo",
+			"revision": "eebd9a5684d70e11eadf155f099ba0a90ca0eb14",
+			"revisionTime": "2017-02-13T07:45:07Z"
+		},
+		{
+			"checksumSHA1": "kvakKmprP2iRIUO378gvKFj9Z7U=",
+			"path": "github.com/webx-top/echo/engine",
+			"revision": "eebd9a5684d70e11eadf155f099ba0a90ca0eb14",
+			"revisionTime": "2017-02-13T07:45:07Z"
+		},
+		{
+			"checksumSHA1": "wYfdon5FRRHTU4sX5g8G471TBJ0=",
+			"path": "github.com/webx-top/echo/engine/fasthttp",
+			"revision": "eebd9a5684d70e11eadf155f099ba0a90ca0eb14",
+			"revisionTime": "2017-02-13T07:45:07Z"
+		},
+		{
+			"checksumSHA1": "BvFAoE9sFDupsfWLEZ8+SRKx3Vw=",
+			"path": "github.com/webx-top/echo/engine/standard",
+			"revision": "eebd9a5684d70e11eadf155f099ba0a90ca0eb14",
+			"revisionTime": "2017-02-13T07:45:07Z"
+		},
+		{
+			"checksumSHA1": "k11OmuiR+70rX0Jk3irhG/axbRQ=",
+			"path": "github.com/webx-top/echo/handler/mvc",
+			"revision": "eebd9a5684d70e11eadf155f099ba0a90ca0eb14",
+			"revisionTime": "2017-02-13T07:45:07Z"
+		},
+		{
+			"checksumSHA1": "nqrVTfILij1mSmg8e01k4I2whsw=",
+			"path": "github.com/webx-top/echo/handler/mvc/events",
+			"revision": "eebd9a5684d70e11eadf155f099ba0a90ca0eb14",
+			"revisionTime": "2017-02-13T07:45:07Z"
+		},
+		{
+			"checksumSHA1": "350r3yrB4GiCQHAkWSXoFE9f7iA=",
+			"path": "github.com/webx-top/echo/handler/mvc/static/minify",
+			"revision": "eebd9a5684d70e11eadf155f099ba0a90ca0eb14",
+			"revisionTime": "2017-02-13T07:45:07Z"
+		},
+		{
+			"checksumSHA1": "3rjUvmCnVKd7jXGD4taq9fHI03I=",
+			"path": "github.com/webx-top/echo/handler/mvc/static/resource",
+			"revision": "eebd9a5684d70e11eadf155f099ba0a90ca0eb14",
+			"revisionTime": "2017-02-13T07:45:07Z"
+		},
+		{
+			"checksumSHA1": "+fzBaFdK1MvzMpR+GpOQ7kpAkOo=",
+			"path": "github.com/webx-top/echo/handler/pprof",
+			"revision": "eebd9a5684d70e11eadf155f099ba0a90ca0eb14",
+			"revisionTime": "2017-02-13T07:45:07Z"
+		},
+		{
+			"checksumSHA1": "kL7Dpc0M5x8sK9iiPAbaeg1gP3A=",
+			"path": "github.com/webx-top/echo/logger",
+			"revision": "eebd9a5684d70e11eadf155f099ba0a90ca0eb14",
+			"revisionTime": "2017-02-13T07:45:07Z"
+		},
+		{
+			"checksumSHA1": "p8cYcJ7xtp/RaWG+aEnCvBz5+cA=",
+			"path": "github.com/webx-top/echo/middleware",
+			"revision": "eebd9a5684d70e11eadf155f099ba0a90ca0eb14",
+			"revisionTime": "2017-02-13T07:45:07Z"
+		},
+		{
+			"checksumSHA1": "W4b9oFwnp0PiYwsupBd97BJQGiY=",
+			"path": "github.com/webx-top/echo/middleware/bytes",
+			"revision": "eebd9a5684d70e11eadf155f099ba0a90ca0eb14",
+			"revisionTime": "2017-02-13T07:45:07Z"
+		},
+		{
+			"checksumSHA1": "3IId00dKMK+/yzCjU968B1iDrSY=",
+			"path": "github.com/webx-top/echo/middleware/language",
+			"revision": "eebd9a5684d70e11eadf155f099ba0a90ca0eb14",
+			"revisionTime": "2017-02-13T07:45:07Z"
+		},
+		{
+			"checksumSHA1": "yptIJch8YmBZKH9a8Uqmd5nowc8=",
+			"path": "github.com/webx-top/echo/middleware/random",
+			"revision": "eebd9a5684d70e11eadf155f099ba0a90ca0eb14",
+			"revisionTime": "2017-02-13T07:45:07Z"
+		},
+		{
+			"checksumSHA1": "4hGtKHzaG14jdZgpn0MDtmWB3pk=",
+			"path": "github.com/webx-top/echo/middleware/render",
+			"revision": "eebd9a5684d70e11eadf155f099ba0a90ca0eb14",
+			"revisionTime": "2017-02-13T07:45:07Z"
+		},
+		{
+			"checksumSHA1": "puEmHnJ86a9IQmBTSILG1wmJefo=",
+			"path": "github.com/webx-top/echo/middleware/render/driver",
+			"revision": "eebd9a5684d70e11eadf155f099ba0a90ca0eb14",
+			"revisionTime": "2017-02-13T07:45:07Z"
+		},
+		{
+			"checksumSHA1": "n2lgT6E3RIS3pqGFIsdUmtI3+gI=",
+			"path": "github.com/webx-top/echo/middleware/render/manager",
+			"revision": "eebd9a5684d70e11eadf155f099ba0a90ca0eb14",
+			"revisionTime": "2017-02-13T07:45:07Z"
+		},
+		{
+			"checksumSHA1": "RgwGvLJnX4pgqApoOAPj48JGQUY=",
+			"path": "github.com/webx-top/echo/middleware/render/pongo2",
+			"revision": "eebd9a5684d70e11eadf155f099ba0a90ca0eb14",
+			"revisionTime": "2017-02-13T07:45:07Z"
+		},
+		{
+			"checksumSHA1": "X5u1wNizgkFnKrjz8xYf2VTmAR8=",
+			"path": "github.com/webx-top/echo/middleware/render/standard",
+			"revision": "eebd9a5684d70e11eadf155f099ba0a90ca0eb14",
+			"revisionTime": "2017-02-13T07:45:07Z"
+		},
+		{
+			"checksumSHA1": "t+ae/FzAe379A7Qa9oiAcDlp6Jw=",
+			"path": "github.com/webx-top/echo/middleware/session",
+			"revision": "eebd9a5684d70e11eadf155f099ba0a90ca0eb14",
+			"revisionTime": "2017-02-13T07:45:07Z"
+		},
+		{
+			"checksumSHA1": "3spxcb43CKdqsivV7a60EeEl9PQ=",
+			"path": "github.com/webx-top/echo/middleware/session/engine",
+			"revision": "eebd9a5684d70e11eadf155f099ba0a90ca0eb14",
+			"revisionTime": "2017-02-13T07:45:07Z"
+		},
+		{
+			"checksumSHA1": "nVz2rcCM/GRo30UYtsg73bDwH3w=",
+			"path": "github.com/webx-top/echo/middleware/session/engine/bolt",
+			"revision": "eebd9a5684d70e11eadf155f099ba0a90ca0eb14",
+			"revisionTime": "2017-02-13T07:45:07Z"
+		},
+		{
+			"checksumSHA1": "2k0z9a7gZeTxGovr6lNYZsA/lOs=",
+			"path": "github.com/webx-top/echo/middleware/session/engine/cookie",
+			"revision": "eebd9a5684d70e11eadf155f099ba0a90ca0eb14",
+			"revisionTime": "2017-02-13T07:45:07Z"
+		},
+		{
+			"checksumSHA1": "MgG7OqSXZB9xisjSn37oL7qNU3Y=",
+			"path": "github.com/webx-top/echo/middleware/tplfunc",
+			"revision": "eebd9a5684d70e11eadf155f099ba0a90ca0eb14",
+			"revisionTime": "2017-02-13T07:45:07Z"
+		},
+		{
+			"checksumSHA1": "iOKiFL6krz7jpv9LnkZD8WO+NPc=",
+			"path": "github.com/webx-top/echo/param",
+			"revision": "eebd9a5684d70e11eadf155f099ba0a90ca0eb14",
+			"revisionTime": "2017-02-13T07:45:07Z"
+		},
+		{
+			"checksumSHA1": "hCTfgxXvMC3YDGOMAFGNg1S+j/U=",
+			"path": "github.com/webx-top/tagfast",
+			"revision": "9a2065ce3dd25846ad772e8f77661b66820c2b73",
+			"revisionTime": "2016-10-20T04:14:35Z"
+		},
+		{
+			"checksumSHA1": "ldQWhCXWUS+CjmJDKV70WLv1cP0=",
+			"path": "github.com/webx-top/validation",
+			"revision": "e7856cc3375c73a5849e853f2813cc6b5b1b9784",
+			"revisionTime": "2016-10-17T13:41:17Z"
+		},
+		{
+			"checksumSHA1": "9lUNmiKbUr/KDiTetwA0qlveTVY=",
+			"path": "github.com/webx-top/webx",
+			"revision": "b1f1e0840db98b9de91b7559399b66d94e6af87d",
+			"revisionTime": "2017-02-12T05:25:03Z"
+		},
+		{
+			"checksumSHA1": "cVrVdzDHh1Tb+PWKBhkzoTU/lIg=",
+			"path": "github.com/webx-top/webx/lib/client/edit",
+			"revision": "b1f1e0840db98b9de91b7559399b66d94e6af87d",
+			"revisionTime": "2017-02-12T05:25:03Z"
+		},
+		{
+			"checksumSHA1": "6oFhMHx+cJsyXsrxJbOQl9JvScs=",
+			"path": "github.com/webx-top/webx/lib/client/list",
+			"revision": "b1f1e0840db98b9de91b7559399b66d94e6af87d",
+			"revisionTime": "2017-02-12T05:25:03Z"
+		},
+		{
+			"checksumSHA1": "6Ev/Y8+iBCpqDv2R3emOeEJ7F5I=",
+			"path": "github.com/webx-top/webx/lib/client/list/datatable",
+			"revision": "b1f1e0840db98b9de91b7559399b66d94e6af87d",
+			"revisionTime": "2017-02-12T05:25:03Z"
+		},
+		{
+			"checksumSHA1": "9UbrdHggGuopwd1KsgQEOEs8PEg=",
+			"path": "github.com/webx-top/webx/lib/client/list/pagination",
+			"revision": "b1f1e0840db98b9de91b7559399b66d94e6af87d",
+			"revisionTime": "2017-02-12T05:25:03Z"
+		},
+		{
+			"checksumSHA1": "I6Ur4X8Rg3Gd417NL6L+XPZlRBE=",
+			"path": "github.com/webx-top/webx/lib/client/upload",
+			"revision": "b1f1e0840db98b9de91b7559399b66d94e6af87d",
+			"revisionTime": "2017-02-12T05:25:03Z"
+		},
+		{
+			"checksumSHA1": "HYPXmpQLvIa2M5ef+UEB8tbs/aE=",
+			"path": "github.com/webx-top/webx/lib/client/upload/client/markdown",
+			"revision": "b1f1e0840db98b9de91b7559399b66d94e6af87d",
+			"revisionTime": "2017-02-12T05:25:03Z"
+		},
+		{
+			"checksumSHA1": "HMsjLmnUP6oEFdoHekO9+hBnOXA=",
+			"path": "github.com/webx-top/webx/lib/client/upload/client/simple",
+			"revision": "b1f1e0840db98b9de91b7559399b66d94e6af87d",
+			"revisionTime": "2017-02-12T05:25:03Z"
+		},
+		{
+			"checksumSHA1": "wKAnTuTuR4yaYzzGHHnIo/8mcjQ=",
+			"path": "github.com/webx-top/webx/lib/client/upload/client/webuploader",
+			"revision": "b1f1e0840db98b9de91b7559399b66d94e6af87d",
+			"revisionTime": "2017-02-12T05:25:03Z"
+		},
+		{
+			"checksumSHA1": "7kg6OITmVTe/cBcHSs84sBo0ciY=",
+			"path": "github.com/webx-top/webx/lib/client/upload/client/xheditor",
+			"revision": "b1f1e0840db98b9de91b7559399b66d94e6af87d",
+			"revisionTime": "2017-02-12T05:25:03Z"
+		},
+		{
+			"checksumSHA1": "6XNdWPfSPg9m0+twY4nupj4ZmA4=",
+			"path": "github.com/webx-top/webx/lib/config",
+			"revision": "b1f1e0840db98b9de91b7559399b66d94e6af87d",
+			"revisionTime": "2017-02-12T05:25:03Z"
+		},
+		{
+			"checksumSHA1": "7nGgCgEQ3116zH6EJUui1Mk50SU=",
+			"path": "github.com/webx-top/webx/lib/database",
+			"revision": "b1f1e0840db98b9de91b7559399b66d94e6af87d",
+			"revisionTime": "2017-02-12T05:25:03Z"
+		},
+		{
+			"checksumSHA1": "8SzpnAa9gbxvF7dlu1vKfwQtovM=",
+			"path": "github.com/webx-top/webx/lib/forms/common",
+			"revision": "b1f1e0840db98b9de91b7559399b66d94e6af87d",
+			"revisionTime": "2017-02-12T05:25:03Z"
+		},
+		{
+			"checksumSHA1": "ezBn+hWskChiPACfPwwpkabXB8c=",
+			"path": "github.com/webx-top/webx/lib/forms/config",
+			"revision": "b1f1e0840db98b9de91b7559399b66d94e6af87d",
+			"revisionTime": "2017-02-12T05:25:03Z"
+		},
+		{
+			"checksumSHA1": "pGWqpmElGWpcz8tWIbdVUSbK1SM=",
+			"path": "github.com/webx-top/webx/lib/get",
+			"revision": "b1f1e0840db98b9de91b7559399b66d94e6af87d",
+			"revisionTime": "2017-02-12T05:25:03Z"
+		},
+		{
+			"checksumSHA1": "a2j2WA8oynKWX44/ppuVNcpzO18=",
+			"path": "github.com/webx-top/webx/lib/middleware/jwt",
+			"revision": "b1f1e0840db98b9de91b7559399b66d94e6af87d",
+			"revisionTime": "2017-02-12T05:25:03Z"
+		},
+		{
+			"checksumSHA1": "HNZ/TkygKzvPZJ3W4Q0epfbwaRA=",
+			"path": "github.com/webx-top/webx/lib/model",
+			"revision": "b1f1e0840db98b9de91b7559399b66d94e6af87d",
+			"revisionTime": "2017-02-12T05:25:03Z"
+		},
+		{
+			"checksumSHA1": "wN1lSNwAmBLvUkyZlE+ngwDj+B8=",
+			"path": "github.com/webx-top/webx/lib/static/htmlcache",
+			"revision": "b1f1e0840db98b9de91b7559399b66d94e6af87d",
+			"revisionTime": "2017-02-12T05:25:03Z"
+		},
+		{
+			"checksumSHA1": "dIMQDkIVE/8ZE/TvQoRPhzF0Vtc=",
+			"path": "github.com/webx-top/webx/lib/store/cache",
+			"revision": "b1f1e0840db98b9de91b7559399b66d94e6af87d",
+			"revisionTime": "2017-02-12T05:25:03Z"
+		},
+		{
+			"checksumSHA1": "NjGHzOIVO5R7VaJbe1fEyrfZyxo=",
+			"path": "github.com/webx-top/webx/lib/store/file",
+			"revision": "b1f1e0840db98b9de91b7559399b66d94e6af87d",
+			"revisionTime": "2017-02-12T05:25:03Z"
+		},
+		{
+			"checksumSHA1": "TeudC5moW0XjF3F1vbusA/c1CLc=",
+			"path": "github.com/webx-top/webx/lib/store/file/local",
+			"revision": "b1f1e0840db98b9de91b7559399b66d94e6af87d",
+			"revisionTime": "2017-02-12T05:25:03Z"
+		},
+		{
+			"checksumSHA1": "yBnIpsjd78oROT3Rq+ys6S8V4kA=",
+			"path": "github.com/webx-top/webx/lib/uuid",
+			"revision": "b1f1e0840db98b9de91b7559399b66d94e6af87d",
+			"revisionTime": "2017-02-12T05:25:03Z"
+		},
+		{
+			"checksumSHA1": "qSVcXlDaCyJ5/+9hMoUIz8RJTZw=",
+			"path": "github.com/webx-top/webx/lib/xsrf",
+			"revision": "b1f1e0840db98b9de91b7559399b66d94e6af87d",
+			"revisionTime": "2017-02-12T05:25:03Z"
+		},
+		{
+			"checksumSHA1": "9jjO5GjLa0XF/nfWihF02RoH4qc=",
+			"path": "golang.org/x/net/context",
+			"revision": "4971afdc2f162e82d185353533d3cf16188a9f4e",
+			"revisionTime": "2016-11-15T21:05:04Z"
+		},
+		{
+			"checksumSHA1": "vqc3a+oTUGX8PmD0TS+qQ7gmN8I=",
+			"path": "golang.org/x/net/html",
+			"revision": "4971afdc2f162e82d185353533d3cf16188a9f4e",
+			"revisionTime": "2016-11-15T21:05:04Z"
+		},
+		{
+			"checksumSHA1": "00eQaGynDYrv3tL+C7l9xH0IDZg=",
+			"path": "golang.org/x/net/html/atom",
+			"revision": "4971afdc2f162e82d185353533d3cf16188a9f4e",
+			"revisionTime": "2016-11-15T21:05:04Z"
+		},
+		{
+			"checksumSHA1": "W/LDYJL5E/MfMm64hFhVGs5Q5Zw=",
+			"path": "golang.org/x/text/collate",
+			"revision": "b01949dc0793a9af5e4cb3fce4d42999e76e8ca1",
+			"revisionTime": "2016-11-03T07:49:12Z"
+		},
+		{
+			"checksumSHA1": "fM/n4f1c26uIh3wB9g+1flJkSAo=",
+			"path": "golang.org/x/text/internal/colltab",
+			"revision": "b01949dc0793a9af5e4cb3fce4d42999e76e8ca1",
+			"revisionTime": "2016-11-03T07:49:12Z"
+		},
+		{
+			"checksumSHA1": "hyNCcTwMQnV6/MK8uUW9E5H0J0M=",
+			"path": "golang.org/x/text/internal/tag",
+			"revision": "b01949dc0793a9af5e4cb3fce4d42999e76e8ca1",
+			"revisionTime": "2016-11-03T07:49:12Z"
+		},
+		{
+			"checksumSHA1": "euHabPKoKBA1T8PJWKTxjPoIDhc=",
+			"path": "golang.org/x/text/language",
+			"revision": "b01949dc0793a9af5e4cb3fce4d42999e76e8ca1",
+			"revisionTime": "2016-11-03T07:49:12Z"
+		},
+		{
+			"checksumSHA1": "ziMb9+ANGRJSSIuxYdRbA+cDRBQ=",
+			"path": "golang.org/x/text/transform",
+			"revision": "b01949dc0793a9af5e4cb3fce4d42999e76e8ca1",
+			"revisionTime": "2016-11-03T07:49:12Z"
+		},
+		{
+			"checksumSHA1": "Vircurgvsnt4k26havmxPM67PUA=",
+			"path": "golang.org/x/text/unicode/norm",
+			"revision": "b01949dc0793a9af5e4cb3fce4d42999e76e8ca1",
+			"revisionTime": "2016-11-03T07:49:12Z"
+		}
+	],
+	"rootPath": "github.com/webx-top/blog"
+}

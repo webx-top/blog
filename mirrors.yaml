@@ -1,6 +1,0 @@
-repos:
-- original: https://golang.org/x/net
-  repo: https://github.com/golang/net
-
-- original: https://golang.org/x/sys
-  repo: https://github.com/golang/sys
