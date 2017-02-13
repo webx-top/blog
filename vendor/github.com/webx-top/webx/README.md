@@ -8,7 +8,7 @@ webx 基于***echo框架***，是对 ***echo框架***(双引擎可切换加强�
 2. 支持多模块架构；
 3. 支持多语言；
 4. 支持响应多种格式(JSON/HTML/XML)；
-5. 完善的[模板引擎](https://github.com/webx-top/webx/tree/master/lib/tplex)(也可以选择pongo2模板引擎)
+5. 完善的模板引擎(支持[golang模板引擎](https://github.com/webx-top/echo/tree/master/middleware/render/standard)和[pongo2模板引擎](https://github.com/webx-top/echo/tree/master/middleware/render/pongo2))
 6. 支持多种缓存引擎(memcache/redis/boltDB/levelDB ...)
 7. 文件支持多种存储方式(本地/FTP/其它云存储 ...)
 8. 支持多种前端组件上传文件(xhEditor/webuploader/Editor.md/其它 ...)
@@ -19,12 +19,15 @@ webx 基于***echo框架***，是对 ***echo框架***(双引擎可切换加强�
 ```Go
 package main
 
-import "github.com/webx-top/webx"
+import (
+	"github.com/webx-top/echo"
+	"github.com/webx-top/webx"
+)
 
 func main(){
 
-    webx.R("/ping",func(c *webx.Context) error {
-	    return c.String(200, "pong")
+    webx.Register("/ping",func(c echo.Context) error {
+	    return c.String("pong")
     })
 
     webx.Run(":8080")
@@ -41,6 +44,7 @@ package main
 import (
 	"fmt"
 
+	"github.com/webx-top/echo"
 	"github.com/webx-top/webx"
 )
 
@@ -50,14 +54,14 @@ type Index struct {
 	*webx.Controller
 }
 
-func (h *Index) Init(c *webx.Context) error {
+func (h *Index) Init(c echo.Context) error {
 	h.Controller = webx.NewController(c)
 	return nil
 }
 
 // URL: /index/index or /
 func (h *Index) Index() error {
-	return h.String(200, "Hello world.[Controller:Index]")
+	return h.String("Hello world.[Controller:Index]")
 }
 
 // ==Home===================================
@@ -67,19 +71,19 @@ type Home struct {
 	*webx.Controller
 }
 
-func (h *Home) Init(c *webx.Context) error {
+func (h *Home) Init(c echo.Context) error {
 	h.Controller = webx.NewController(c)
 	return nil
 }
 
 // URL: /home/ or /home/index
 func (h *Home) Index() error {
-	return h.String(200, "Hello world.[Controller:Home]")
+	return h.String("Hello world.[Controller:Home]")
 }
 
 // URL: /home/ping
 func (h *Home) Ping() error {
-	return h.String(200, "pong")
+	return h.String("pong")
 }
 
 // 前置操作(可选)
