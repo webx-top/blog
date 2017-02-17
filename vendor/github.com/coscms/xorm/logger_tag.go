@@ -186,6 +186,15 @@ func (t *TLogger) SetLogger(logger core.ILogger) {
 	t.Other.Logger = logger
 }
 
+func (t *TLogger) SetProcessor(processor func(tag string, format string, args []interface{}) (string, []interface{})) {
+	t.SQL.Processor = processor
+	t.Event.Processor = processor
+	t.Cache.Processor = processor
+	t.ETime.Processor = processor
+	t.Base.Processor = processor
+	t.Other.Processor = processor
+}
+
 func NewTLogger(logger core.ILogger) *TLogger {
 	return &TLogger{
 		SQL:   &CLogger{Name: "sql", Disabled: false, Processor: defaultLogProcessor, Logger: logger},

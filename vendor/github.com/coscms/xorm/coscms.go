@@ -191,35 +191,34 @@ func (r *ResultSet) Set(index int, value interface{}) bool {
 func (r *ResultSet) SetByName(name string, value interface{}) bool {
 	if index, ok := r.NameIndex[name]; ok {
 		return r.Set(index, value)
-	} else {
-		r.NameIndex[name] = len(r.Values)
-		r.Fields = append(r.Fields, name)
-		rawValue := reflect.Indirect(reflect.ValueOf(value))
-		r.Values = append(r.Values, &rawValue)
-		r.Length = len(r.Values)
 	}
+	r.NameIndex[name] = len(r.Values)
+	r.Fields = append(r.Fields, name)
+	rawValue := reflect.Indirect(reflect.ValueOf(value))
+	r.Values = append(r.Values, &rawValue)
+	r.Length = len(r.Values)
 	return true
 }
 
 // =====================================
 // 增加Session结构体中的方法
 // =====================================
-func (session *Session) QueryStr(sqlStr string, paramStr ...interface{}) ([]map[string]string, error) {
+func (session *Session) QueryStr(sqlStr string, params ...interface{}) ([]map[string]string, error) {
 	defer session.resetStatement()
 	if session.IsAutoClose {
 		defer session.Close()
 	}
 
-	return session.queryStr(sqlStr, paramStr...)
+	return session.queryStr(sqlStr, params...)
 }
 
-func (session *Session) QueryRaw(sqlStr string, paramStr ...interface{}) ([]map[string]interface{}, error) {
+func (session *Session) QueryRaw(sqlStr string, params ...interface{}) ([]map[string]interface{}, error) {
 	defer session.resetStatement()
 	if session.IsAutoClose {
 		defer session.Close()
 	}
 
-	return session.queryInterface(sqlStr, paramStr...)
+	return session.queryInterface(sqlStr, params...)
 }
 
 /**
@@ -229,7 +228,7 @@ func (session *Session) QueryRaw(sqlStr string, paramStr ...interface{}) ([]map[
  * @return []*ResultSet,error
  * @author AdamShen (swh@admpub.com)
  */
-func (session *Session) Q(sqlStr string, paramStr ...interface{}) (resultsSlice []*ResultSet, err error) {
+func (session *Session) Q(sqlStr string, params ...interface{}) (resultsSlice []*ResultSet, err error) {
 
 	defer session.resetStatement()
 	if session.IsAutoClose {
@@ -237,7 +236,7 @@ func (session *Session) Q(sqlStr string, paramStr ...interface{}) (resultsSlice 
 	}
 
 	resultsSlice = make([]*ResultSet, 0)
-	rows, err := session.queryRows(sqlStr, paramStr...)
+	rows, err := session.queryRows(sqlStr, params...)
 	if rows != nil {
 		if err == nil {
 			resultsSlice, err = rows2ResultSetSlice(rows)
@@ -251,7 +250,7 @@ func (session *Session) Q(sqlStr string, paramStr ...interface{}) (resultsSlice 
  * 逐行执行回调函数
  * @param  func(*core.Rows) callback		callback func
  * @param  string sqlStr 					SQL
- * @param  ...interface{} paramStr			params
+ * @param  ...interface{} params			params
  * @return error
  * @author AdamShen (swh@admpub.com)
  * @example
@@ -262,15 +261,16 @@ func (session *Session) Q(sqlStr string, paramStr ...interface{}) (resultsSlice 
  *	//.....
  * },"SELECT * FROM shop WHERE type=?","vip")
  */
-func (session *Session) QCallback(callback func(*core.Rows, []string), sqlStr string, paramStr ...interface{}) (err error) {
+func (session *Session) QCallback(callback func(*core.Rows, []string), sqlStr string, params ...interface{}) (err error) {
 
 	defer session.resetStatement()
 	if session.IsAutoClose {
 		defer session.Close()
 	}
 
-	rows, err := session.queryRows(sqlStr, paramStr...)
+	rows, err := session.queryRows(sqlStr, params...)
 	if rows != nil {
+		defer rows.Close()
 		if err == nil {
 			var fields []string
 			fields, err = rows.Columns()
@@ -281,7 +281,6 @@ func (session *Session) QCallback(callback func(*core.Rows, []string), sqlStr st
 				callback(rows, fields)
 			}
 		}
-		rows.Close()
 	}
 	return
 }
@@ -296,13 +295,13 @@ func (session *Session) queryInterface(sqlStr string, params ...interface{}) (re
 	return
 }
 
-func (session *Session) queryRows(sqlStr string, paramStr ...interface{}) (rows *core.Rows, err error) {
-	session.queryPreprocess(&sqlStr, paramStr...)
+func (session *Session) queryRows(sqlStr string, params ...interface{}) (rows *core.Rows, err error) {
+	session.queryPreprocess(&sqlStr, params...)
 
 	if session.IsAutoCommit {
-		return session.innerQueryRows(session.DB(), sqlStr, paramStr...)
+		return session.innerQueryRows(session.DB(), sqlStr, params...)
 	}
-	return session.txQueryRows(session.Tx, sqlStr, paramStr...)
+	return session.txQueryRows(session.Tx, sqlStr, params...)
 }
 
 func (session *Session) txQueryRows(tx *core.Tx, sqlStr string, params ...interface{}) (rows *core.Rows, err error) {
@@ -336,20 +335,20 @@ func (session *Session) innerQueryRows(db *core.DB, sqlStr string, params ...int
 // 增加Engine结构体中的方法
 // =====================================
 
-func (this *Engine) QueryStr(sql string, paramStr ...interface{}) []map[string]string {
+func (this *Engine) QueryStr(sql string, params ...interface{}) []map[string]string {
 	session := this.NewSession()
 	defer session.Close()
-	result, err := session.QueryStr(sql, paramStr...)
+	result, err := session.QueryStr(sql, params...)
 	if err != nil {
 		this.TLogger.Base.Error(err)
 	}
 	return result
 }
 
-func (this *Engine) QueryRaw(sql string, paramStr ...interface{}) []map[string]interface{} {
+func (this *Engine) QueryRaw(sql string, params ...interface{}) []map[string]interface{} {
 	session := this.NewSession()
 	defer session.Close()
-	result, err := session.QueryRaw(sql, paramStr...)
+	result, err := session.QueryRaw(sql, params...)
 	if err != nil {
 		this.TLogger.Base.Error(err)
 	}
@@ -359,27 +358,27 @@ func (this *Engine) QueryRaw(sql string, paramStr ...interface{}) []map[string]i
 // =======================
 // 原生SQL查询
 // =======================
-func (this *Engine) RawQuery(sql string, paramStr ...interface{}) (resultsSlice []*ResultSet, err error) {
+func (this *Engine) RawQuery(sql string, params ...interface{}) (resultsSlice []*ResultSet, err error) {
 	session := this.NewSession()
 	defer session.Close()
-	resultsSlice, err = session.Q(sql, paramStr...)
+	resultsSlice, err = session.Q(sql, params...)
 	return
 }
 
-func (this *Engine) RawQueryCallback(callback func(*core.Rows, []string), sql string, paramStr ...interface{}) (err error) {
+func (this *Engine) RawQueryCallback(callback func(*core.Rows, []string), sql string, params ...interface{}) (err error) {
 	session := this.NewSession()
 	defer session.Close()
-	err = session.QCallback(callback, sql, paramStr...)
+	err = session.QCallback(callback, sql, params...)
 	return
 }
 
 /**
  * 查询键值对
  */
-func (this *Engine) RawQueryKv(key string, val string, sql string, paramStr ...interface{}) map[string]string {
-	var results map[string]string = make(map[string]string, 0)
+func (this *Engine) RawQueryKv(key string, val string, sql string, params ...interface{}) map[string]string {
+	results := make(map[string]string, 0)
 	err := this.RawQueryCallback(func(rows *core.Rows, fields []string) {
-		var result map[string]string = make(map[string]string)
+		result := make(map[string]string)
 		StrRowProcessing(rows, fields, func(data string, index int, fieldName string) {
 			result[fieldName] = data
 		})
@@ -388,17 +387,17 @@ func (this *Engine) RawQueryKv(key string, val string, sql string, paramStr ...i
 				results[k] = v
 			}
 		}
-	}, sql, paramStr...)
+	}, sql, params...)
 	if err != nil {
 		this.TLogger.Base.Error(err)
 	}
 	return results
 }
 
-func (this *Engine) RawQueryAllKvs(key string, sql string, paramStr ...interface{}) map[string][]map[string]string {
-	var results map[string][]map[string]string = make(map[string][]map[string]string, 0)
+func (this *Engine) RawQueryAllKvs(key string, sql string, params ...interface{}) map[string][]map[string]string {
+	results := make(map[string][]map[string]string, 0)
 	err := this.RawQueryCallback(func(rows *core.Rows, fields []string) {
-		var result map[string]string = make(map[string]string)
+		result := make(map[string]string)
 		StrRowProcessing(rows, fields, func(data string, index int, fieldName string) {
 			result[fieldName] = data
 		})
@@ -408,7 +407,7 @@ func (this *Engine) RawQueryAllKvs(key string, sql string, paramStr ...interface
 			}
 			results[k] = append(results[k], result)
 		}
-	}, sql, paramStr...)
+	}, sql, params...)
 	if err != nil {
 		this.TLogger.Base.Error(err)
 	}
@@ -513,20 +512,20 @@ func (this *Engine) RawFetch(fields string, table string, where string, params .
 /**
  * 查询基于指定字段值为键名的map
  */
-func (this *Engine) RawQueryKvs(key string, sql string, paramStr ...interface{}) map[string]map[string]string {
+func (this *Engine) RawQueryKvs(key string, sql string, params ...interface{}) map[string]map[string]string {
 	if key == "" {
 		key = "id"
 	}
-	var results map[string]map[string]string = make(map[string]map[string]string, 0)
+	results := make(map[string]map[string]string, 0)
 	err := this.RawQueryCallback(func(rows *core.Rows, fields []string) {
-		var result map[string]string = make(map[string]string)
+		result := make(map[string]string)
 		StrRowProcessing(rows, fields, func(data string, index int, fieldName string) {
 			result[fieldName] = data
 		})
 		if k, ok := result[key]; ok {
 			results[k] = result
 		}
-	}, sql, paramStr...)
+	}, sql, params...)
 	if err != nil {
 		this.TLogger.Base.Error(err)
 	}
@@ -534,17 +533,17 @@ func (this *Engine) RawQueryKvs(key string, sql string, paramStr ...interface{})
 }
 
 /**
- * 查询[]map[string]string
+ * RawQueryStr 查询[]map[string]string
  */
-func (this *Engine) RawQueryStr(sql string, paramStr ...interface{}) []map[string]string {
-	var results []map[string]string = make([]map[string]string, 0)
+func (this *Engine) RawQueryStr(sql string, params ...interface{}) []map[string]string {
+	var results []map[string]string
 	err := this.RawQueryCallback(func(rows *core.Rows, fields []string) {
-		var result map[string]string = make(map[string]string)
+		result := make(map[string]string)
 		StrRowProcessing(rows, fields, func(data string, index int, fieldName string) {
 			result[fieldName] = data
 		})
 		results = append(results, result)
-	}, sql, paramStr...)
+	}, sql, params...)
 	if err != nil {
 		this.TLogger.Base.Error(err)
 	}
@@ -555,10 +554,12 @@ func (this *Engine) RawQueryStr(sql string, paramStr ...interface{}) []map[strin
 // 写操作
 // -----------------------
 func (this *Engine) RawInsert(table string, sets map[string]interface{}) (lastId int64) {
-	fields := ""
-	values := ""
-	params := make([]interface{}, 0)
-	delim := ""
+	var (
+		fields string
+		values string
+		params []interface{}
+		delim  string
+	)
 	for k, v := range sets {
 		fields += delim + this.Quote(k)
 		values += delim + "?"
@@ -570,10 +571,12 @@ func (this *Engine) RawInsert(table string, sets map[string]interface{}) (lastId
 }
 
 func (this *Engine) RawOnlyInsert(table string, sets map[string]interface{}) (sql.Result, error) {
-	fields := ""
-	values := ""
-	params := make([]interface{}, 0)
-	delim := ""
+	var (
+		fields string
+		values string
+		params []interface{}
+		delim  string
+	)
 	for k, v := range sets {
 		fields += delim + this.Quote(k)
 		values += delim + "?"
@@ -585,14 +588,16 @@ func (this *Engine) RawOnlyInsert(table string, sets map[string]interface{}) (sq
 }
 
 func (this *Engine) RawBatchInsert(table string, multiSets []map[string]interface{}) (sql.Result, error) {
-	fields := ""
-	values := ""
-	params := make([]interface{}, 0)
+	var (
+		fields string
+		values string
+		params []interface{}
+		length int
+		delim  string
+	)
 	keyIdx := map[string]int{}
-	length := 0
-	delim := ""
 	for i, sets := range multiSets {
-		innerDelim := ""
+		var innerDelim string
 		values += delim + "("
 		if i == 0 {
 			idx := 0
@@ -626,10 +631,12 @@ func (this *Engine) RawBatchInsert(table string, multiSets []map[string]interfac
 }
 
 func (this *Engine) RawReplace(table string, sets map[string]interface{}) int64 {
-	fields := ""
-	values := ""
-	params := make([]interface{}, 0)
-	delim := ""
+	var (
+		fields string
+		values string
+		params []interface{}
+		delim  string
+	)
 	for k, v := range sets {
 		fields += delim + this.Quote(k)
 		values += delim + "?"
@@ -641,9 +648,11 @@ func (this *Engine) RawReplace(table string, sets map[string]interface{}) int64 
 }
 
 func (this *Engine) RawUpdate(table string, sets map[string]interface{}, where string, args ...interface{}) int64 {
-	set := ""
-	params := make([]interface{}, 0)
-	delim := ""
+	var (
+		set    string
+		params []interface{}
+		delim  string
+	)
 	for k, v := range sets {
 		set += delim + this.Quote(k) + "=?"
 		params = append(params, v)
@@ -868,7 +877,7 @@ func BuildSqlResult(sqlStr string, args interface{}) string {
 }
 
 func AddSlashes(s string, args ...rune) string {
-	b := []rune{'\\', '\''}
+	b := []rune{'\''}
 	if len(args) > 0 {
 		b = append(b, args...)
 	}
@@ -878,13 +887,17 @@ func AddSlashes(s string, args ...rune) string {
 func AddCSlashes(s string, b ...rune) string {
 	r := []rune{}
 	for _, v := range []rune(s) {
-		for _, f := range b {
-			if v == f {
-				r = append(r, '\\')
-				break
+		if v == '\\' {
+			r = append(r, '\\')
+		} else {
+			for _, f := range b {
+				if v == f {
+					r = append(r, '\\')
+					break
+				}
 			}
 		}
 		r = append(r, v)
 	}
-	return strings.TrimRight(string(r), `\`)
+	return string(r)
 }

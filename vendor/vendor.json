@@ -93,10 +93,10 @@
 			"revisionTime": "2016-10-08T15:24:23Z"
 		},
 		{
-			"checksumSHA1": "4J1QNaLqbuSuZ+Et1l2qYuP3pH4=",
+			"checksumSHA1": "1uw1+2E8mTrFZ5i5rW/YxmCGXI8=",
 			"path": "github.com/coscms/xorm",
-			"revision": "e246004df5ca9af4326fd8c5ae1829dcb62d1dfe",
-			"revisionTime": "2017-02-13T03:47:32Z"
+			"revision": "7455a50dd6473c0b98cc52a8bec0a5f4e0195154",
+			"revisionTime": "2017-02-15T10:51:46Z"
 		},
 		{
 			"checksumSHA1": "fkFQb6aidoKzVjfByrliimLiyVY=",
@@ -201,10 +201,10 @@
 			"revisionTime": "2017-02-14T03:30:55Z"
 		},
 		{
-			"checksumSHA1": "E1B7ftGsLO3OYE0WFnEoQ5heUo4=",
+			"checksumSHA1": "7hiYuw0opW2SuKjT9p+eQ6fUH1I=",
 			"path": "github.com/webx-top/echo",
-			"revision": "9b76aa9bbee50aa678be03948e880fe4e979c7ab",
-			"revisionTime": "2017-02-14T03:34:54Z"
+			"revision": "f92a304213bed2f2de59b7589ea83d2e3d51660b",
+			"revisionTime": "2017-02-17T03:34:04Z"
 		},
 		{
 			"checksumSHA1": "kvakKmprP2iRIUO378gvKFj9Z7U=",
@@ -363,10 +363,10 @@
 			"revisionTime": "2016-10-17T13:41:17Z"
 		},
 		{
-			"checksumSHA1": "BXs9+s21IAWZFEc8r9C74w5BXSA=",
+			"checksumSHA1": "B/u8yRbqTzt0DMAw2hdlrGoik+k=",
 			"path": "github.com/webx-top/webx",
-			"revision": "d55bd161b98c1f04563b27fa99345abbd804d745",
-			"revisionTime": "2017-02-13T09:51:20Z"
+			"revision": "e5cc4ecbdb2668f78771a26b057c88bdbdb60c1b",
+			"revisionTime": "2017-02-15T07:20:52Z"
 		},
 		{
 			"checksumSHA1": "cVrVdzDHh1Tb+PWKBhkzoTU/lIg=",
