@@ -30,6 +30,14 @@ func NewAdmpubLogger(args ...*log.Logger) *AdmpubLogger {
 	return l
 }
 
+func NewAdmpubLoggerWithPrefix(prefix string, args ...*log.Logger) *AdmpubLogger {
+	l := NewAdmpubLogger(args...)
+	l.Formatter = func(l *log.Logger, e *log.Entry) string {
+		return e.Time.Format(`2006-01-02 15:04:05`) + "|" + e.Level.String() + "|" + e.Category + "|" + prefix + "|" + e.Message + e.CallStack
+	}
+	return l
+}
+
 // Level implement core.ILogger
 func (s *AdmpubLogger) Level() core.LogLevel {
 	return s.level

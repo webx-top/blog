@@ -130,7 +130,7 @@ func (a *Select) SetClient(countFn func() int64, data interface{}) *Select {
 
 // 生成查询条件。 参数 1-表名, 2-别名
 func (a *Select) GenSess(args ...interface{}) *xorm.Session {
-	s := a.Orm.NewSession()
+	s := a.Orm.Replica().NewSession()
 	s.IsAutoClose = true
 	switch len(args) {
 	case 2:

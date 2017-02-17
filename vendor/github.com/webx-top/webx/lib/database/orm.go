@@ -18,7 +18,6 @@
 package database
 
 import (
-	"io"
 	"log"
 	"regexp"
 	"strings"
@@ -30,53 +29,78 @@ import (
 	"github.com/webx-top/com"
 	cachestore "github.com/webx-top/webx/lib/store/cache"
 	//_ "github.com/ziutek/mymysql/godrv"
+	xlog "github.com/admpub/log"
+	"github.com/webx-top/webx/lib/config"
+	"github.com/webx-top/webx/lib/database/balancer"
 )
 
-func NewOrm(engine string, dsn string) (db *Orm, err error) {
+func NewOrm(engine string, cfgMaster *config.DB, cfgSlaves ...*config.DB) (db *Orm, err error) {
 	db = &Orm{}
-	db.Engine, err = NewEngine(engine, dsn)
+	dsn := cfgMaster.Dsn()
+	for _, cfg := range cfgSlaves {
+		dsn += `;` + cfg.Dsn()
+	}
+	db.Balancer, err = balancer.New(engine, dsn)
 	if err != nil {
 		log.Println("The database connection failed:", err)
 		return
 	}
-	err = db.Engine.Ping()
+	err = db.Ping()
 	if err != nil {
 		log.Println("The database ping failed:", err)
 		return
 	}
-	db.Engine.OpenLog()
+	db.SetToAllDbs(func(x *Engine) {
+		x.OpenLog()
+	})
+	db.SetLogger(xlog.New(`orm`))
 	return
 }
 
 type Orm struct {
-	*Engine
+	*balancer.Balancer
 	CacheStore   interface{}
 	PrefixMapper core.PrefixMapper
 }
 
+func (this *Orm) SetToAllDbs(setter func(*Engine)) *Orm {
+	for _, db := range this.GetAllDbs() {
+		setter(db)
+	}
+	return this
+}
+
 func (this *Orm) SetTimezone(timezone string) *Orm {
+	var location *time.Location
 	switch timezone {
 	case "UTC", "U":
-		this.TZLocation = time.UTC
+		location = time.UTC
 	case "Local", "L", "":
-		this.TZLocation = time.Local
+		location = time.Local
 	default:
 		var err error
-		this.TZLocation, err = time.LoadLocation(timezone)
+		location, err = time.LoadLocation(timezone)
 		if err != nil {
 			log.Println(err)
 		}
 	}
+
+	this.SetToAllDbs(func(x *Engine) {
+		x.TZLocation = location
+	})
 	return this
 }
 
 func (this *Orm) SetPrefix(prefix string) *Orm {
 	this.PrefixMapper = core.NewPrefixMapper(core.SnakeMapper{}, prefix)
-	this.SetTblMapper(this.PrefixMapper)
+
+	this.SetToAllDbs(func(x *Engine) {
+		x.SetTblMapper(this.PrefixMapper)
+	})
 	return this
 }
 
-//取得完整的表名
+// TblName 取得完整的表名
 func (this *Orm) TblName(noPrefixTableName string) string {
 	return this.Engine.TableName(noPrefixTableName)
 }
@@ -89,8 +113,8 @@ func (this *Orm) JoinAliasObj(table interface{}, alias string) []interface{} {
 	return []interface{}{table, alias}
 }
 
-func (this *Orm) SetLogger(out io.Writer) *Orm {
-	this.Engine.SetLogger(NewSimpleLogger(out))
+func (this *Orm) SetLogger(logger *xlog.Logger) *Orm {
+	this.Balancer.TraceOn(``, logger)
 	return this
 }
 
@@ -100,25 +124,29 @@ func (this *Orm) SetCacher(cs core.CacheStore) *Orm {
 		var (
 			cacher     *LRUCacher
 			lifeTime   int32 = 86400
-			maxEleSize int   = 999999999 //max element size
+			maxEleSize       = 999999999 //max element size
 		)
 		//NewLRUCacher(store core.CacheStore, maxElementSize int)
 		cacher = NewLRUCacher(this.CacheStore.(core.CacheStore), maxEleSize)
 		cacher.Expired = time.Duration(lifeTime) * time.Second
-		this.SetDefaultCacher(cacher)
+		this.SetToAllDbs(func(x *Engine) {
+			x.SetDefaultCacher(cacher)
+		})
 	}
 	return this
 }
 
 func (this *Orm) Close() {
 	//重置数据库连接
-	if this.Engine != nil {
-		if this.Engine.Cacher != nil {
-			this.Engine.Cacher = nil
+	this.SetToAllDbs(func(x *Engine) {
+		if x != nil {
+			if x.Cacher != nil {
+				x.Cacher = nil
+			}
+			_ = x.Close()
+			x = nil
 		}
-		_ = this.Engine.Close()
-		this.Engine = nil
-	}
+	})
 
 	//重置缓存对象
 	if closer, ok := this.CacheStore.(cachestore.Closer); ok {

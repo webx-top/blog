@@ -23,6 +23,7 @@ import (
 	"bytes"
 	"fmt"
 	"html/template"
+	"io/ioutil"
 	"os"
 	"path/filepath"
 	"reflect"
@@ -43,6 +44,7 @@ var (
 	LabelFn  = func(s string) string {
 		return s
 	}
+	FileReader = ioutil.ReadFile
 
 	//private
 	cachedTemplate = make(map[string]*template.Template)

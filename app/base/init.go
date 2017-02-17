@@ -118,7 +118,8 @@ func init() {
 	// ======================
 	// 连接数据库
 	// ======================
-	DB, err = database.NewOrm(Config.DB.Engine, Config.DB.Dsn())
+	Config.DBSlaves = []*config.DB{&Config.DB} //testing
+	DB, err = database.NewOrm(Config.DB.Engine, &Config.DB, Config.DBSlaves...)
 	if err == nil {
 		DB.SetPrefix(Config.DB.Prefix)
 	}

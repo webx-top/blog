@@ -21,7 +21,6 @@ package formcommon
 
 import (
 	"html/template"
-	"io/ioutil"
 	"path/filepath"
 
 	"github.com/webx-top/echo/middleware/tplfunc"
@@ -33,7 +32,7 @@ func TplFuncs() template.FuncMap {
 
 func ParseFiles(files ...string) *template.Template {
 	name := filepath.Base(files[0])
-	b, err := ioutil.ReadFile(files[0])
+	b, err := FileReader(files[0])
 	if err != nil {
 		panic(err)
 	}

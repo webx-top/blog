@@ -23,8 +23,9 @@ import (
 )
 
 type Config struct {
-	DB               `json:"DB"`
-	Session          `json:"Session"`
+	DB               DB              `json:"DB"`
+	DBSlaves         []*DB           `json:"DBSlaves,omitempty"`
+	Session          Session         `json:"Session"`
 	Language         language.Config `json:"Language"`
 	FrontendTemplate render.Config   `json:"FrontendTemplate"`
 	BackendTemplate  render.Config   `json:"BackendTemplate"`
