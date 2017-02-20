@@ -122,6 +122,11 @@ func (b *Balancer) Master() *xorm.Engine {
 	return b.Engine
 }
 
+// Slave Replica's alias
+func (b *Balancer) Slave() *xorm.Engine {
+	return b.Replica()
+}
+
 // Replica returns one of the replicas databases
 func (b *Balancer) Replica() *xorm.Engine {
 	b.mu.RLock()

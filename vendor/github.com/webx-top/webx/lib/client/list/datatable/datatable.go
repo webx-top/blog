@@ -160,7 +160,7 @@ func (a *DataTable) Init(c *X.Context, orm *database.Orm, m interface{}, args ..
 	// 获取客户端提交的字段名
 	// ==========================
 	findFields := map[string]map[string]interface{}{}
-	for k, _ := range c.Request().Form().All() {
+	for k := range c.Request().Form().All() {
 		if !strings.HasPrefix(k, fm[0]) || !strings.HasSuffix(k, fm[1]) {
 			continue
 		}
@@ -185,11 +185,11 @@ func (a *DataTable) Init(c *X.Context, orm *database.Orm, m interface{}, args ..
 
 		//要排序的字段
 		fidx := c.Form(`order[` + idx + `][column]`)
-		if fidx == `` {
+		if len(fidx) == 0 {
 			continue
 		}
 		field = c.Form(fm[0] + fidx + fm[1])
-		if field == `` {
+		if len(field) == 0 {
 			continue
 		}
 		fieldParts = strings.Split(field, `.`)
@@ -219,11 +219,11 @@ func (a *DataTable) Init(c *X.Context, orm *database.Orm, m interface{}, args ..
 
 		//搜索本字段
 		kw := c.Form(`columns[` + info.index + `][search][value]`)
-		if kw != `` {
+		if len(kw) > 0 {
 			a.searches[fullColName] = kw
 		}
 		a.fieldsInfo[fullColName] = column
-		if info.sort != `` {
+		if len(info.sort) > 0 {
 			a.orders.Insert(com.Int(info.index), fullField, fullColName, info.sort)
 		}
 	})

@@ -210,40 +210,33 @@ func (this *Orm) SimpleVerifyTblFields(v interface{}, fields ...string) []string
 // 验证字段名
 // ==========================
 func (this *Orm) VerifyFieldsByMap(m interface{}, findFields map[string]map[string]interface{}, callback func(column *core.Column, info interface{}, prefix string)) string {
-	tables := map[string]*core.Table{}
-	var refValue reflect.Value
 	var pkField string
 	for parent, fields := range findFields {
-		table, ok := tables[parent]
-		if !ok {
-			if !refValue.IsValid() {
-				refValue = reflect.ValueOf(m)
-				typ := refValue.Type()
-				if typ.Kind() == reflect.Ptr && typ.Elem().Kind() == reflect.Struct {
-					refValue = refValue.Elem()
-				}
-			}
-			if parent != `` {
-				vt := refValue.FieldByName(strings.Title(parent))
-				if !vt.IsValid() {
-					continue
-				}
-				if vt.Kind() == reflect.Ptr {
-					if vt.IsNil() {
-						vt.Set(reflect.New(vt.Type().Elem()))
-					}
-					vt = vt.Elem()
-				}
-				table = this.TableInfo(vt.Interface()).Table
-			} else {
-				table = this.TableInfo(m).Table
-			}
-			tables[parent] = table
+		refValue := reflect.ValueOf(m)
+		typ := refValue.Type()
+		if typ.Kind() == reflect.Ptr && typ.Elem().Kind() == reflect.Struct {
+			refValue = refValue.Elem()
 		}
-		if table == nil {
+		var table *core.Table
+		if len(parent) > 0 {
+			vt := refValue.FieldByName(strings.Title(parent))
+			if !vt.IsValid() {
+				continue
+			}
+			if vt.Kind() == reflect.Ptr {
+				if vt.IsNil() {
+					vt.Set(reflect.New(vt.Type().Elem()))
+				}
+				vt = vt.Elem()
+			}
+			table = this.TableInfo(vt.Interface()).Table
+		} else {
+			table = this.TableInfo(m).Table
+		}
+		if table == nil || len(table.MyColumns()) == 0 {
 			continue
 		}
-		if pkField == `` {
+		if len(pkField) == 0 {
 			pks := table.PKColumns()
 			if len(pks) > 0 {
 				for _, col := range pks {
@@ -255,7 +248,7 @@ func (this *Orm) VerifyFieldsByMap(m interface{}, findFields map[string]map[stri
 			}
 		}
 		var prefix string
-		if parent != `` {
+		if len(parent) > 0 {
 			prefix = parent + `.`
 		}
 		for field, info := range fields {

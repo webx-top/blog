@@ -192,16 +192,17 @@ func (a *Post) EditorContent(m *D.Post) (otherContent string) {
 	return
 }
 
-func EditorContent(ctx *X.Context, etype string, editorContext string) (content string, otherContent string) {
+func EditorContent(ctx *X.Context, etype string, editorContent string) (string, string) {
+	var rawContent string
 	switch etype {
 	case `markdown`:
-		otherContent = editorContext
+		rawContent = editorContent
 		editorId := ctx.Form(`EditorId`)
-		if editorId != `` {
-			content = ctx.Form(editorId + `-html-code`)
+		if len(editorId) > 0 {
+			editorContent = ctx.Form(editorId + `-html-code`)
 		} else {
-			content = ``
+			editorContent = ``
 		}
 	}
-	return
+	return editorContent, rawContent
 }
