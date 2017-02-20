@@ -20,7 +20,6 @@ package controller
 import (
 	D "github.com/webx-top/blog/app/base/dbschema"
 	"github.com/webx-top/blog/app/base/model"
-	"github.com/webx-top/com"
 	"github.com/webx-top/echo"
 	X "github.com/webx-top/webx"
 )
@@ -78,7 +77,7 @@ func (a *Link) Add() error {
 }
 
 func (a *Link) Edit() error {
-	id := com.Int(a.Form(`id`))
+	id := a.Formx(`id`).Int()
 	m, has, err := a.lnkM.Get(id)
 	if err != nil {
 		return err
@@ -105,7 +104,7 @@ func (a *Link) Edit() error {
 }
 
 func (a *Link) Delete() error {
-	id := com.Int(a.Form(`id`))
+	id := a.Formx(`id`).Int()
 	if id < 1 {
 		return a.NotFoundData().GotoNext(`Index`)
 	}

@@ -5,8 +5,8 @@
 			<div class="grid_wrapper">
 
 				<div class="g_6 contents_header">
-					<h3 class="i_16_forms tab_label">{{"录入"|T}}</h3>
-					<div><span class="label">{{"文章录入"|T}}</span></div>
+					<h3 class="i_16_forms tab_label">{{"评论"|T}}</h3>
+					<div><span class="label">{{"评论录入"|T}}</span></div>
 				</div>
 				<div class="g_6 contents_options">
 					<div class="simple_buttons">
@@ -39,32 +39,10 @@
 
 				<div class="g_12">
 					<div class="widget_header">
-						<h4 class="widget_header_title wwIcon i_16_forms">{{if eq ActionName "Edit"}}{{"修改文章"|T}}{{else}}{{"添加文章"|T}}{{end}}</h4>
+						<h4 class="widget_header_title wwIcon i_16_forms">{{if eq ActionName "Edit"}}{{"修改评论"|T}}{{else}}{{"添加评论"|T}}{{end}}</h4>
 					</div>
 					<div class="widget_contents noPadding">
 					<form action="" method="post" id="formPost" data-validate="true">
-						<div class="line_grid">
-							<div class="g_3"><span class="label">{{"标题"|T}}
-							<span class="must">*</span></span><div class="field_notice">{{"文章标题"}}</div></div>
-							<div class="g_9">
-								<input class="simple_field" required="required" type="text" name="Title" value="{{.Detail.Title}}" />
-							</div>
-						</div>
-						<div class="line_grid">
-							<div class="g_3"><span class="label">{{"分类"|T}}<span class="must">*</span></span></div>
-							<div class="g_9">
-								<select name="Catid" required="required" class="simple_form">
-								<option value="">- {{"请选择"|T}} -</option>
-								<option value="1"{{if eq .Detail.Catid 1}} selected="selected" {{end}}>{{"默认"|T}}</option>
-								</select>
-							</div>
-						</div>
-						<div class="line_grid">
-							<div class="g_3"><span class="label">{{"简介"|T}}</span></div>
-							<div class="g_9">
-								<textarea class="simple_field elastic twMaxChars" name="Description">{{.Detail.Description}}</textarea>
-							</div>
-						</div>
 						<div class="line_grid">
 							<div class="g_3"><span class="label">{{"编辑器"|T}}<span class="must">*</span></span></div>
 							<div class="g_9">
@@ -82,33 +60,6 @@
 								<textarea class="simple_field" name="Content" style="height:600px" data-content-elem="#etype-{=type=}-content" data-upload-url="{{ModuleURLFor (printf "/Index/Upload?immediate=1&%v=%v" XsrfName XsrfValue)}}">{{.Detail.Content}}</textarea>
 								</div>
 								<div class="field_notice"></div>
-							</div>
-						</div>
-						<div class="line_grid">
-							<div class="g_3"><span class="label">{{"权限"|T}}<span class="must">*</span></span></div>
-							<div class="g_9">
-								<label><input type="radio" name="Display" class="simple_form" value="ALL"{{if or (eq .Detail.Display "") (eq .Detail.Display "ALL")}} checked="checked"{{end}}><span class="label ilC">完全公开</span></label>
-								<label><input type="radio" name="Display" class="simple_form" value="SELF"{{if eq .Detail.Display "SELF"}} checked="checked"{{end}}><span class="label ilC">自己可见</span></label>
-								<label><input type="radio" name="Display" class="simple_form" value="FRIEND"{{if eq .Detail.Display "FRIEND"}} checked="checked"{{end}}><span class="label ilC">好友可见</span></label>
-								<label><input type="radio" name="Display" class="simple_form" value="PWD"{{if eq .Detail.Display "PWD"}} checked="checked"{{end}}><span class="label ilC">需要密码</span></label>
-							</div>
-						</div>
-						<div class="line_grid" id="inputPasswd">
-							<div class="g_3"><span class="label">{{"访问密码"|T}}</span></div>
-							<div class="g_9">
-								<input type="text" placeholder="" title="" disabled="disabled" name="Passwd" class="simple_field tooltip" value="{{.Detail.Passwd}}">
-							</div>
-						</div>
-						<div class="line_grid">
-							<div class="g_3"><span class="label">{{"允许评论"|T}}</span></div>
-							<div class="g_9">
-								<label><input type="checkbox" name="AllowComment" class="simple_form" value="1"{{if or (eq .Detail.AllowComment "") (eq .Detail.AllowComment "Y")}} checked="checked"{{end}}></label>
-							</div>
-						</div>
-						<div class="line_grid">
-							<div class="g_3"><span class="label">{{"标签"|T}}</span></div>
-							<div class="g_9">
-								<input type="text" name="Tags" class="simple_field tooltip" value="{{.Detail.Tags}}" placeholder="" title="多个标签用逗号隔开">
 							</div>
 						</div>
 							<div class="line_grid">

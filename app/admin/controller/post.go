@@ -22,7 +22,6 @@ import (
 
 	D "github.com/webx-top/blog/app/base/dbschema"
 	"github.com/webx-top/blog/app/base/model"
-	"github.com/webx-top/com"
 	"github.com/webx-top/echo"
 	X "github.com/webx-top/webx"
 )
@@ -112,7 +111,7 @@ func (a *Post) Add() error {
 }
 
 func (a *Post) Edit() error {
-	id := com.Int(a.Form(`id`))
+	id := a.Formx(`id`).Int()
 	m, has, err := a.postM.Get(id)
 	if err != nil {
 		return err
@@ -148,7 +147,7 @@ func (a *Post) Edit() error {
 }
 
 func (a *Post) Delete() error {
-	id := com.Int(a.Form(`id`))
+	id := a.Formx(`id`).Int()
 	if id < 1 {
 		return a.NotFoundData().GotoNext(`Index`)
 	}

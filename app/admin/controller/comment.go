@@ -20,7 +20,6 @@ package controller
 import (
 	D "github.com/webx-top/blog/app/base/dbschema"
 	"github.com/webx-top/blog/app/base/model"
-	"github.com/webx-top/com"
 	"github.com/webx-top/echo"
 	X "github.com/webx-top/webx"
 )
@@ -55,6 +54,7 @@ func (a *Comment) Index() error {
 
 func (a *Comment) Add() error {
 	m := &D.Comment{}
+	other := &D.Ocontent{}
 	if a.IsPost() {
 		err := a.Bind(m)
 		if err != nil {
@@ -74,11 +74,12 @@ func (a *Comment) Add() error {
 		}
 	}
 	a.Assign(`Detail`, m)
+	a.Assign(`Other`, other)
 	return a.Display(a.TmplPath(`Edit`))
 }
 
 func (a *Comment) Edit() error {
-	id := com.Int64(a.Form(`id`))
+	id := a.Formx(`id`).Int64()
 	m, has, err := a.cmtM.Get(id)
 	if err != nil {
 		return err
@@ -100,12 +101,17 @@ func (a *Comment) Edit() error {
 			return a.GotoNext(`Index`)
 		}
 	}
+	other, _, err := a.cmtM.GetOtherContent(m.Id)
+	if err != nil {
+		return err
+	}
 	a.Assign(`Detail`, m)
+	a.Assign(`Other`, other)
 	return a.Display()
 }
 
 func (a *Comment) Delete() error {
-	id := com.Int64(a.Form(`id`))
+	id := a.Formx(`id`).Int64()
 	if id < 1 {
 		return a.NotFoundData().GotoNext(`Index`)
 	}

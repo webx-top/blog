@@ -24,11 +24,12 @@ import (
 )
 
 func NewComment(ctx *X.Context) *Comment {
-	return &Comment{M: NewM(ctx)}
+	return &Comment{M: NewM(ctx), C: NewOcontent(ctx)}
 }
 
 type Comment struct {
 	*M
+	C *Ocontent
 }
 
 type CommentWithPost struct {
@@ -61,18 +62,72 @@ func (a *Comment) ListWithPost(s *Select) (countFn func() int64, m []*CommentWit
 }
 
 func (a *Comment) Add(m *D.Comment) (affected int64, err error) {
-	affected, err = a.Sess().Insert(m)
+	otherContent := a.EditorContent(m)
+	a.Trans(func() error {
+		affected, err = a.Sess().Insert(m)
+		if err != nil {
+			return err
+		}
+
+		if m.Etype != `html` {
+			occ := &D.Ocontent{
+				RcId:    int64(m.Id),
+				RcType:  `comment`,
+				Content: otherContent,
+				Etype:   `markdown`,
+			}
+			_, err = a.C.Add(occ)
+		}
+		return err
+	})
+	return
+}
+
+func (a *Comment) EditorContent(m *D.Comment) (otherContent string) {
+	m.Content, otherContent = EditorContent(a.Context, m.Etype, m.Content)
 	return
 }
 
 func (a *Comment) Edit(id int64, m *D.Comment) (affected int64, err error) {
-	affected, err = a.Sess().Id(id).Update(m)
+	oc, has, err := a.C.GetByMaster(int64(id), `post`)
+	otherContent := a.EditorContent(m)
+	a.Trans(func() error {
+		affected, err = a.Sess().Id(id).Update(m)
+		if err != nil {
+			return err
+		}
+		if m.Etype != `html` {
+			occ := &D.Ocontent{
+				RcId:    id,
+				RcType:  `comment`,
+				Content: otherContent,
+				Etype:   `markdown`,
+			}
+			if has {
+				_, err = a.C.Edit(oc.Id, occ)
+			} else {
+				_, err = a.C.Add(occ)
+			}
+		} else {
+			if has {
+				_, err = a.C.DelByMaster(id, `comment`)
+			}
+		}
+		return err
+	})
 	return
 }
 
 func (a *Comment) Delete(id int64) (affected int64, err error) {
 	m := &D.Comment{}
-	affected, err = a.Sess().Where(`id=?`, id).Delete(m)
+	a.Trans(func() error {
+		affected, err = a.Sess().Where(`id=?`, id).Delete(m)
+		if err != nil {
+			return err
+		}
+		_, err = a.C.DelByMaster(id, `comment`)
+		return err
+	})
 	return
 }
 
@@ -80,4 +135,8 @@ func (a *Comment) Get(id int64) (m *D.Comment, has bool, err error) {
 	m = &D.Comment{}
 	has, err = a.DB.Id(id).Get(m)
 	return
+}
+
+func (a *Comment) GetOtherContent(id int64) (m *D.Ocontent, has bool, err error) {
+	return a.C.GetByMaster(id, `comment`)
 }

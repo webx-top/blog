@@ -54,6 +54,6 @@
 			</div>		
 		</div>
 <template id="operate-template">
-<a title="{{"编辑"|T}}" href="{{BuildURL "Comment" "Edit"}}?id={=row.Id=}" class="fa fa-edit"></a> | <a title="{{"删除"|T}}" href="{{BuildURL "Comment" "Delete"}}?id={=row.Id=}" class="fa fa-trash" onclick="return confirm('{{"确定删除？"|T}}');"></a>
+<a title="{{"编辑"|T}}" href="{{BuildURL "Comment" "Edit"}}?id={=row.Comment.Id=}" class="fa fa-edit"></a> | <a title="{{"删除"|T}}" href="{{BuildURL "Comment" "Delete"}}?id={=row.Comment.Id=}" class="fa fa-trash" onclick="return confirm('{{"确定删除？"|T}}');"></a>
 </template>
 {{/Block}}

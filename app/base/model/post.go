@@ -64,7 +64,24 @@ func (a *Post) Add(m *D.Post) (affected int64, err error) {
 			}
 		}
 	}
-	affected, err = a.Sess().Insert(m)
+	otherContent := a.EditorContent(m)
+	a.Trans(func() error {
+		affected, err = a.Sess().Insert(m)
+		if err != nil {
+			return err
+		}
+
+		if m.Etype != `html` {
+			occ := &D.Ocontent{
+				RcId:    int64(m.Id),
+				RcType:  `post`,
+				Content: otherContent,
+				Etype:   `markdown`,
+			}
+			_, err = a.C.Add(occ)
+		}
+		return err
+	})
 	return
 }
 
@@ -85,12 +102,20 @@ func (a *Post) Delete(id int) (affected int64, err error) {
 			return
 		}
 	}
-	affected, err = a.Sess().Id(id).Delete(&D.Post{})
+
+	a.Trans(func() error {
+		affected, err = a.Sess().Id(id).Delete(&D.Post{})
+		if err != nil {
+			return err
+		}
+		_, err = a.C.DelByMaster(int64(id), `post`)
+		return err
+	})
 	return
 }
 
 func (a *Post) Edit(id int, m *D.Post) (affected int64, err error) {
-	oc, has, err := a.C.GetByMaster(id, `post`)
+	oc, has, err := a.C.GetByMaster(int64(id), `post`)
 	otherContent := a.EditorContent(m)
 	old, has2, err := a.Get(id)
 	if err != nil {
@@ -107,7 +132,7 @@ func (a *Post) Edit(id int, m *D.Post) (affected int64, err error) {
 		}
 		if m.Etype != `html` {
 			occ := &D.Ocontent{
-				RcId:    id,
+				RcId:    int64(id),
 				RcType:  `post`,
 				Content: otherContent,
 				Etype:   `markdown`,
@@ -119,7 +144,7 @@ func (a *Post) Edit(id int, m *D.Post) (affected int64, err error) {
 			}
 		} else {
 			if has {
-				_, err = a.C.DelByMaster(id, `post`)
+				_, err = a.C.DelByMaster(int64(id), `post`)
 			}
 		}
 		if err != nil {
@@ -159,18 +184,23 @@ func (a *Post) Get(id int) (m *D.Post, has bool, err error) {
 }
 
 func (a *Post) GetOtherContent(id int) (m *D.Ocontent, has bool, err error) {
-	return a.C.GetByMaster(id, `post`)
+	return a.C.GetByMaster(int64(id), `post`)
 }
 
 func (a *Post) EditorContent(m *D.Post) (otherContent string) {
-	switch m.Etype {
+	m.Content, otherContent = EditorContent(a.Context, m.Etype, m.Content)
+	return
+}
+
+func EditorContent(ctx *X.Context, etype string, editorContext string) (content string, otherContent string) {
+	switch etype {
 	case `markdown`:
-		otherContent = m.Content
-		editorId := a.M.Context.Form(`EditorId`)
+		otherContent = editorContext
+		editorId := ctx.Form(`EditorId`)
 		if editorId != `` {
-			m.Content = a.M.Context.Form(editorId + `-html-code`)
+			content = ctx.Form(editorId + `-html-code`)
 		} else {
-			m.Content = ``
+			content = ``
 		}
 	}
 	return
