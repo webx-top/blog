@@ -47,8 +47,7 @@ func (a *Link) Index_HTML() error {
 
 func (a *Link) Index() error {
 	sel := a.lnkM.NewSelect(&D.Link{})
-	sel.Condition = `uid=?`
-	sel.AddParam(a.User.Id).FromClient(true, "title")
+	sel.AddParam(a.User.Id).FromClient(true, "name")
 	countFn, data, _ := a.lnkM.List(sel)
 	sel.Client.SetCount(countFn).Data(data)
 	return a.Display()

@@ -3,10 +3,10 @@
 		lang: 'zh-cn',
 		staticUrl: '',
 		siteUrl: '',
-		appUrl: '',
-		appName: '',
-	    controllerName: '',
-	 	actionName: '',
+		moduleUrl: '',
+		module: '',
+	    controller: '',
+	 	action: '',
 		data: {},
 		pageJs: null,
 		libs: {
@@ -89,11 +89,11 @@
 			webx.includes(key);
 			if (callback != null) return callback();
 		},
-		jsFile:function(act,ctl,app){
-			if(app==null)app=webx.appName;
-			if(ctl==null)ctl=webx.controllerName;
-			if(act==null)act=webx.actionName;
-			return "pages/"+app+"/"+ctl+"/"+act+".js";
+		jsFile:function(act,ctl,mod){
+			if(mod==null)mod=webx.module;
+			if(ctl==null)ctl=webx.controller;
+			if(act==null)act=webx.action;
+			return "pages/"+mod+"/"+ctl+"/"+act+".js";
 		},
 		includes: function(js) {
 			if (!js) return;
@@ -102,7 +102,7 @@
 				webx.include(webx.staticUrl + 'js/' + js);
 				return;
 			case 'boolean':
-				webx.include(webx.staticUrl + 'js/pages/' + webx.appName + '/' + webx.controllerName + '/' + webx.actionName + '.js');
+				webx.include(webx.staticUrl + 'js/pages/' + webx.module + '/' + webx.controller + '/' + webx.action + '.js');
 				return;
 			default:
 				if (typeof(js.length) == 'undefined') return;

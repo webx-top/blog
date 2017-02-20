@@ -18,8 +18,6 @@
 package model
 
 import (
-	//"errors"
-	//"strings"
 	"math"
 
 	D "github.com/webx-top/blog/app/base/dbschema"
@@ -80,11 +78,14 @@ func (a *Tag) AddNotExists(uid int, rcType string, tags ...string) (m []*D.Tag, 
 		params[k] = v
 	}
 	err = a.Sess().Where(`rc_type=?`, rcType).In(`name`, params...).Find(&m)
-	rs := make([]string, 0)
+	var rs []string
 	if err != nil {
 		return
 	}
 	for _, tag := range tags {
+		if tag == `` {
+			continue
+		}
 		exists := false
 		for _, v := range m {
 			if v.Name == tag {
@@ -97,9 +98,6 @@ func (a *Tag) AddNotExists(uid int, rcType string, tags ...string) (m []*D.Tag, 
 		}
 	}
 	for _, tag := range rs {
-		if tag == `` {
-			continue
-		}
 		_m := &D.Tag{
 			Name:   tag,
 			Uid:    uid,

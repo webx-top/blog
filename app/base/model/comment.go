@@ -18,9 +18,6 @@
 package model
 
 import (
-	//"errors"
-	//"strings"
-
 	D "github.com/webx-top/blog/app/base/dbschema"
 	X "github.com/webx-top/webx"
 	. "github.com/webx-top/webx/lib/model"
@@ -34,6 +31,11 @@ type Comment struct {
 	*M
 }
 
+type CommentWithPost struct {
+	Comment *D.Comment `xorm:"extends"`
+	Post    *D.Post    `xorm:"extends" rel:"LEFT:Post.id=Comment.rc_id"`
+}
+
 func (a *Comment) List(s *Select) (countFn func() int64, m []*D.Comment, err error) {
 	m = []*D.Comment{}
 	err = s.Do().Find(&m)
@@ -42,6 +44,18 @@ func (a *Comment) List(s *Select) (countFn func() int64, m []*D.Comment, err err
 	}
 	countFn = func() int64 {
 		return s.Count(D.Comment{})
+	}
+	return
+}
+
+func (a *Comment) ListWithPost(s *Select) (countFn func() int64, m []*CommentWithPost, err error) {
+	m = []*CommentWithPost{}
+	err = s.Do().Find(&m)
+	if err != nil {
+		return
+	}
+	countFn = func() int64 {
+		return s.Count(&CommentWithPost{})
 	}
 	return
 }

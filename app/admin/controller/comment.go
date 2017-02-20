@@ -46,10 +46,9 @@ func (a *Comment) Index_HTML() error {
 }
 
 func (a *Comment) Index() error {
-	sel := a.cmtM.NewSelect(&D.Comment{})
-	sel.Condition = `uid=?`
-	sel.AddParam(a.User.Id).FromClient(true, "title")
-	countFn, data, _ := a.cmtM.List(sel)
+	sel := a.cmtM.NewSelect(&model.CommentWithPost{})
+	sel.AddParam(a.User.Id).FromClient(true, "Comment.content")
+	countFn, data, _ := a.cmtM.ListWithPost(sel)
 	sel.Client.SetCount(countFn).Data(data)
 	return a.Display()
 }

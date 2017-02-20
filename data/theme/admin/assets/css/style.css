@@ -2388,15 +2388,14 @@ div.field_notice.error_tips{
   position: relative;
   overflow: hidden;
   background: white;
-  border: 1px solid #d2e2e7;
-  border-bottom-color: #c5d4d9;
+  border: 1px solid #ccc;
+  border-bottom-color: #bbb;
   border-radius: 2px;
-  background-image: -webkit-linear-gradient(top, #fcfdff, #f2f7f7);
-  background-image: -moz-linear-gradient(top, #fcfdff, #f2f7f7);
-  background-image: -o-linear-gradient(top, #fcfdff, #f2f7f7);
-  background-image: linear-gradient(to bottom, #fcfdff, #f2f7f7);
-  -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+  background-image: -webkit-linear-gradient(top, #fcfcfc, #f2f2f2);
+  background-image: -moz-linear-gradient(top, #fcfcfc, #f2f2f2);
+  background-image: -o-linear-gradient(top, #fcfcfc, #f2f2f2);
+  background-image: linear-gradient(to bottom, #fcfcfc, #f2f2f2);
+  box-shadow: 0 2px 3px #eaeaea;
   width:auto;
 }
 .prettySelector:before, .prettySelector:after {
@@ -2410,11 +2409,11 @@ div.field_notice.error_tips{
 }
 .prettySelector:before {
   top: 10px;
-  border-bottom: 3px solid #7f9298;
+  border-bottom: 3px solid #888;
 }
 .prettySelector:after {
   top: 16px;
-  border-top: 3px solid #7f9298;
+  border-top: 3px solid #888;
 }
 .prettySelector > select {
   position: relative;
@@ -2424,11 +2423,12 @@ div.field_notice.error_tips{
   line-height: 17px;
   padding: 5px 9px;
   padding-right: 0;
-  color: #80989f;
+  color: #888;
   background: transparent;
   background: rgba(0, 0, 0, 0);
   border: 0;
   -webkit-appearance: none;
+  text-shadow: 0 1px 0 #ffffff;
 }
 .prettySelector > select:focus {
   color: #4d5a5e;

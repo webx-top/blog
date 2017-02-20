@@ -126,10 +126,10 @@ func (a *Post) Edit(id int, m *D.Post) (affected int64, err error) {
 			return err
 		}
 		tag := NewTag(a.M.Model.Context)
-		tags := strings.SplitN(m.Tags, `,`, 5)
+		tags := strings.Split(m.Tags, `,`)
 		if old.Tags != `` {
 			oldTags := strings.Split(old.Tags, `,`)
-			delTags := make([]string, 0)
+			var delTags []string
 			for _, t := range oldTags {
 				exists := false
 				for _, v := range tags {

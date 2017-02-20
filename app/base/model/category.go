@@ -18,8 +18,6 @@
 package model
 
 import (
-	//"fmt"
-
 	D "github.com/webx-top/blog/app/base/dbschema"
 	X "github.com/webx-top/webx"
 	. "github.com/webx-top/webx/lib/model"

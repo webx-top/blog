@@ -15,20 +15,20 @@
 						<h4 class="widget_header_title wwIcon i_16_tooltip">{{"评论列表"|T}}</h4>
 					</div>
 					<div class="widget_contents noPadding twCheckbox">
-						<table data-table-url="{{BuildURL "Post" "Index"}}" data-table-order="[1,'asc']" data-table-oninit="eventer.onInit" data-table-ondraw="eventer.onDraw" class="tables noObOLine">
+						<table data-table-url="{{BuildURL "Comment" "Index"}}" data-table-order="[1,'asc']" data-table-oninit="eventer.onInit" data-table-ondraw="eventer.onDraw" class="tables noObOLine">
 							<thead>
 								<tr>
-									<th data-col-field="_" data-col-render='<input type="checkbox" class="simple_form" value="{=row.Id=}">' data-col-orderable="false">
+									<th data-col-field="_" data-col-render='<input type="checkbox" class="simple_form" value="{=row.Comment.Id=}">' data-col-orderable="false">
 										<input type="checkbox" class="simple_form tMainC">
 									</th>
-									<th data-col-field="Id" width="30">ID</th>
-									<th data-col-field="Title" data-col-render='<a href="{{BuildURL "Post" "View"}}?id={=row.Id=}" target="_blank">{=data=}</a>'>{{"标题"|T}}</th>
-									<th data-col-field="Uname" width="50">{{"作者"|T}}</th>
-									<th data-col-field="Updated" data-col-render=":formater.date" width="130">{{"更新时间"|T}}</th>
-									<th data-col-field="Views" width="50">{{"浏览量"|T}}</th>
-									<th data-col-field="Likes" width="50">{{"喜欢量"|T}}</th>
-									<th data-col-field="Comments" width="50">{{"评论量"|T}}</th>
-									<th data-col-field="Deleted" data-col-render=":formater.onOff" width="30">{{"删除"|T}}</th>
+									<th data-col-field="Comment.Id" width="30">ID</th>
+									<th data-col-field="Comment.RcId" data-col-render='<a href="{{BuildURL "Post" "View"}}?id={=row.Comment.RcId=}" target="_blank">{=row.Post.Title=}</a>'>{{"评论文章"|T}}</th>
+									<th data-col-field="Comment.Content">{{"评论"|T}}</th>
+									<th data-col-field="Comment.Uname" width="50">{{"作者"|T}}</th>
+									<th data-col-field="Comment.Created" data-col-render=":formater.date" width="130">{{"时间"|T}}</th>
+									<th data-col-field="Comment.Uname" width="50">{{"评论者"|T}}</th>
+									<th data-col-field="Comment.Up" width="50">{{"顶"|T}}</th>
+									<th data-col-field="Comment.Down" width="50">{{"踩"|T}}</th>
 									<th data-col-field="Operate" data-col-render='#operate-template' width="50">{{"操作"|T}}</th>
 								</tr>
 							</thead>
@@ -37,7 +37,6 @@
 									<th>
 										<input type="checkbox" class="simple_form tMainC">
 									</th>
-									<th><input type="text" class="simple_field"></th>
 									<th><input type="text" class="simple_field"></th>
 									<th><input type="text" class="simple_field"></th>
 									<th><input type="text" class="simple_field"></th>
@@ -54,10 +53,7 @@
 				
 			</div>		
 		</div>
-<script>
-webx.pageJs=true;
-</script>
 <template id="operate-template">
-<a title="{{"编辑"|T}}" href="{{BuildURL "Post" "Edit"}}?id={=row.Id=}" class="fa fa-edit"></a> | <a title="{{"删除"|T}}" href="{{BuildURL "Post" "Delete"}}?id={=row.Id=}" class="fa fa-trash" onclick="return confirm('{{"确定删除？"|T}}');"></a>
+<a title="{{"编辑"|T}}" href="{{BuildURL "Comment" "Edit"}}?id={=row.Id=}" class="fa fa-edit"></a> | <a title="{{"删除"|T}}" href="{{BuildURL "Comment" "Delete"}}?id={=row.Id=}" class="fa fa-trash" onclick="return confirm('{{"确定删除？"|T}}');"></a>
 </template>
 {{/Block}}
