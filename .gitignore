@@ -12,3 +12,4 @@
 /data/upload/*
 /data/bolt/*
 /vendor/github.com/webx-top/webx/*.log
+/*.log
