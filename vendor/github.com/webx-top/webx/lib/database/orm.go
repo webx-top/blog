@@ -50,9 +50,8 @@ func NewOrm(engine string, cfgMaster *config.DB, cfgSlaves ...*config.DB) (db *O
 		log.Println("The database ping failed:", err)
 		return
 	}
-	db.SetToAllDbs(func(x *Engine) {
-		x.OpenLog()
-	})
+	db.SetPrefix(cfgMaster.Prefix)
+	db.OpenLog()
 	db.SetLogger(xlog.New(`orm`))
 	return
 }
@@ -67,6 +66,20 @@ func (this *Orm) SetToAllDbs(setter func(*Engine)) *Orm {
 	for _, db := range this.GetAllDbs() {
 		setter(db)
 	}
+	return this
+}
+
+func (this *Orm) OpenLog(tags ...string) *Orm {
+	this.SetToAllDbs(func(x *Engine) {
+		x.OpenLog(tags...)
+	})
+	return this
+}
+
+func (this *Orm) CloseLog(tags ...string) *Orm {
+	this.SetToAllDbs(func(x *Engine) {
+		x.CloseLog(tags...)
+	})
 	return this
 }
 

@@ -18,6 +18,7 @@
 package base
 
 import (
+	"github.com/admpub/log"
 	"github.com/webx-top/echo"
 	mw "github.com/webx-top/echo/middleware"
 	"github.com/webx-top/echo/middleware/language"
@@ -120,8 +121,8 @@ func init() {
 	// ======================
 	Config.DBSlaves = []*config.DB{&Config.DB} //testing
 	DB, err = database.NewOrm(Config.DB.Engine, &Config.DB, Config.DBSlaves...)
-	if err == nil {
-		DB.SetPrefix(Config.DB.Prefix)
+	if err != nil {
+		log.Error(err)
 	}
 
 	store := localStore.New(map[string]string{
