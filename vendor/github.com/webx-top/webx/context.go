@@ -190,7 +190,7 @@ func (c *Context) SetSecCookie(key string, value interface{}) {
 
 func (c *Context) SecCookie(key string, value interface{}) {
 	cookieValue := c.GetCookie(key)
-	if cookieValue == `` {
+	if len(cookieValue) == 0 {
 		return
 	}
 	if c.Server.Codec != nil {
@@ -225,19 +225,15 @@ func (c *Context) Body() ([]byte, error) {
 }
 
 func (c *Context) IP() string {
-	return c.Request().RealIP()
-}
-
-func (c *Context) IsPjax() bool {
-	return c.Header(`X-PJAX`) == `true`
-}
-
-func (c *Context) PjaxContainer() string {
-	return c.Header(`X-PJAX-Container`)
+	return c.RealIP()
 }
 
 func (c *Context) OnlyAjax() bool {
 	return c.IsAjax() && !c.IsPjax()
+}
+
+func (c *Context) PjaxContainer() string {
+	return c.Header(`X-PJAX-Container`)
 }
 
 // Refer returns http referer header.
@@ -390,41 +386,6 @@ func (c *Context) SetTmplDefaultFuncs(flash *Output, ok bool) {
 		}
 		return c.Output.For
 	})
-}
-
-// MapForm 映射表单数据到结构体
-// ParseStruct mapping forms' name and values to struct's field
-// For example:
-//		<form>
-//			<input name=`user.id`/>
-//			<input name=`user.name`/>
-//			<input name=`user.age`/>
-//		</form>
-//
-//		type User struct {
-//			Id int64
-//			Name string
-//			Age string
-//		}
-//
-//		var user User
-//		err := c.MapForm(&user,`user`)
-//
-func (c *Context) MapForm(i interface{}, names ...string) error {
-	var name string
-	if len(names) > 0 {
-		name = names[0]
-	}
-	return echo.NamedStructMap(c.Server.Core, i, c.Request().Form().All(), name)
-}
-
-// MapData 映射数据到结构体
-func (c *Context) MapData(i interface{}, data map[string][]string, names ...string) error {
-	var name string
-	if len(names) > 0 {
-		name = names[0]
-	}
-	return echo.NamedStructMap(c.Server.Core, i, data, name)
 }
 
 // ErrorWithCode 生成HTTPError

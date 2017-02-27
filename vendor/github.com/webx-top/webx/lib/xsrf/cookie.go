@@ -18,9 +18,9 @@
 package xsrf
 
 import (
+	"github.com/webx-top/com"
 	"github.com/webx-top/echo"
 	X "github.com/webx-top/webx"
-	"github.com/webx-top/com"
 )
 
 type SecCookieStorage struct {
@@ -37,8 +37,7 @@ func (c *SecCookieStorage) Set(key, val string, ctx echo.Context) {
 
 func (c *SecCookieStorage) safelyVal(val string, ctx echo.Context) string {
 	if c.HighSafe {
-		context := X.X(ctx)
-		val = val + `|` + context.IP() + `|` + context.Request().UserAgent()
+		val = val + `|` + ctx.RealIP() + `|` + ctx.Request().UserAgent()
 	}
 	return val
 }
@@ -53,18 +52,17 @@ type CookieStorage struct {
 }
 
 func (c *CookieStorage) Get(key string, ctx echo.Context) string {
-	return X.X(ctx).GetCookie(key)
+	return ctx.GetCookie(key)
 }
 
 func (c *CookieStorage) Set(key, val string, ctx echo.Context) {
-	X.X(ctx).SetCookie(key, c.safelyVal(val, ctx))
+	ctx.SetCookie(key, c.safelyVal(val, ctx))
 }
 
 func (c *CookieStorage) safelyVal(val string, ctx echo.Context) string {
-	if c.AuthKey != `` {
+	if len(c.AuthKey) > 0 {
 		if c.HighSafe {
-			context := X.X(ctx)
-			val = com.Md5(val + `|` + context.IP() + `|` + context.Request().UserAgent() + `|` + c.AuthKey)
+			val = com.Md5(val + `|` + ctx.RealIP() + `|` + ctx.Request().UserAgent() + `|` + c.AuthKey)
 		} else {
 			val = com.Md5(val + `|` + c.AuthKey)
 		}

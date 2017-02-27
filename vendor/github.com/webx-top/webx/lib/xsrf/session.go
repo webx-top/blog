@@ -19,14 +19,13 @@ package xsrf
 
 import (
 	"github.com/webx-top/echo"
-	X "github.com/webx-top/webx"
 )
 
 type SessionStorage struct {
 }
 
 func (c *SessionStorage) Get(key string, ctx echo.Context) string {
-	s := X.X(ctx).Session()
+	s := ctx.Session()
 	if s == nil {
 		return ""
 	}
@@ -35,7 +34,7 @@ func (c *SessionStorage) Get(key string, ctx echo.Context) string {
 }
 
 func (c *SessionStorage) Set(key, val string, ctx echo.Context) {
-	s := X.X(ctx).Session()
+	s := ctx.Session()
 	if s == nil {
 		return
 	}

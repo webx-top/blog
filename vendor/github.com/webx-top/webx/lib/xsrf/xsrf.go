@@ -49,8 +49,8 @@ type Xsrf struct {
 }
 
 func (c *Xsrf) Value(ctx echo.Context) string {
-	var val string = c.Manager.Get(c.Name, ctx)
-	if val == "" {
+	val := c.Manager.Get(c.Name, ctx)
+	if len(val) == 0 {
 		val = uuid.NewRandom().String()
 		c.Manager.Set(c.Name, val, ctx)
 	}
@@ -91,8 +91,8 @@ func (c *Xsrf) Middleware() echo.MiddlewareFunc {
 			val := c.Value(ctx)
 			if ctx.Request().Method() == `POST` {
 				formVal := ctx.Form(c.Name)
-				if formVal == "" || val != formVal {
-					return errors.New("xsrf token error.")
+				if len(formVal) == 0 || val != formVal {
+					return errors.New("xsrf token error")
 				}
 			}
 			return h.Handle(ctx)
