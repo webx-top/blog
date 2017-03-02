@@ -67,7 +67,7 @@ func init() {
 		Config.FrontendTemplate.Theme = `default`
 	}
 	if Config.BackendTemplate.Theme == `` {
-		Config.FrontendTemplate.Theme = `admin`
+		Config.BackendTemplate.Theme = `admin`
 	}
 	Server.TemplateDir = Server.RootDir() + `/data/theme/`
 	Server.SetTheme(&Config.FrontendTemplate)
