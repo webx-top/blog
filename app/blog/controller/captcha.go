@@ -91,7 +91,7 @@ func (this *Captcha) Show() error {
 func (this *Captcha) Reload() (err error) {
 	err, _ = this.checkRefer(func() error {
 		d := struct{ Id string }{Id: C.New()}
-		this.Output.Data = d
+		this.SetSucData(d)
 		return nil
 	})
 	if err != nil {

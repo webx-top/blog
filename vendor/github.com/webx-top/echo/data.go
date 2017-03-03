@@ -17,17 +17,33 @@
 */
 package echo
 
-import "fmt"
+import (
+	"encoding/gob"
+	"fmt"
+)
+
+func init() {
+	gob.Register(&Data{})
+}
 
 type Data struct {
-	Code int
-	Info interface{}
-	Zone interface{} `json:",omitempty" xml:",omitempty"`
-	Data interface{} `json:",omitempty" xml:",omitempty"`
+	context Context
+	Code    int
+	Info    interface{}
+	Zone    interface{} `json:",omitempty" xml:",omitempty"`
+	Data    interface{} `json:",omitempty" xml:",omitempty"`
 }
 
 func (d *Data) Error() string {
 	return fmt.Sprintf(`%v`, d.Info)
+}
+
+func (d *Data) String() string {
+	return fmt.Sprintf(`%v`, d.Info)
+}
+
+func (d *Data) Render(tmpl string, code ...int) error {
+	return d.context.Render(tmpl, d.Data, code...)
 }
 
 func (d *Data) SetError(err error, args ...int) *Data {
@@ -72,8 +88,89 @@ func (d *Data) SetData(data interface{}, args ...int) *Data {
 	return d
 }
 
+func (d *Data) SetContext(ctx Context) *Data {
+	d.context = ctx
+	return d
+}
+
+func (c *Data) Assign(key string, val interface{}) {
+	data, _ := c.Data.(H)
+	if data == nil {
+		data = H{}
+	}
+	data[key] = val
+	c.Data = data
+}
+
+func (c *Data) Assignx(values *map[string]interface{}) {
+	if values == nil {
+		return
+	}
+	data, _ := c.Data.(H)
+	if data == nil {
+		data = H{}
+	}
+	for key, val := range *values {
+		data[key] = val
+	}
+	c.Data = data
+}
+
+func (c *Data) SetTmplFuncs() {
+	flash, ok := c.context.Session().Get(`webx:flash`).(*Data)
+	if ok {
+		c.context.Session().Delete(`webx:flash`).Save()
+		c.context.SetFunc(`Code`, func() int {
+			return flash.Code
+		})
+		c.context.SetFunc(`Info`, func() interface{} {
+			return flash.Info
+		})
+		c.context.SetFunc(`Zone`, func() interface{} {
+			return flash.Zone
+		})
+	} else {
+		c.context.SetFunc(`Code`, func() int {
+			return c.Code
+		})
+		c.context.SetFunc(`Info`, func() interface{} {
+			return c.Info
+		})
+		c.context.SetFunc(`Zone`, func() interface{} {
+			return c.Zone
+		})
+	}
+}
+
+// Set 设置输出(code,info,zone,data)
+func (c *Data) Set(code int, args ...interface{}) {
+	c.Code = code
+	var hasData bool
+	switch len(args) {
+	case 3:
+		c.Data = args[2]
+		hasData = true
+		fallthrough
+	case 2:
+		c.Zone = args[1]
+		fallthrough
+	case 1:
+		c.Info = args[0]
+		if !hasData {
+			flash := &Data{
+				context: c.context,
+				Code:    c.Code,
+				Info:    c.Info,
+				Zone:    c.Zone,
+				Data:    nil,
+			}
+			c.context.Session().Set(`webx:flash`, flash).Save()
+		}
+	}
+}
+
 // NewData params: Code,Info,Zone,Data
-func NewData(code int, args ...interface{}) *Data {
+func NewData(ctx Context, code int, args ...interface{}) *Data {
 	var info, zone, data interface{}
 	switch len(args) {
 	case 3:
@@ -86,9 +183,10 @@ func NewData(code int, args ...interface{}) *Data {
 		info = args[0]
 	}
 	return &Data{
-		Code: code,
-		Info: info,
-		Zone: zone,
-		Data: data,
+		context: ctx,
+		Code:    code,
+		Info:    info,
+		Zone:    zone,
+		Data:    data,
 	}
 }
