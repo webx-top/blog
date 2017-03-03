@@ -21,6 +21,14 @@ func (c *Output) Render(tmpl string, code ...int) error {
 	return c.context.Render(tmpl, c.Data, code...)
 }
 
+func (c *Output) Gets() (int, interface{}, interface{}, interface{}) {
+	return c.Status, c.Message, c.For, c.Data
+}
+
+func (c *Output) GetData() interface{} {
+	return c.Data
+}
+
 func (c *Output) String() string {
 	return fmt.Sprintf(`%v`, c.Message)
 }

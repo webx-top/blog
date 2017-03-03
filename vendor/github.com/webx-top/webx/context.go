@@ -19,6 +19,7 @@ package webx
 
 import (
 	"encoding/gob"
+	"reflect"
 
 	"github.com/webx-top/echo"
 	"github.com/webx-top/echo/engine"
@@ -120,4 +121,21 @@ func (c *Context) SetNoPerm(args ...interface{}) *Context {
 func (c *Context) SetTmpl(args ...string) *Context {
 	c.Context.SetTmpl(args...)
 	return c
+}
+
+// A 调用控制器方法
+func (c *Context) A(ctl string, act string) (err error) {
+	a := c.Module.Wrapper(`controller.` + ctl)
+	if a == nil {
+		return c.Atoe(`Controller "` + ctl + `" does not exist.`)
+	}
+	k := `webx.controller.reflect.type:` + ctl
+	var e reflect.Type
+	if t, ok := c.Get(k).(reflect.Type); ok {
+		e = t
+	} else {
+		e = reflect.Indirect(reflect.ValueOf(a.Controller)).Type()
+		c.Set(k, e)
+	}
+	return a.Exec(c, e, act)
 }
