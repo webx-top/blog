@@ -18,6 +18,8 @@
 package model
 
 import (
+	"errors"
+
 	"github.com/coscms/xorm"
 	"github.com/webx-top/echo/logger"
 	X "github.com/webx-top/webx"
@@ -25,6 +27,8 @@ import (
 	listClient "github.com/webx-top/webx/lib/client/list"
 	"github.com/webx-top/webx/lib/database"
 )
+
+var ErrNotModified = errors.New(`not modified`)
 
 func New(db *database.Orm, ctx *X.Context) *Model {
 	return &Model{
@@ -143,6 +147,15 @@ type TransContext struct {
 	Error error
 }
 
+func (t *TransContext) SetError(err error, affected ...int64) *TransContext {
+	if err != nil {
+		t.Error = err
+	} else if len(affected) > 0 && affected[0] < 1 {
+		t.Error = ErrNotModified
+	}
+	return t
+}
+
 func NewTransContext(s *xorm.Session) *TransContext {
 	return &TransContext{Session: s}
 }
@@ -259,6 +272,10 @@ func (this *Model) NewListClient(m interface{}) listClient.Client {
 	}
 	c := listClient.Get(clientName)
 	return c.Init(this.Context, this.DB, m)
+}
+
+func (this *Model) NotModified() error {
+	return ErrNotModified
 }
 
 func (this *Model) NewEditClient(m interface{}) editClient.Client {
