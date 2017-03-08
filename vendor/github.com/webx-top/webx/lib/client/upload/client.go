@@ -21,7 +21,7 @@ import (
 	"fmt"
 	"io"
 
-	X "github.com/webx-top/webx"
+	"github.com/webx-top/echo"
 )
 
 type Result struct {
@@ -42,10 +42,10 @@ func New() Client {
 
 type defaultClient struct {
 	result *Result
-	*X.Context
+	echo.Context
 }
 
-func (a *defaultClient) Init(ctx *X.Context, res *Result) {
+func (a *defaultClient) Init(ctx echo.Context, res *Result) {
 	a.Context = ctx
 	a.result = res
 }
@@ -73,7 +73,7 @@ func (a *defaultClient) Result(errMsg string) (r string) {
 
 type Client interface {
 	//初始化
-	Init(*X.Context, *Result)
+	Init(echo.Context, *Result)
 
 	//file表单域name属性值
 	Name() string

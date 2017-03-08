@@ -136,14 +136,23 @@ func (this *Model) Merge(collectFn func(func(interface{}, int)), relKey string) 
 }
 
 // =====================================
-// TransManager
+// TransContext
 // =====================================
-func (this *Model) Begin() *xorm.Session {
-	ss, _ := this.transSession()
-	if ss != nil {
+type TransContext struct {
+	*xorm.Session
+	Error error
+}
+
+func NewTransContext(s *xorm.Session) *TransContext {
+	return &TransContext{Session: s}
+}
+
+func (this *Model) Begin() *TransContext {
+	ss, ok := this.transSession()
+	if ok {
 		ss.Close()
 	}
-	ss = this.DB.NewSession()
+	ss = NewTransContext(this.DB.NewSession())
 	err := ss.Begin()
 	if err != nil {
 		this.Logger.Error(err)
@@ -152,20 +161,21 @@ func (this *Model) Begin() *xorm.Session {
 	return ss
 }
 
-//事务是否已经开始
+// HasBegun 事务是否已经开始
 func (this *Model) HasBegun() bool {
-	ss, ok := this.transSession()
-	return ok && ss != nil
+	_, ok := this.transSession()
+	return ok
 }
 
-func (this *Model) transSession() (ss *xorm.Session, ok bool) {
-	ss, ok = this.Context.Get(`webx:transSession`).(*xorm.Session)
+func (this *Model) transSession() (ss *TransContext, ok bool) {
+	ss, ok = this.Context.Get(`webx:transSession`).(*TransContext)
 	return
 }
 
-func (this *Model) TSess() *xorm.Session { // TransSession
+// TSess TransSession
+func (this *Model) TSess() *TransContext {
 	ss, ok := this.transSession()
-	if ok == false || ss == nil {
+	if !ok {
 		return this.Begin()
 	}
 	return ss
@@ -173,29 +183,34 @@ func (this *Model) TSess() *xorm.Session { // TransSession
 
 func (this *Model) Trans(fn func() error) *database.Orm {
 	ss, ok := this.transSession()
-	begun := ok && ss != nil
-	if !begun {
+	if !ok {
 		ss = this.Begin()
+	} else {
+		if ss.Error != nil {
+			return this.DB
+		}
 	}
-	result := fn()
-	if !begun {
-		this.End(result == nil, ss)
+	ss.Error = fn()
+	if !ok {
+		this.End(ss)
 	}
 	return this.DB
 }
 
-func (this *Model) Sess() *xorm.Session { // TransSession or Session
+func (this *Model) Sess() (sess *xorm.Session) { // TransSession or Session
 	ss, ok := this.transSession()
-	if ok == false {
-		ss = this.DB.NewSession()
-		ss.IsAutoClose = true
+	if !ok {
+		sess = this.DB.NewSession()
+		sess.IsAutoClose = true
+	} else {
+		sess = ss.Session
 	}
-	return ss
+	return
 }
 
-func (this *Model) End(result bool, args ...*xorm.Session) (err error) {
-	var ss *xorm.Session
-	if len(args) > 0 && args[0] != nil {
+func (this *Model) End(args ...*TransContext) (err error) {
+	var ss *TransContext
+	if len(args) > 0 {
 		ss = args[0]
 	} else {
 		ss, _ = this.transSession()
@@ -203,7 +218,7 @@ func (this *Model) End(result bool, args ...*xorm.Session) (err error) {
 	if ss == nil {
 		return nil
 	}
-	if result {
+	if ss.Error == nil {
 		err = ss.Commit()
 	} else {
 		err = ss.Rollback()
@@ -212,7 +227,7 @@ func (this *Model) End(result bool, args ...*xorm.Session) (err error) {
 		this.Logger.Error(err)
 	}
 	ss.Close()
-	this.Context.Set(`webx:transSession`, nil)
+	this.Context.Delete(`webx:transSession`)
 	return
 }
 

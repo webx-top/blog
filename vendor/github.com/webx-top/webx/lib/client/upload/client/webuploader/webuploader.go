@@ -20,7 +20,7 @@ package webuploader
 import (
 	"io"
 
-	X "github.com/webx-top/webx"
+	"github.com/webx-top/echo"
 	uploadClient "github.com/webx-top/webx/lib/client/upload"
 )
 
@@ -36,10 +36,10 @@ func New() uploadClient.Client {
 
 type Webuploader struct {
 	result *uploadClient.Result
-	*X.Context
+	echo.Context
 }
 
-func (a *Webuploader) Init(ctx *X.Context, res *uploadClient.Result) {
+func (a *Webuploader) Init(ctx echo.Context, res *uploadClient.Result) {
 	a.Context = ctx
 	a.result = res
 }

@@ -39,12 +39,6 @@ var (
 	mapperType = reflect.TypeOf(Mapper{})
 )
 
-func init() {
-	mvc.IsMapper = func(t reflect.Type) bool {
-		return t == mapperType
-	}
-}
-
 // 结构体中定义路由的字段类型
 type Mapper struct{}
 

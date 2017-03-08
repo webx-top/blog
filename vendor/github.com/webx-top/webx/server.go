@@ -18,6 +18,8 @@
 package webx
 
 import (
+	"reflect"
+
 	"github.com/webx-top/echo"
 	"github.com/webx-top/echo/handler/mvc"
 )
@@ -40,6 +42,9 @@ func NewServer(name string, middlewares ...interface{}) (s *Server) {
 	s.Core.SetHandlerWrapper(HandlerWrapper)
 	s.ContextInitial = func(ctx echo.Context, wrp *mvc.Wrapper, controller interface{}, actionName string) (err error, exit bool) {
 		return ctx.(ContextInitial).Init(wrp, controller, actionName)
+	}
+	s.MapperCheck = func(t reflect.Type) bool {
+		return t == mapperType
 	}
 	servs.Set(name, s)
 	return

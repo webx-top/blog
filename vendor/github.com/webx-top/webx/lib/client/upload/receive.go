@@ -24,7 +24,7 @@ import (
 	"net/url"
 	"strings"
 
-	X "github.com/webx-top/webx"
+	"github.com/webx-top/echo"
 )
 
 var (
@@ -36,7 +36,7 @@ type Sizer interface {
 	Size() int64
 }
 
-func Receive(name string, ctx *X.Context) (f io.ReadCloser, fileName string, err error) {
+func Receive(name string, ctx echo.Context) (f io.ReadCloser, fileName string, err error) {
 	switch ctx.ResolveContentType() {
 	/*
 		case "multipart/form-data":
