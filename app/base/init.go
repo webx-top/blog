@@ -58,6 +58,7 @@ func init() {
 	// 初始化默认Server
 	// ======================
 	Server = X.Serv(Project)
+	//Server.Core.Use(mw.Gzip())
 	Server.RootModuleName = `blog`
 	err := Server.LoadConfig(Server.RootDir()+`/data/config/config.yaml`, Config)
 	if err != nil {

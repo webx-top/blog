@@ -68,7 +68,7 @@ func (this *Captcha) Show() error {
 		if !download {
 			header.Set(E.HeaderContentType, "image/png")
 		}
-		return C.WriteImage(this.Response().Writer(), id, C.StdWidth, C.StdHeight)
+		return C.WriteImage(this.Response(), id, C.StdWidth, C.StdHeight)
 	case ".wav":
 		lang := strings.ToLower(this.Query("lang"))
 		if lang != `en` && lang != `ru` && lang != `zh` {
