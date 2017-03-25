@@ -18,13 +18,12 @@
 package controller
 
 import (
-	"strconv"
 	"strings"
 
 	//"github.com/webx-top/blog/app/blog/lib"
 	C "github.com/webx-top/captcha"
 	"github.com/webx-top/echo"
-	E "github.com/webx-top/echo"
+	"github.com/webx-top/echo/handler/captcha"
 	X "github.com/webx-top/webx"
 )
 
@@ -46,46 +45,7 @@ func (this *Captcha) Show() error {
 	if _, ok := this.checkRefer(func() error { return nil }); !ok {
 		return nil
 	}
-	param := this.P(0)
-	var id, ext string
-	if p := strings.LastIndex(param, `.`); p > 0 {
-		id = param[0:p]
-		ext = param[p:]
-	}
-	if ext == "" || id == "" {
-		return this.NotFound()
-	}
-	if this.Query("reload") != "" {
-		C.Reload(id)
-	}
-	header := this.Response().Header()
-	download := this.Query("download") != ""
-	if download {
-		header.Set(E.HeaderContentType, "application/octet-stream")
-	}
-	switch ext {
-	case ".png":
-		if !download {
-			header.Set(E.HeaderContentType, "image/png")
-		}
-		return C.WriteImage(this.Response(), id, C.StdWidth, C.StdHeight)
-	case ".wav":
-		lang := strings.ToLower(this.Query("lang"))
-		if lang != `en` && lang != `ru` && lang != `zh` {
-			lang = `zh`
-		}
-		au, err := C.GetAudio(id, lang)
-		if err != nil {
-			return err
-		}
-		if !download {
-			header.Set(E.HeaderContentType, "audio/x-wav")
-		}
-		header.Set("Content-Length", strconv.Itoa(au.EncodedLen()))
-		_, err = au.WriteTo(this.Response().Writer())
-		return err
-	}
-	return nil
+	return captcha.Captcha()(this.Context)
 }
 
 func (this *Captcha) Reload() (err error) {
