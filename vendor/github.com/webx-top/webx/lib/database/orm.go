@@ -18,6 +18,7 @@
 package database
 
 import (
+	"errors"
 	"log"
 	"regexp"
 	"strings"
@@ -36,23 +37,7 @@ import (
 
 func NewOrm(engine string, cfgMaster *config.DB, cfgSlaves ...*config.DB) (db *Orm, err error) {
 	db = &Orm{}
-	dsn := cfgMaster.Dsn()
-	for _, cfg := range cfgSlaves {
-		dsn += `;` + cfg.Dsn()
-	}
-	db.Balancer, err = balancer.New(engine, dsn)
-	if err != nil {
-		log.Println("The database connection failed:", err)
-		return
-	}
-	err = db.Ping()
-	if err != nil {
-		log.Println("The database ping failed:", err)
-		return
-	}
-	db.SetPrefix(cfgMaster.Prefix)
-	db.OpenLog()
-	db.SetLogger(xlog.New(`orm`))
+	err = db.Connect(engine, cfgMaster, cfgSlaves...)
 	return
 }
 
@@ -60,6 +45,29 @@ type Orm struct {
 	*balancer.Balancer
 	CacheStore   interface{}
 	PrefixMapper core.PrefixMapper
+	connected    bool
+}
+
+func (this *Orm) Connect(engine string, cfgMaster *config.DB, cfgSlaves ...*config.DB) error {
+	this.Close()
+	dsn := cfgMaster.Dsn()
+	for _, cfg := range cfgSlaves {
+		dsn += `;` + cfg.Dsn()
+	}
+	var err error
+	this.Balancer, err = balancer.New(engine, dsn)
+	if err != nil {
+		return errors.New("The database connection failed: " + err.Error())
+	}
+	err = this.Ping()
+	if err != nil {
+		return errors.New("The database ping failed: " + err.Error())
+	}
+	this.SetPrefix(cfgMaster.Prefix)
+	this.OpenLog()
+	this.SetLogger(xlog.New(`orm`))
+	this.connected = true
+	return nil
 }
 
 func (this *Orm) SetToAllDbs(setter func(*Engine)) *Orm {
@@ -67,6 +75,10 @@ func (this *Orm) SetToAllDbs(setter func(*Engine)) *Orm {
 		setter(db)
 	}
 	return this
+}
+
+func (this *Orm) Connected() bool {
+	return this.connected
 }
 
 func (this *Orm) OpenLog(tags ...string) *Orm {
@@ -150,22 +162,25 @@ func (this *Orm) SetCacher(cs core.CacheStore) *Orm {
 }
 
 func (this *Orm) Close() {
-	//重置数据库连接
-	this.SetToAllDbs(func(x *Engine) {
-		if x != nil {
-			if x.Cacher != nil {
-				x.Cacher = nil
+	if this.Balancer != nil {
+		//重置数据库连接
+		this.SetToAllDbs(func(x *Engine) {
+			if x != nil {
+				if x.Cacher != nil {
+					x.Cacher = nil
+				}
+				_ = x.Close()
+				x = nil
 			}
-			_ = x.Close()
-			x = nil
-		}
-	})
+		})
+	}
 
 	//重置缓存对象
 	if closer, ok := this.CacheStore.(cachestore.Closer); ok {
 		closer.Close()
 	}
 	this.CacheStore = nil
+	this.connected = false
 }
 
 var (

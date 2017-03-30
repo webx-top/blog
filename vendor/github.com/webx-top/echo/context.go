@@ -25,6 +25,10 @@ type (
 	// response objects, path parameters, data and registered handler.
 	Context interface {
 		context.Context
+		StdContext() context.Context
+		SetStdContext(context.Context)
+		Validator
+		SetValidator(Validator)
 		Translator
 		SetTranslator(Translator)
 		Request() engine.Request
@@ -33,6 +37,7 @@ type (
 		Logger() logger.Logger
 		Object() *xContext
 		Echo() *Echo
+		Meta() H
 		Reset(engine.Request, engine.Response)
 
 		//----------------
@@ -44,7 +49,6 @@ type (
 		Param(string) string
 		// ParamNames returns path parameter names.
 		ParamNames() []string
-		SetParamNames(...string)
 		ParamValues() []string
 		SetParamValues(values ...string)
 
@@ -198,17 +202,16 @@ type (
 	}
 
 	xContext struct {
+		Validator
 		Translator
 		sessioner           Sessioner
 		cookier             Cookier
 		context             context.Context
 		request             engine.Request
 		response            engine.Response
-		path                string
-		pnames              []string
 		pvalues             []string
 		store               store
-		handler             Handler
+		route               *Route
 		echo                *Echo
 		funcs               map[string]interface{}
 		renderer            Renderer
@@ -252,7 +255,7 @@ func NewContext(req engine.Request, res engine.Response, e *Echo) Context {
 		echo:       e,
 		pvalues:    make([]string, *e.maxParam),
 		store:      make(store),
-		handler:    NotFoundHandler,
+		route:      NotFoundRoute,
 		funcs:      make(map[string]interface{}),
 		sessioner:  DefaultNopSession,
 	}
@@ -260,11 +263,11 @@ func NewContext(req engine.Request, res engine.Response, e *Echo) Context {
 	return c
 }
 
-func (c *xContext) Context() context.Context {
+func (c *xContext) StdContext() context.Context {
 	return c.context
 }
 
-func (c *xContext) SetContext(ctx context.Context) {
+func (c *xContext) SetStdContext(ctx context.Context) {
 	c.context = ctx
 }
 
@@ -285,7 +288,14 @@ func (c *xContext) Value(key interface{}) interface{} {
 }
 
 func (c *xContext) Handle(ctx Context) error {
-	return c.handler.Handle(ctx)
+	if c.route.Handler == nil {
+		return NotFoundHandler(ctx)
+	}
+	return c.route.Handler.Handle(ctx)
+}
+
+func (c *xContext) Meta() H {
+	return c.route.Meta
 }
 
 // Request returns *http.Request.
@@ -300,12 +310,12 @@ func (c *xContext) Response() engine.Response {
 
 // Path returns the registered path for the handler.
 func (c *xContext) Path() string {
-	return c.path
+	return c.route.Path
 }
 
 // P returns path parameter by index.
 func (c *xContext) P(i int) (value string) {
-	l := len(c.pnames)
+	l := len(c.route.Params)
 	if i < l {
 		value = c.pvalues[i]
 	}
@@ -314,8 +324,8 @@ func (c *xContext) P(i int) (value string) {
 
 // Param returns path parameter by name.
 func (c *xContext) Param(name string) (value string) {
-	l := len(c.pnames)
-	for i, n := range c.pnames {
+	l := len(c.route.Params)
+	for i, n := range c.route.Params {
 		if n == name && i < l {
 			value = c.pvalues[i]
 			break
@@ -325,11 +335,7 @@ func (c *xContext) Param(name string) (value string) {
 }
 
 func (c *xContext) ParamNames() []string {
-	return c.pnames
-}
-
-func (c *xContext) SetParamNames(names ...string) {
-	c.pnames = names
+	return c.route.Params
 }
 
 func (c *xContext) ParamValues() []string {
@@ -406,6 +412,7 @@ func (c *xContext) Render(name string, data interface{}, codes ...int) (err erro
 	if err != nil {
 		return
 	}
+	b = bytes.TrimLeft(b, ` `)
 	c.response.Header().Set(HeaderContentType, MIMETextHTMLCharsetUTF8)
 	err = c.Blob(b, codes...)
 	return
@@ -632,6 +639,7 @@ func (c *xContext) SetTranslator(t Translator) {
 }
 
 func (c *xContext) Reset(req engine.Request, res engine.Response) {
+	c.Validator = DefaultNopValidate
 	c.Translator = DefaultNopTranslate
 	c.sessioner = DefaultNopSession
 	c.context = context.Background()
@@ -640,7 +648,7 @@ func (c *xContext) Reset(req engine.Request, res engine.Response) {
 	c.store = make(store)
 	c.funcs = make(map[string]interface{})
 	c.renderer = nil
-	c.handler = NotFoundHandler
+	c.route = NotFoundRoute
 	c.sessionOptions = nil
 	c.withFormatExtension = false
 	c.format = ""
@@ -678,6 +686,10 @@ func (c *xContext) Fetch(name string, data interface{}) (b []byte, err error) {
 	}
 	b = buf.Bytes()
 	return
+}
+
+func (c *xContext) SetValidator(v Validator) {
+	c.Validator = v
 }
 
 // SetRenderer registers an HTML template renderer.
