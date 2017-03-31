@@ -161,7 +161,7 @@ func NewTransContext(s *xorm.Session) *TransContext {
 }
 
 func (this *Model) Begin() *TransContext {
-	ss, ok := this.transSession()
+	ss, ok := this.transContext()
 	if ok {
 		ss.Close()
 	}
@@ -170,24 +170,31 @@ func (this *Model) Begin() *TransContext {
 	if err != nil {
 		this.Logger.Error(err)
 	}
-	this.Context.Set(`webx:transSession`, ss)
+	this.Context.Set(`webx:transContext`, ss)
 	return ss
 }
 
 // HasBegun 事务是否已经开始
 func (this *Model) HasBegun() bool {
-	_, ok := this.transSession()
+	_, ok := this.transContext()
 	return ok
 }
 
-func (this *Model) transSession() (ss *TransContext, ok bool) {
-	ss, ok = this.Context.Get(`webx:transSession`).(*TransContext)
+func (this *Model) transContext() (ss *TransContext, ok bool) {
+	ss, ok = this.Context.Get(`webx:transContext`).(*TransContext)
 	return
 }
 
-// TSess TransSession
+func (this *Model) TransSession() *xorm.Session {
+	if ss, ok := this.transContext(); ok {
+		return ss.Session
+	}
+	return nil
+}
+
+// TSess transContext
 func (this *Model) TSess() *TransContext {
-	ss, ok := this.transSession()
+	ss, ok := this.transContext()
 	if !ok {
 		return this.Begin()
 	}
@@ -195,7 +202,7 @@ func (this *Model) TSess() *TransContext {
 }
 
 func (this *Model) Trans(fn func() error) *database.Orm {
-	ss, ok := this.transSession()
+	ss, ok := this.transContext()
 	if !ok {
 		ss = this.Begin()
 	} else {
@@ -210,8 +217,8 @@ func (this *Model) Trans(fn func() error) *database.Orm {
 	return this.DB
 }
 
-func (this *Model) Sess() (sess *xorm.Session) { // TransSession or Session
-	ss, ok := this.transSession()
+func (this *Model) Sess() (sess *xorm.Session) { // transContext or Session
+	ss, ok := this.transContext()
 	if !ok {
 		sess = this.DB.NewSession()
 		sess.IsAutoClose = true
@@ -226,7 +233,7 @@ func (this *Model) End(args ...*TransContext) (err error) {
 	if len(args) > 0 {
 		ss = args[0]
 	} else {
-		ss, _ = this.transSession()
+		ss, _ = this.transContext()
 	}
 	if ss == nil {
 		return nil
@@ -240,7 +247,7 @@ func (this *Model) End(args ...*TransContext) (err error) {
 		this.Logger.Error(err)
 	}
 	ss.Close()
-	this.Context.Delete(`webx:transSession`)
+	this.Context.Delete(`webx:transContext`)
 	return
 }
 
