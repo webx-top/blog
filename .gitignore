@@ -13,3 +13,4 @@
 /data/bolt/*
 /vendor/github.com/webx-top/webx/*.log
 /*.log
+/vendor/github.com/webx-top/echo/*.log
