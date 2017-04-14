@@ -11,17 +11,18 @@ var _ = mvc.Data(&Output{})
 
 type Output struct {
 	context echo.Context
-	Status  int
+	Status  echo.State
+	Summary string `json:",omitempty" xml:",omitempty"`
 	Message interface{}
-	For     interface{}
-	Data    interface{}
+	For     interface{} `json:",omitempty" xml:",omitempty"`
+	Data    interface{} `json:",omitempty" xml:",omitempty"`
 }
 
 func (c *Output) Render(tmpl string, code ...int) error {
 	return c.context.Render(tmpl, c.Data, code...)
 }
 
-func (c *Output) Gets() (int, interface{}, interface{}, interface{}) {
+func (c *Output) Gets() (echo.State, interface{}, interface{}, interface{}) {
 	return c.Status, c.Message, c.For, c.Data
 }
 
@@ -60,7 +61,7 @@ func (c *Output) SetTmplFuncs() {
 	flash, ok := c.context.Session().Get(`webx:flash`).(*Output)
 	if ok {
 		c.context.Session().Delete(`webx:flash`).Save()
-		c.context.SetFunc(`Status`, func() int {
+		c.context.SetFunc(`Status`, func() echo.State {
 			return flash.Status
 		})
 		c.context.SetFunc(`Message`, func() interface{} {
@@ -70,7 +71,7 @@ func (c *Output) SetTmplFuncs() {
 			return flash.For
 		})
 	} else {
-		c.context.SetFunc(`Status`, func() int {
+		c.context.SetFunc(`Status`, func() echo.State {
 			return c.Status
 		})
 		c.context.SetFunc(`Message`, func() interface{} {
@@ -85,7 +86,8 @@ func (c *Output) SetTmplFuncs() {
 
 // Set 设置输出(code,message,for,data)
 func (c *Output) Set(code int, args ...interface{}) {
-	c.Status = code
+	c.Status = echo.State(code)
+	c.Summary = c.Status.String()
 	var hasData bool
 	switch len(args) {
 	case 3:
@@ -100,6 +102,7 @@ func (c *Output) Set(code int, args ...interface{}) {
 		if !hasData {
 			flash := &Output{
 				Status:  c.Status,
+				Summary: c.Summary,
 				Message: c.Message,
 				For:     c.For,
 				Data:    nil,
