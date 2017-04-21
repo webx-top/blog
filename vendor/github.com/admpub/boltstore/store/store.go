@@ -4,15 +4,15 @@ import (
 	"bytes"
 	"encoding/base32"
 	"encoding/gob"
-	"github.com/gogo/protobuf/proto"
 	"strings"
+
+	"github.com/gogo/protobuf/proto"
 
 	"github.com/admpub/boltstore/shared"
 	"github.com/admpub/sessions"
 	"github.com/boltdb/bolt"
 	"github.com/gorilla/securecookie"
 	"github.com/webx-top/echo"
-	"github.com/webx-top/echo/engine"
 )
 
 // Store represents a session store.
@@ -32,12 +32,12 @@ func (s *Store) Get(ctx echo.Context, name string) (*sessions.Session, error) {
 // New returns a session for the given name without adding it to the registry.
 //
 // See gorilla/sessions FilesystemStore.New().
-func (s *Store) New(r engine.Request, name string) (*sessions.Session, error) {
+func (s *Store) New(ctx echo.Context, name string) (*sessions.Session, error) {
 	var err error
 	session := sessions.NewSession(s, name)
 	session.Options = &s.config.SessionOptions
 	session.IsNew = true
-	if v := r.Cookie(name); v != `` {
+	if v := ctx.GetCookie(name); len(v) > 0 {
 		err = securecookie.DecodeMulti(name, v, &session.ID, s.codecs...)
 		if err == nil {
 			ok, err := s.load(session)
@@ -48,13 +48,13 @@ func (s *Store) New(r engine.Request, name string) (*sessions.Session, error) {
 }
 
 // Save adds a single session to the response.
-func (s *Store) Save(r engine.Request, w engine.Response, session *sessions.Session) error {
+func (s *Store) Save(ctx echo.Context, session *sessions.Session) error {
 	if session.Options.MaxAge < 0 {
 		s.delete(session)
-		w.SetCookie(sessions.NewCookie(session.Name(), "", session.Options))
+		sessions.SetCookie(ctx, session.Name(), "", session.Options)
 	} else {
 		// Build an alphanumeric ID.
-		if session.ID == "" {
+		if len(session.ID) == 0 {
 			session.ID = strings.TrimRight(base32.StdEncoding.EncodeToString(securecookie.GenerateRandomKey(32)), "=")
 		}
 		if err := s.save(session); err != nil {
@@ -64,7 +64,7 @@ func (s *Store) Save(r engine.Request, w engine.Response, session *sessions.Sess
 		if err != nil {
 			return err
 		}
-		w.SetCookie(sessions.NewCookie(session.Name(), encoded, session.Options))
+		sessions.SetCookie(ctx, session.Name(), encoded, session.Options)
 	}
 	return nil
 }

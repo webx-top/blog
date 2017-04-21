@@ -15,6 +15,8 @@
    limitations under the License.
 
 */
+
+// Package echo is a fast and unfancy web framework for Go (Golang)
 package echo
 
 import (
@@ -23,6 +25,7 @@ import (
 	"time"
 )
 
+// CookieOptions cookie options
 type CookieOptions struct {
 	Prefix string
 
@@ -37,17 +40,21 @@ type CookieOptions struct {
 	HttpOnly bool
 }
 
+//Cookier interface
 type Cookier interface {
 	Get(key string) string
 	Set(key string, val string, args ...interface{}) Cookier
 }
 
+//NewCookier create a cookie instance
 func NewCookier(ctx Context) Cookier {
 	return &cookie{
 		context: ctx,
+		cookies: []*Cookie{},
 	}
 }
 
+//NewCookie create a cookie instance
 func NewCookie(name string, value string, opts ...*CookieOptions) *Cookie {
 	opt := &CookieOptions{}
 	if len(opts) > 0 {
@@ -70,25 +77,30 @@ func NewCookie(name string, value string, opts ...*CookieOptions) *Cookie {
 	return cookie
 }
 
+//Cookie 操作封装
 type Cookie struct {
 	cookie *http.Cookie
 }
 
+//Path 设置路径
 func (c *Cookie) Path(p string) *Cookie {
 	c.cookie.Path = p
 	return c
 }
 
+//Domain 设置域名
 func (c *Cookie) Domain(p string) *Cookie {
 	c.cookie.Domain = p
 	return c
 }
 
+//MaxAge 设置有效时长（秒）
 func (c *Cookie) MaxAge(p int) *Cookie {
 	c.cookie.MaxAge = p
 	return c
 }
 
+//Expires 设置过期时间戳
 func (c *Cookie) Expires(p int64) *Cookie {
 	if p > 0 {
 		c.cookie.Expires = time.Unix(time.Now().Unix()+p, 0)
@@ -98,27 +110,31 @@ func (c *Cookie) Expires(p int64) *Cookie {
 	return c
 }
 
+//Secure 设置是否启用HTTPS
 func (c *Cookie) Secure(p bool) *Cookie {
 	c.cookie.Secure = p
 	return c
 }
 
+//HttpOnly 设置是否启用HttpOnly
 func (c *Cookie) HttpOnly(p bool) *Cookie {
 	c.cookie.HttpOnly = p
 	return c
 }
 
+//Send 发送cookie数据到响应头
 func (c *Cookie) Send(ctx Context) {
-	ctx.Response().Header().Set(HeaderSetCookie, c.cookie.String())
+	ctx.Response().SetCookie(c.cookie)
 }
 
 type cookie struct {
 	context Context
+	cookies []*Cookie
 }
 
 func (c *cookie) Get(key string) string {
 	var val string
-	if v := c.context.Request().Cookie(c.context.CookieOptions().Prefix + key); v != `` {
+	if v := c.context.Request().Cookie(c.context.CookieOptions().Prefix + key); len(v) > 0 {
 		val, _ = url.QueryUnescape(v)
 	}
 	return val
@@ -126,7 +142,18 @@ func (c *cookie) Get(key string) string {
 
 func (c *cookie) Set(key string, val string, args ...interface{}) Cookier {
 	val = url.QueryEscape(val)
-	cookie := NewCookie(key, val, c.context.CookieOptions())
+	var cookie *Cookie
+	var found bool
+	for _, v := range c.cookies {
+		if key == v.cookie.Name {
+			cookie = v
+			found = true
+			break
+		}
+	}
+	if cookie == nil {
+		cookie = NewCookie(key, val, c.context.CookieOptions())
+	}
 	switch len(args) {
 	case 5:
 		httpOnly, _ := args[4].(bool)
@@ -156,6 +183,14 @@ func (c *cookie) Set(key string, val string, args ...interface{}) Cookier {
 		}
 		cookie.Expires(liftTime)
 	}
-	cookie.Send(c.context)
+	if !found {
+		c.cookies = append(c.cookies, cookie)
+		cookie.Send(c.context)
+	} else {
+		c.context.Response().Header().Del(HeaderSetCookie)
+		for _, cookie := range c.cookies {
+			cookie.Send(c.context)
+		}
+	}
 	return c
 }

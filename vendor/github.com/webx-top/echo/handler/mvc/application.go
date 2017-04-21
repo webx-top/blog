@@ -97,7 +97,6 @@ func NewWithContext(name string, newContext func(*echo.Echo) echo.Context, middl
 			Path:     `/`,
 		},
 	}
-	s.FuncMap = s.DefaultFuncMap()
 	s.ContextInitial = func(ctx echo.Context, wrp *Wrapper, controller interface{}, actionName string) (err error, exit bool) {
 		return ctx.(*Context).Init(wrp, controller, actionName)
 	} //[1]
@@ -113,6 +112,7 @@ func NewWithContext(name string, newContext func(*echo.Echo) echo.Context, middl
 	s.SetErrorPages(nil)
 
 	s.URLs = NewURLs(name, s)
+	s.FuncMap = s.DefaultFuncMap()
 	return
 }
 
@@ -577,6 +577,10 @@ func (s *Application) DefaultFuncMap() (r map[string]interface{}) {
 		}
 		return s.URL
 	}
+	r["RootModuleURL"] = func(ctl string, act string, params ...interface{}) string {
+		return s.URLs.Build(s.RootModuleName, ctl, act, params...)
+	}
+	r["URLFor"] = s.URLs.Build
 	return
 }
 

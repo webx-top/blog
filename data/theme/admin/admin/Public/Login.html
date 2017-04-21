@@ -5,7 +5,7 @@
 		<div class="wrapper">
 			<div class="user">
 				<img src="{{"user_avatar.png"|ImgURL}} " alt="user_avatar" class="user_avatar">
-				<span class="label"><a href="{{URLFor (printf "Public/Register?next=%v" $next)}}">{{"SIGN_UP" | T}}</a></span>
+				<span class="label"><a href="{{URLPath (printf "Public/Register?next=%v" $next)}}">{{"SIGN_UP" | T}}</a></span>
 			</div>
 		</div>
 	</div> 
@@ -19,7 +19,7 @@
 			</div>
 			{{$next:=Query "next"}}
 			<div class="widget_contents lgNoPadding">
-				<form action="{{URLFor (printf "Public/Login?next=%v" $next)}}" method="post" data-validate="true">
+				<form action="{{URLPath (printf "Public/Login?next=%v" $next)}}" method="post" data-validate="true">
 				{{XsrfForm}}
 				<div class="line_grid">
 					<div class="g_2 g_2M"><span class="label">{{"USERNAME" | T}}</span></div>
