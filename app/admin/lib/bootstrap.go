@@ -28,5 +28,6 @@ var (
 )
 
 func init() {
+	Module.Core.RouteDebug = true
 	Module.InitRenderer(&base.Config.BackendTemplate, FuncMap)
 }

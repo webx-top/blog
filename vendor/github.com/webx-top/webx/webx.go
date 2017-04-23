@@ -20,6 +20,7 @@ package webx
 import (
 	"reflect"
 
+	"github.com/webx-top/echo"
 	"github.com/webx-top/echo/handler/mvc"
 )
 
@@ -39,7 +40,7 @@ var (
 	mapperType = reflect.TypeOf(Mapper{})
 )
 
-// 结构体中定义路由的字段类型
+// Mapper 结构体中定义路由的字段类型
 type Mapper struct{}
 
 // Servers 服务集合
@@ -77,9 +78,14 @@ func Register(p string, h interface{}, methods ...string) *mvc.Module {
 	return serv.Module().Register(p, h, methods...)
 }
 
-// Use 注册控制器到根App
-func Use(args ...interface{}) *mvc.Module {
-	return serv.Module().Use(args...)
+// Router 返回RouteRegister
+func Router() echo.ICore {
+	return serv.Module().Router()
+}
+
+// Add 注册控制器到根App
+func Add(args ...interface{}) *mvc.Module {
+	return serv.Module().Add(args...)
 }
 
 // Run 启动服务

@@ -74,7 +74,7 @@ func init() {
 	Server.SetTheme(&Config.FrontendTemplate)
 	Server.InitStatic()
 	Server.Pprof().Debug(true)
-	Server.Core.PreUse(Language.Middleware())
+	Server.Core.Pre(Language.Middleware())
 	Server.SetSessionOptions(&Config.Session.SessionOptions)
 	Server.InitCodec([]byte(Config.Session.AuthKey), []byte(Config.Session.BlockKey))
 

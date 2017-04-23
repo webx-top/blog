@@ -33,11 +33,11 @@ func HandlerWrapper(h interface{}) echo.Handler {
 	return nil
 }
 
-func NewServer(name string, middlewares ...interface{}) (s *Server) {
+func NewServer(name string) (s *Server) {
 	s = &Server{
 		Application: mvc.NewWithContext(name, func(e *echo.Echo) echo.Context {
 			return NewContext(s, echo.NewContext(nil, nil, e))
-		}, middlewares...),
+		}),
 	}
 	s.Core.SetHandlerWrapper(HandlerWrapper)
 	s.ContextInitial = func(ctx echo.Context, wrp *mvc.Wrapper, controller interface{}, actionName string) (err error, exit bool) {

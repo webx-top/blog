@@ -23,5 +23,5 @@ import (
 )
 
 func init() {
-	lib.Module.Use(&Category{}, &Comment{}, &Index{}, &Link{}, &Post{}, &Public{}, &Setting{})
+	lib.Module.Add(&Category{}, &Comment{}, &Index{}, &Link{}, &Post{}, &Public{}, &Setting{})
 }
