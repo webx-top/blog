@@ -192,9 +192,6 @@ func (condIn condIn) WriteTo(w Writer) error {
 			return err
 		}
 	default:
-		if len(condIn.vals) <= 0 {
-			return ErrNoInConditions
-		}
 		questionMark := strings.Repeat("?,", len(condIn.vals))
 		if _, err := fmt.Fprintf(w, "%s IN (%s)", condIn.col, questionMark[:len(questionMark)-1]); err != nil {
 			return err

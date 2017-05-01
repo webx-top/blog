@@ -1,11 +1,8 @@
 package standard
 
 import (
-	"crypto/tls"
-	"net"
 	"net/http"
 	"sync"
-	"time"
 
 	"github.com/admpub/log"
 	"github.com/webx-top/echo/engine"
@@ -99,9 +96,13 @@ func (s *Server) SetLogger(l logger.Logger) {
 // Start implements `engine.Server#Start` function.
 func (s *Server) Start() error {
 	if s.config.Listener == nil {
-		return s.startDefaultListener()
+		err := s.config.InitListener()
+		if err != nil {
+			return err
+		}
 	}
-	return s.startCustomListener()
+	s.config.Print(`standard`)
+	return s.Serve(s.config.Listener)
 }
 
 // Stop implements `engine.Server#Stop` function.
@@ -110,38 +111,6 @@ func (s *Server) Stop() error {
 		return nil
 	}
 	return s.config.Listener.Close()
-}
-
-func (s *Server) startDefaultListener() error {
-	ln, err := net.Listen("tcp", s.config.Address)
-	if err != nil {
-		return err
-	}
-	if s.config.TLSConfig != nil {
-		s.logger.Info(`StandardHTTP is running at `, s.config.Address, ` [TLS]`)
-		s.config.Listener = tls.NewListener(tcpKeepAliveListener{ln.(*net.TCPListener)}, s.config.TLSConfig)
-	} else if len(s.config.TLSCertFile) > 0 && len(s.config.TLSKeyFile) > 0 {
-		// TODO: https://github.com/golang/go/commit/d24f446a90ea94b87591bf16228d7d871fec3d92
-		config := &tls.Config{}
-		if !s.config.DisableHTTP2 {
-			config.NextProtos = append(config.NextProtos, "h2")
-		}
-		config.Certificates = make([]tls.Certificate, 1)
-		config.Certificates[0], err = tls.LoadX509KeyPair(s.config.TLSCertFile, s.config.TLSKeyFile)
-		if err != nil {
-			return err
-		}
-		s.logger.Info(`StandardHTTP is running at `, s.config.Address, ` [TLS]`)
-		s.config.Listener = tls.NewListener(tcpKeepAliveListener{ln.(*net.TCPListener)}, config)
-	} else {
-		s.logger.Info(`StandardHTTP is running at `, s.config.Address)
-		s.config.Listener = tcpKeepAliveListener{ln.(*net.TCPListener)}
-	}
-	return s.Serve(s.config.Listener)
-}
-
-func (s *Server) startCustomListener() error {
-	return s.Serve(s.config.Listener)
 }
 
 // ServeHTTP implements `http.Handler` interface.
@@ -169,22 +138,4 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	s.pool.url.Put(reqURL)
 	s.pool.response.Put(res)
 	s.pool.responseHeader.Put(resHdr)
-}
-
-// tcpKeepAliveListener sets TCP keep-alive timeouts on accepted
-// connections. It's used by ListenAndServe and ListenAndServeTLS so
-// dead TCP connections (e.g. closing laptop mid-download) eventually
-// go away.
-type tcpKeepAliveListener struct {
-	*net.TCPListener
-}
-
-func (ln tcpKeepAliveListener) Accept() (c net.Conn, err error) {
-	tc, err := ln.AcceptTCP()
-	if err != nil {
-		return
-	}
-	tc.SetKeepAlive(true)
-	tc.SetKeepAlivePeriod(3 * time.Minute)
-	return tc, nil
 }

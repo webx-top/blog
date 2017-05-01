@@ -50,9 +50,9 @@ func (j *joinTables) HasJoin() bool {
 }
 
 func (j *joinTables) String() string {
-	joinStr := ``
+	var joinStr string
 	if j.Size() > 0 {
-		t := ``
+		var t string
 		for _, join := range j.params {
 			joinStr += t + join.String()
 			t = ` `
@@ -68,8 +68,10 @@ func (j *joinTables) fromRelation() string {
 	if r == nil || r.IsTable {
 		return ``
 	}
-	joinStr := ``
-	t := ``
+	var (
+		joinStr string
+		t       string
+	)
 	for i, table := range r.Extends {
 		rt := r.RelTables[i]
 		if rt == nil || !rt.IsValid() {
@@ -87,12 +89,11 @@ func (j *joinTables) fromRelation() string {
 	return joinStr
 }
 
-func (j *joinTables) Args() []interface{} {
-	args := make([]interface{}, 0)
+func (j *joinTables) Args() (args []interface{}) {
 	for _, join := range j.params {
 		args = append(args, join.Args...)
 	}
-	return args
+	return
 }
 
 func NewJoinParam(stmt *Statement) *joinParam {
@@ -142,9 +143,8 @@ func (statement *Statement) join(joinOP string, tablename interface{}, condition
 	join.ONStr = condition
 	join.Args = args
 
-	switch tablename.(type) {
+	switch t := tablename.(type) {
 	case []string:
-		t := tablename.([]string)
 		if len(t) > 1 {
 			join.Table = statement.withPrefix(t[0])
 			join.Alias = t[1]
@@ -152,7 +152,6 @@ func (statement *Statement) join(joinOP string, tablename interface{}, condition
 			join.Table = statement.withPrefix(t[0])
 		}
 	case []interface{}:
-		t := tablename.([]interface{})
 		l := len(t)
 		var table string
 		if l > 0 {
@@ -173,13 +172,13 @@ func (statement *Statement) join(joinOP string, tablename interface{}, condition
 			join.Alias = fmt.Sprintf("%v", t[1])
 		}
 	case core.SQL:
-		join.SQLStr = joinOP + ` JOIN ` + string(tablename.(core.SQL))
+		join.SQLStr = joinOP + ` JOIN ` + string(t)
 	case string:
-		join.Table = statement.withPrefix(tablename.(string))
+		join.Table = statement.withPrefix(t)
 	default:
 		v := rValue(tablename)
-		t := v.Type()
-		if t.Kind() == reflect.Struct {
+		typ := v.Type()
+		if typ.Kind() == reflect.Struct {
 			r := statement.Engine.autoMapType(v)
 			join.Table = r.Name
 		} else {

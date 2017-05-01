@@ -6,15 +6,11 @@ import (
 	"io/ioutil"
 	"math"
 	"reflect"
+	"strconv"
 	"strings"
 	"time"
-
-	"strconv"
-
-	u "github.com/araddon/gou"
 )
 
-var _ = u.EMPTY
 var e = fmt.Errorf
 
 // Primitive is a value that hasn't been decoded into a Go value.
@@ -110,7 +106,6 @@ func Unmarshal(bs []byte, v interface{}) error {
 // This decoder will not handle cyclic types. If a cyclic type is passed,
 // `Decode` will not terminate.
 func Decode(data string, v interface{}) (MetaData, error) {
-	data = strings.Replace(data, "\r", "", -1)
 	p, err := parse(data)
 	if err != nil {
 		return MetaData{}, err

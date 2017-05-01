@@ -164,13 +164,12 @@ func (statement *Statement) Where(query interface{}, args ...interface{}) *State
 
 // And add Where & and statment
 func (statement *Statement) And(query interface{}, args ...interface{}) *Statement {
-	switch query.(type) {
+	switch q := query.(type) {
 	case string:
-		cond := builder.Expr(query.(string), args...)
+		cond := builder.Expr(q, args...)
 		statement.cond = statement.cond.And(cond)
 	case builder.Cond:
-		cond := query.(builder.Cond)
-		statement.cond = statement.cond.And(cond)
+		statement.cond = statement.cond.And(q)
 		for _, v := range args {
 			if vv, ok := v.(builder.Cond); ok {
 				statement.cond = statement.cond.And(vv)
@@ -185,13 +184,12 @@ func (statement *Statement) And(query interface{}, args ...interface{}) *Stateme
 
 // Or add Where & Or statment
 func (statement *Statement) Or(query interface{}, args ...interface{}) *Statement {
-	switch query.(type) {
+	switch q := query.(type) {
 	case string:
-		cond := builder.Expr(query.(string), args...)
+		cond := builder.Expr(q, args...)
 		statement.cond = statement.cond.Or(cond)
 	case builder.Cond:
-		cond := query.(builder.Cond)
-		statement.cond = statement.cond.Or(cond)
+		statement.cond = statement.cond.Or(q)
 		for _, v := range args {
 			if vv, ok := v.(builder.Cond); ok {
 				statement.cond = statement.cond.Or(vv)

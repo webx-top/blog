@@ -1164,9 +1164,15 @@ func (engine *Engine) mapType(v reflect.Value, args ...*core.Relation) *core.Tab
 		} else {
 			var sqlType core.SQLType
 			if fieldValue.CanAddr() {
+				if !fieldValue.Addr().CanInterface() {
+					continue
+				}
 				if _, ok := fieldValue.Addr().Interface().(core.Conversion); ok {
 					sqlType = core.SQLType{Name: core.Text}
 				}
+			}
+			if !fieldValue.CanInterface() {
+				continue
 			}
 			if _, ok := fieldValue.Interface().(core.Conversion); ok {
 				sqlType = core.SQLType{Name: core.Text}
