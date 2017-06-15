@@ -71,6 +71,7 @@ type Paginationer interface {
 
 	//获取登记的数据结果
 	Data() interface{}
+	Pagebar() *Pagebar
 
 	//URL中的“页码”变量标识
 	PageKey() string
@@ -80,6 +81,8 @@ type Paginationer interface {
 
 	//URL中的“数据总量”变量标识
 	TotalRowsKey() string
+
+	CleanURL(string, ...string) string
 }
 
 type Pages struct {
@@ -160,7 +163,7 @@ func (this *Pagination) SetTmpl(tmpl string) Paginationer {
 	return this
 }
 
-// 1-页码变量名 2-每页数据量变量名 3-总数据量变量名
+//SetQueryName 1-页码变量名 2-每页数据量变量名 3-总数据量变量名
 func (this *Pagination) SetQueryName(args ...string) Paginationer {
 	switch len(args) {
 	case 3:
@@ -200,7 +203,7 @@ func (this *Pagination) QueryValue() Paginationer {
 	return this
 }
 
-// 1-总数据量 2-每页数据量 3-页码
+//SetPage 1-总数据量 2-每页数据量 3-页码
 func (this *Pagination) SetPage(args ...int64) Paginationer {
 	switch len(args) {
 	case 4:
@@ -403,6 +406,10 @@ func (this *Pagination) Data() interface{} {
 	return this.data
 }
 
+func (this *Pagination) Pagebar() *Pagebar {
+	return this.pagebar
+}
+
 func (this *Pagination) PageNum() int64 {
 	return this.pageNum
 }
@@ -426,7 +433,10 @@ func (this *Pagination) TotalRowsKey() string {
 func (this *Pagination) ReqURI() (r string) {
 	r = this.Context.Request().URL().Path()
 	q := this.Context.Request().URL().RawQuery()
-	cr, _ := regexp.Compile(`(&|^)(` + this.pageKey + `|` + this.pageRowsKey + `|` + this.totalRowsKey + `)=[\d]*`)
+	cr, err := regexp.Compile(`(&|^)(` + this.pageKey + `|` + this.pageRowsKey + `|` + this.totalRowsKey + `)=[\d]*`)
+	if err != nil {
+		return err.Error()
+	}
 	q = cr.ReplaceAllString(q, ``)
 	if this.Context.Query(`_pjax`) != `` {
 		cr, _ := regexp.Compile(`(&|^)_pjax=[^&]*`)
@@ -436,5 +446,15 @@ func (this *Pagination) ReqURI() (r string) {
 	if q != `` {
 		r += `?` + q
 	}
+	return
+}
+
+func (this *Pagination) CleanURL(q string, keys ...string) (r string) {
+	cr, err := regexp.Compile(`(&|^)(` + strings.Join(keys, `|`) + `)=[^&]*`)
+	if err != nil {
+		return err.Error()
+	}
+	r = cr.ReplaceAllString(q, ``)
+	r = strings.Trim(r, `&`)
 	return
 }

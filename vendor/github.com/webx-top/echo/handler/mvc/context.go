@@ -58,7 +58,6 @@ type Context struct {
 	ControllerName string
 	ActionName     string
 	Tmpl           string
-	Output         Data
 
 	exit bool
 	body []byte
@@ -71,7 +70,6 @@ func (c *Context) Reset(req engine.Request, resp engine.Response) {
 	c.Module = nil
 	c.ActionName = ``
 	c.Tmpl = ``
-	c.Output = c.Context.NewData()
 	c.Format()
 	c.C = nil
 
@@ -195,12 +193,12 @@ func (c *Context) SubDomain() string {
 }
 
 func (c *Context) Assign(key string, val interface{}) *Context {
-	c.Output.Assign(key, val)
+	c.Data().Assign(key, val)
 	return c
 }
 
 func (c *Context) Assignx(values *map[string]interface{}) *Context {
-	c.Output.Assignx(values)
+	c.Data().Assignx(values)
 	return c
 }
 
@@ -260,22 +258,22 @@ func (c *Context) Display(args ...interface{}) error {
 		return nil
 	}
 
-	c.Output.SetTmplFuncs()
+	c.Data().SetTmplFuncs()
 	var err error
 	switch c.Format() {
 	case `xml`:
-		err = c.XML(c.Output, c.Code())
+		err = c.XML(c.Data(), c.Code())
 	case `json`:
 		if callback := c.Query(`callback`); callback != `` {
-			err = c.JSONP(callback, c.Output, c.Code())
+			err = c.JSONP(callback, c.Data(), c.Code())
 		} else {
-			err = c.JSON(c.Output, c.Code())
+			err = c.JSON(c.Data(), c.Code())
 		}
 	default:
 		if len(c.Tmpl) == 0 {
-			err = c.String(fmt.Sprintf(`%v`, c.Output), c.Code())
+			err = c.String(fmt.Sprintf(`%v`, c.Data()), c.Code())
 		} else {
-			err = c.Output.Render(c.Tmpl, c.Code())
+			err = c.Data().Render(c.Tmpl, c.Code())
 		}
 	}
 	return err
@@ -288,7 +286,7 @@ func (c *Context) ErrorWithCode(code int, args ...string) *echo.HTTPError {
 
 // SetOutput 设置输出(code,info,zone,data)
 func (c *Context) SetOutput(code int, args ...interface{}) *Context {
-	c.Output.Set(code, args...)
+	c.Data().Set(code, args...)
 	return c
 }
 
@@ -398,7 +396,10 @@ func (c *Context) GotoNext(defaultURL ...string) error {
 
 // GetNextURL 自动获取下一步网址
 func (c *Context) GetNextURL() string {
-	next := c.Form(`next`)
+	next := c.Header(`X-Next`)
+	if len(next) == 0 {
+		next = c.Form(`next`)
+	}
 	if len(next) > 0 {
 		return c.ParseNextURL(next)
 	}
@@ -503,12 +504,26 @@ func (c *Context) Redir(url string, args ...interface{}) error {
 		}
 	}
 	c.Exit()
-	if c.Format() != `html` {
+	if c.Format() != `html` || c.echoRedirect() {
 		c.Set(`webx:ignoreRender`, false)
 		c.Assign(`Location`, url)
 		return c.Display()
 	}
 	return c.Context.Redirect(url, code)
+}
+
+func (c *Context) echoRedirect() bool {
+	format := c.Header(`X-Echo-Redirect`)
+	if len(format) == 0 {
+		return false
+	}
+	switch format {
+	case `json`, `xml`:
+		c.SetFormat(format)
+		return true
+	default:
+		return false
+	}
 }
 
 // Goto 页面跳转(根据路由生成网址后跳转)

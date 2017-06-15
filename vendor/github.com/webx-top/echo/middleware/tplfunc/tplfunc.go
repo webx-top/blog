@@ -21,13 +21,13 @@ import (
 	"fmt"
 	"html/template"
 	"log"
+	"math"
 	"net/url"
 	"path/filepath"
+	"regexp"
 	"strconv"
 	"strings"
 	"time"
-
-	"regexp"
 
 	"github.com/webx-top/captcha"
 	"github.com/webx-top/com"
@@ -63,32 +63,40 @@ var TplFuncMap template.FuncMap = template.FuncMap{
 	"Eq":       Eq,
 	"Add":      Add,
 	"Sub":      Sub,
+	"Div":      Div,
+	"Mul":      Mul,
 	"IsNil":    IsNil,
 	"IsEmpty":  IsEmpty,
 	"NotEmpty": NotEmpty,
+	"IsNaN":    IsNaN,
+	"IsInf":    IsInf,
 
 	// ======================
 	// conversion type
 	// ======================
-	"Html":        ToHTML,
-	"Js":          ToJS,
-	"Css":         ToCSS,
-	"ToJS":        ToJS,
-	"ToCSS":       ToCSS,
-	"ToURL":       ToURL,
-	"ToHTML":      ToHTML,
-	"ToHTMLAttr":  ToHTMLAttr,
-	"ToHTMLAttrs": ToHTMLAttrs,
-	"ToStrSlice":  ToStrSlice,
-	"Str":         com.Str,
-	"Int":         com.Int,
-	"Int32":       com.Int32,
-	"Int64":       com.Int64,
-	"Uint":        com.Uint,
-	"Uint32":      com.Uint32,
-	"Uint64":      com.Uint64,
-	"Float32":     com.Float32,
-	"Float64":     com.Float64,
+	"Html":         ToHTML,
+	"Js":           ToJS,
+	"Css":          ToCSS,
+	"ToJS":         ToJS,
+	"ToCSS":        ToCSS,
+	"ToURL":        ToURL,
+	"ToHTML":       ToHTML,
+	"ToHTMLAttr":   ToHTMLAttr,
+	"ToHTMLAttrs":  ToHTMLAttrs,
+	"ToStrSlice":   ToStrSlice,
+	"Str":          com.Str,
+	"Int":          com.Int,
+	"Int32":        com.Int32,
+	"Int64":        com.Int64,
+	"Uint":         com.Uint,
+	"Uint32":       com.Uint32,
+	"Uint64":       com.Uint64,
+	"Float32":      com.Float32,
+	"Float64":      com.Float64,
+	"ToFloat64":    ToFloat64,
+	"ToFixed":      ToFixed,
+	"Math":         Math,
+	"NumberFormat": NumberFormat,
 
 	// ======================
 	// string
@@ -146,8 +154,8 @@ var TplFuncMap template.FuncMap = template.FuncMap{
 	// ======================
 	// other
 	// ======================
-	"NoOutput": NoOutput,
-	"Default":  Default,
+	"Ignore":  Ignore,
+	"Default": Default,
 }
 
 func JsonEncode(s interface{}) string {
@@ -155,7 +163,7 @@ func JsonEncode(s interface{}) string {
 	return r
 }
 
-func NoOutput(_ interface{}) interface{} {
+func Ignore(_ interface{}) interface{} {
 	return nil
 }
 
@@ -281,48 +289,66 @@ func IsNil(a interface{}) bool {
 	return false
 }
 
+func interface2Int64(value interface{}) (int64, bool) {
+	switch v := value.(type) {
+	case uint:
+		return int64(v), true
+	case uint8:
+		return int64(v), true
+	case uint16:
+		return int64(v), true
+	case uint32:
+		return int64(v), true
+	case uint64:
+		return int64(v), true
+	case int:
+		return int64(v), true
+	case int8:
+		return int64(v), true
+	case int16:
+		return int64(v), true
+	case int32:
+		return int64(v), true
+	case int64:
+		return v, true
+	default:
+		return 0, false
+	}
+}
+
+func interface2Float64(value interface{}) (float64, bool) {
+	switch v := value.(type) {
+	case float32:
+		return float64(v), true
+	case float64:
+		return v, true
+	default:
+		return 0, false
+	}
+}
+
+func ToFloat64(value interface{}) float64 {
+	if v, ok := interface2Int64(value); ok {
+		return float64(v)
+	}
+	if v, ok := interface2Float64(value); ok {
+		return v
+	}
+	return com.Float64(value)
+}
+
 func Add(left interface{}, right interface{}) interface{} {
 	var rleft, rright int64
 	var fleft, fright float64
-	isInt := true
-	switch left.(type) {
-	case int:
-		rleft = int64(left.(int))
-	case int8:
-		rleft = int64(left.(int8))
-	case int16:
-		rleft = int64(left.(int16))
-	case int32:
-		rleft = int64(left.(int32))
-	case int64:
-		rleft = left.(int64)
-	case float32:
-		fleft = float64(left.(float32))
-		isInt = false
-	case float64:
-		fleft = left.(float64)
-		isInt = false
+	var isInt bool
+	rleft, isInt = interface2Int64(left)
+	if !isInt {
+		fleft, _ = interface2Float64(left)
 	}
-
-	switch right.(type) {
-	case int:
-		rright = int64(right.(int))
-	case int8:
-		rright = int64(right.(int8))
-	case int16:
-		rright = int64(right.(int16))
-	case int32:
-		rright = int64(right.(int32))
-	case int64:
-		rright = right.(int64)
-	case float32:
-		fright = float64(left.(float32))
-		isInt = false
-	case float64:
-		fleft = left.(float64)
-		isInt = false
+	rright, isInt = interface2Int64(right)
+	if !isInt {
+		fright, _ = interface2Float64(right)
 	}
-
 	intSum := rleft + rright
 
 	if isInt {
@@ -331,52 +357,153 @@ func Add(left interface{}, right interface{}) interface{} {
 	return fleft + fright + float64(intSum)
 }
 
+func Div(left interface{}, right interface{}) interface{} {
+	return ToFloat64(left) / ToFloat64(right)
+}
+
+func Mul(left interface{}, right interface{}) interface{} {
+	return ToFloat64(left) * ToFloat64(right)
+}
+
+func Math(op string, args ...interface{}) interface{} {
+	length := len(args)
+	if length < 1 {
+		return float64(0)
+	}
+	switch op {
+	case `mod`: //模
+		if length < 2 {
+			return float64(0)
+		}
+		return math.Mod(ToFloat64(args[0]), ToFloat64(args[1]))
+	case `abs`:
+		return math.Abs(ToFloat64(args[0]))
+	case `acos`:
+		return math.Acos(ToFloat64(args[0]))
+	case `acosh`:
+		return math.Acosh(ToFloat64(args[0]))
+	case `asin`:
+		return math.Asin(ToFloat64(args[0]))
+	case `asinh`:
+		return math.Asinh(ToFloat64(args[0]))
+	case `atan`:
+		return math.Atan(ToFloat64(args[0]))
+	case `atan2`:
+		if length < 2 {
+			return float64(0)
+		}
+		return math.Atan2(ToFloat64(args[0]), ToFloat64(args[1]))
+	case `atanh`:
+		return math.Atanh(ToFloat64(args[0]))
+	case `cbrt`:
+		return math.Cbrt(ToFloat64(args[0]))
+	case `ceil`:
+		return math.Ceil(ToFloat64(args[0]))
+	case `copysign`:
+		if length < 2 {
+			return float64(0)
+		}
+		return math.Copysign(ToFloat64(args[0]), ToFloat64(args[1]))
+	case `cos`:
+		return math.Cos(ToFloat64(args[0]))
+	case `cosh`:
+		return math.Cosh(ToFloat64(args[0]))
+	case `dim`:
+		if length < 2 {
+			return float64(0)
+		}
+		return math.Dim(ToFloat64(args[0]), ToFloat64(args[1]))
+	case `erf`:
+		return math.Erf(ToFloat64(args[0]))
+	case `erfc`:
+		return math.Erfc(ToFloat64(args[0]))
+	case `exp`:
+		return math.Exp(ToFloat64(args[0]))
+	case `exp2`:
+		return math.Exp2(ToFloat64(args[0]))
+	case `floor`:
+		return math.Floor(ToFloat64(args[0]))
+	case `max`:
+		if length < 2 {
+			return float64(0)
+		}
+		return math.Max(ToFloat64(args[0]), ToFloat64(args[1]))
+	case `min`:
+		if length < 2 {
+			return float64(0)
+		}
+		return math.Min(ToFloat64(args[0]), ToFloat64(args[1]))
+	case `pow`: //幂
+		if length < 2 {
+			return float64(0)
+		}
+		return math.Pow(ToFloat64(args[0]), ToFloat64(args[1]))
+	case `sqrt`: //平方根
+		return math.Sqrt(ToFloat64(args[0]))
+	case `sin`:
+		return math.Sin(ToFloat64(args[0]))
+	case `log`:
+		return math.Log(ToFloat64(args[0]))
+	case `log2`:
+		return math.Log2(ToFloat64(args[0]))
+	case `log10`:
+		return math.Log10(ToFloat64(args[0]))
+	case `tan`:
+		return math.Tan(ToFloat64(args[0]))
+	case `tanh`:
+		return math.Tanh(ToFloat64(args[0]))
+	case `add`: //加
+		if length < 2 {
+			return float64(0)
+		}
+		return Add(ToFloat64(args[0]), ToFloat64(args[1]))
+	case `sub`: //减
+		if length < 2 {
+			return float64(0)
+		}
+		return Sub(ToFloat64(args[0]), ToFloat64(args[1]))
+	case `mul`: //乘
+		if length < 2 {
+			return float64(0)
+		}
+		return Mul(ToFloat64(args[0]), ToFloat64(args[1]))
+	case `div`: //除
+		if length < 2 {
+			return float64(0)
+		}
+		return Div(ToFloat64(args[0]), ToFloat64(args[1]))
+	}
+	return nil
+}
+
+func IsNaN(v interface{}) bool {
+	return math.IsNaN(ToFloat64(v))
+}
+
+func IsInf(v interface{}, s interface{}) bool {
+	return math.IsInf(ToFloat64(v), com.Int(s))
+}
+
 func Sub(left interface{}, right interface{}) interface{} {
 	var rleft, rright int64
 	var fleft, fright float64
-	isInt := true
-	switch left.(type) {
-	case int:
-		rleft = int64(left.(int))
-	case int8:
-		rleft = int64(left.(int8))
-	case int16:
-		rleft = int64(left.(int16))
-	case int32:
-		rleft = int64(left.(int32))
-	case int64:
-		rleft = left.(int64)
-	case float32:
-		fleft = float64(left.(float32))
-		isInt = false
-	case float64:
-		fleft = left.(float64)
-		isInt = false
+	var isInt bool
+	rleft, isInt = interface2Int64(left)
+	if !isInt {
+		fleft, _ = interface2Float64(left)
 	}
-
-	switch right.(type) {
-	case int:
-		rright = int64(right.(int))
-	case int8:
-		rright = int64(right.(int8))
-	case int16:
-		rright = int64(right.(int16))
-	case int32:
-		rright = int64(right.(int32))
-	case int64:
-		rright = right.(int64)
-	case float32:
-		fright = float64(left.(float32))
-		isInt = false
-	case float64:
-		fleft = left.(float64)
-		isInt = false
+	rright, isInt = interface2Int64(right)
+	if !isInt {
+		fright, _ = interface2Float64(right)
 	}
-
 	if isInt {
 		return rleft - rright
 	}
 	return fleft + float64(rleft) - (fright + float64(rright))
+}
+
+func ToFixed(value interface{}, precision interface{}) string {
+	return fmt.Sprintf("%.*f", com.Int(precision), ToFloat64(value))
 }
 
 func Now() time.Time {
@@ -535,4 +662,29 @@ func TimestampToTime(timestamp interface{}) time.Time {
 		ts = i
 	}
 	return time.Unix(ts, 0)
+}
+
+func NumberFormat(number interface{}, precision int, delim ...string) string {
+	r := fmt.Sprintf(`%.*f`, precision, ToFloat64(number))
+	d := `,`
+	if len(delim) > 0 {
+		d = delim[0]
+		if len(d) == 0 {
+			return r
+		}
+	}
+	i := len(r) - 1 - precision
+	j := int(math.Ceil(float64(i) / float64(3)))
+	s := make([]string, j)
+	v := r[i:]
+	for i > 0 && j > 0 {
+		j--
+		start := i - 3
+		if start < 0 {
+			start = 0
+		}
+		s[j] = r[start:i]
+		i = start
+	}
+	return strings.Join(s, d) + v
 }

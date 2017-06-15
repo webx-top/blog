@@ -48,13 +48,13 @@ type Context struct {
 
 func (c *Context) Reset(req engine.Request, resp engine.Response) {
 	c.Context.Reset(req, resp)
-	c.Output = &Output{
+	c.SetData(&Output{
 		context: c.Context,
 		Status:  1,
 		Message: ``,
 		For:     ``,
 		Data:    echo.H{},
-	}
+	})
 }
 
 func (c *Context) AcceptFormat() string {
@@ -83,7 +83,7 @@ func (c *Context) AssignX(values *map[string]interface{}) *Context {
 
 // SetOutput 设置输出(status,message,for,data)
 func (c *Context) SetOutput(code int, args ...interface{}) *Context {
-	c.Output.Set(code, args...)
+	c.Data().Set(code, args...)
 	return c
 }
 

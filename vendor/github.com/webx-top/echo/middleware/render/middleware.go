@@ -110,43 +110,30 @@ func AutoOutput(options ...*Options) echo.MiddlewareFunc {
 
 // Output Outputs the specified format
 func Output(format string, c echo.Context, opt *Options) error {
+	data := c.Get(opt.DataKey)
 	switch format {
 	case `json`:
-		return c.JSON(c.Get(opt.DataKey))
+		return c.JSON(data)
 	case `jsonp`:
-		return c.JSONP(c.Query(opt.JSONPCallbackName), c.Get(opt.DataKey))
+		return c.JSONP(c.Query(opt.JSONPCallbackName), data)
 	case `xml`:
-		return c.XML(c.Get(opt.DataKey))
+		return c.XML(data)
 	default:
 		tmpl, ok := c.Get(opt.TmplKey).(string)
 		if !ok {
 			tmpl = opt.DefaultTmpl
 		}
-		data := c.Get(opt.DataKey)
-		if v, y := data.(*echo.Data); y {
-			SetFuncs(c, v)
-			return c.Render(tmpl, v.Data)
+		if v, y := data.(echo.Data); y {
+			v.SetTmplFuncs()
+			return v.Render(tmpl)
 		}
 		if h, y := data.(echo.H); y {
 			v := h.ToData().SetContext(c)
-			SetFuncs(c, v)
-			return c.Render(tmpl, v.Data)
+			v.SetTmplFuncs()
+			return v.Render(tmpl)
 		}
 		return c.Render(tmpl, data)
 	}
-}
-
-// SetFuncs register template function
-func SetFuncs(c echo.Context, v *echo.Data) {
-	c.SetFunc(`Info`, func() interface{} {
-		return v.Info
-	})
-	c.SetFunc(`Code`, func() interface{} {
-		return v.Code
-	})
-	c.SetFunc(`Zone`, func() interface{} {
-		return v.Zone
-	})
 }
 
 func HTTPErrorHandler(templates map[int]string, options ...*Options) echo.HTTPErrorHandler {
@@ -158,11 +145,15 @@ func HTTPErrorHandler(templates map[int]string, options ...*Options) echo.HTTPEr
 	return func(err error, c echo.Context) {
 		code := opt.DefaultErrorHTTPCode
 		var msg string
-		if he, ok := err.(*echo.HTTPError); ok {
-			if he.Code > 0 {
-				code = he.Code
+		var panicErr *echo.PanicError
+		switch e := err.(type) {
+		case *echo.HTTPError:
+			if e.Code > 0 {
+				code = e.Code
 			}
-			msg = he.Message
+			msg = e.Message
+		case *echo.PanicError:
+			panicErr = e
 		}
 		title := http.StatusText(code)
 		if c.Echo().Debug() {
@@ -180,13 +171,14 @@ func HTTPErrorHandler(templates map[int]string, options ...*Options) echo.HTTPEr
 					t, y = templates[0]
 				}
 				if y {
-					c.Set(opt.DataKey, c.NewData().SetInfo(echo.H{
+					c.Set(opt.TmplKey, t)
+					c.Set(opt.DataKey, c.Data().Reset().SetInfo(echo.H{
 						"title":   title,
 						"content": msg,
 						"debug":   c.Echo().Debug(),
 						"code":    code,
-					}))
-					c.Set(opt.TmplKey, t)
+						"panic":   panicErr,
+					}, 0))
 					c.SetCode(code)
 					if err := opt.OutputFunc(c.Format(), c, opt); err != nil {
 						msg += "\n" + err.Error()

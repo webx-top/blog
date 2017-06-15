@@ -193,7 +193,7 @@ func (c *Config) Middleware() echo.MiddlewareFunc {
 			if c.Read(ctx) {
 				return nil
 			}
-			ctx.Response().SetKeepBody(true)
+			ctx.Response().KeepBody(true)
 			if err := h.Handle(ctx); err != nil {
 				return err
 			}

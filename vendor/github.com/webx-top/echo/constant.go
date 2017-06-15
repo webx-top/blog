@@ -16,7 +16,7 @@
 
 */
 
-// Package echo is a fast and unfancy web framework for Go (Golang)
+
 package echo
 
 const (
@@ -90,6 +90,7 @@ const (
 	HeaderXRealIP                       = "X-Real-IP"
 	HeaderServer                        = "Server"
 	HeaderOrigin                        = "Origin"
+	HeaderCacheControl                  = "Cache-Control"
 	HeaderAccessControlRequestMethod    = "Access-Control-Request-Method"
 	HeaderAccessControlRequestHeaders   = "Access-Control-Request-Headers"
 	HeaderAccessControlAllowOrigin      = "Access-Control-Allow-Origin"

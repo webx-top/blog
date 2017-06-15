@@ -58,7 +58,7 @@ func (a *Webuploader) Body() (file io.ReadCloser, err error) {
 
 func (a *Webuploader) Result(errMsg string) (r string) {
 	cid := a.Context.Form("id")
-	if cid == "" {
+	if len(cid) == 0 {
 		form := a.Context.Request().MultipartForm()
 		if form != nil && form.Value != nil {
 			if v, ok := form.Value["id"]; ok && len(v) > 0 {
@@ -67,11 +67,11 @@ func (a *Webuploader) Result(errMsg string) (r string) {
 		}
 	}
 	if errMsg == "" {
-		r = `{"jsonrpc":"2.0","result":{"id":"` + a.result.FileIdString() + `","containerid":"` + cid + `"},"error":null}`
+		r = `{"jsonrpc":"2.0","result":{"url":"` + a.result.FileUrl + `","id":"` + a.result.FileIdString() + `","containerid":"` + cid + `"},"error":null}`
 		return
 	}
 	code := "100"
-	r = `{"jsonrpc":"2.0","result":{"id":"` + a.result.FileIdString() + `","containerid":"` + cid + `"},"error":{"code":"` + code + `","message":"` + errMsg + `"}}`
+	r = `{"jsonrpc":"2.0","result":{"url":"` + a.result.FileUrl + `","id":"` + a.result.FileIdString() + `","containerid":"` + cid + `"},"error":{"code":"` + code + `","message":"` + errMsg + `"}}`
 
 	return
 }

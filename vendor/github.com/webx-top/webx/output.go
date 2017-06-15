@@ -4,10 +4,9 @@ import (
 	"fmt"
 
 	"github.com/webx-top/echo"
-	"github.com/webx-top/echo/handler/mvc"
 )
 
-var _ = mvc.Data(&Output{})
+var _ = echo.Data(&Output{})
 
 type Output struct {
 	context echo.Context
@@ -22,8 +21,29 @@ func (c *Output) Render(tmpl string, code ...int) error {
 	return c.context.Render(tmpl, c.Data, code...)
 }
 
+func (c *Output) Reset() echo.Data {
+	c.Status = echo.State(0)
+	c.Summary = ``
+	c.Message = nil
+	c.For = nil
+	c.Data = nil
+	return c
+}
+
 func (c *Output) Gets() (echo.State, interface{}, interface{}, interface{}) {
 	return c.Status, c.Message, c.For, c.Data
+}
+
+func (c *Output) GetCode() echo.State {
+	return c.Status
+}
+
+func (c *Output) GetInfo() interface{} {
+	return c.Message
+}
+
+func (c *Output) GetZone() interface{} {
+	return c.For
 }
 
 func (c *Output) GetData() interface{} {
@@ -85,7 +105,7 @@ func (c *Output) SetTmplFuncs() {
 }
 
 // Set 设置输出(code,message,for,data)
-func (c *Output) Set(code int, args ...interface{}) {
+func (c *Output) Set(code int, args ...interface{}) echo.Data {
 	c.Status = echo.State(code)
 	c.Summary = c.Status.String()
 	var hasData bool
@@ -110,4 +130,58 @@ func (c *Output) Set(code int, args ...interface{}) {
 			c.context.Session().Set(`webx:flash`, flash).Save()
 		}
 	}
+	return c
+}
+
+func (c *Output) SetContext(ctx echo.Context) echo.Data {
+	c.context = ctx
+	return c
+}
+
+//SetError 设置错误
+func (c *Output) SetError(err error, args ...int) echo.Data {
+	if err != nil {
+		if len(args) > 0 {
+			c.SetCode(args[0])
+		} else {
+			c.SetCode(0)
+		}
+		c.Message = err.Error()
+	} else {
+		c.SetCode(1)
+	}
+	return c
+}
+
+//SetCode 设置状态码
+func (c *Output) SetCode(code int) echo.Data {
+	c.Status = echo.State(code)
+	c.Summary = c.Status.String()
+	return c
+}
+
+//SetInfo 设置提示信息
+func (c *Output) SetInfo(info interface{}, args ...int) echo.Data {
+	c.Message = info
+	if len(args) > 0 {
+		c.SetCode(args[0])
+	}
+	return c
+}
+
+//SetZone 设置提示区域
+func (c *Output) SetZone(zone interface{}) echo.Data {
+	c.For = zone
+	return c
+}
+
+//SetData 设置正常数据
+func (c *Output) SetData(data interface{}, args ...int) echo.Data {
+	c.Data = data
+	if len(args) > 0 {
+		c.SetCode(args[0])
+	} else {
+		c.SetCode(1)
+	}
+	return c
 }

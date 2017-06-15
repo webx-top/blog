@@ -13,7 +13,6 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
-	"sync"
 	"time"
 	"unicode"
 
@@ -107,14 +106,15 @@ type (
 		XMLBlob([]byte, ...int) error
 		Stream(func(io.Writer) bool)
 		SSEvent(string, chan interface{}) error
-		File(string) error
+		File(string, ...http.FileSystem) error
 		Attachment(io.ReadSeeker, string) error
 		NoContent(...int) error
 		Redirect(string, ...int) error
 		Error(err error)
 		SetCode(int)
 		Code() int
-		NewData(...interface{}) *Data
+		SetData(Data)
+		Data() Data
 
 		// ServeContent sends static content from `io.Reader` and handles caching
 		// via `If-Modified-Since` request header. It automatically sets `Content-Type`
@@ -168,6 +168,7 @@ type (
 		IsPjax() bool
 		Method() string
 		Format() string
+		SetFormat(string)
 		IsPost() bool
 		IsGet() bool
 		IsPut() bool
@@ -231,38 +232,9 @@ type (
 		format              string
 		code                int
 		preResponseHook     []func() error
+		dataEngine          Data
 	}
-
-	store map[string]interface{}
 )
-
-var mutex sync.RWMutex
-
-func (s store) Set(key string, value interface{}) store {
-	mutex.Lock()
-	s[key] = value
-	mutex.Unlock()
-	return s
-}
-
-func (s store) Get(key string) interface{} {
-	mutex.RLock()
-	defer mutex.RUnlock()
-	if v, y := s[key]; y {
-		return v
-	}
-	return nil
-}
-
-func (s store) Delete(keys ...string) {
-	mutex.Lock()
-	for _, key := range keys {
-		if _, y := s[key]; y {
-			delete(s, key)
-		}
-	}
-	mutex.Unlock()
-}
 
 // NewContext creates a Context object.
 func NewContext(req engine.Request, res engine.Response, e *Echo) Context {
@@ -279,6 +251,7 @@ func NewContext(req engine.Request, res engine.Response, e *Echo) Context {
 		sessioner:  DefaultNopSession,
 	}
 	c.cookier = NewCookier(c)
+	c.dataEngine = NewData(c)
 	return c
 }
 
@@ -548,8 +521,14 @@ func (c *xContext) SSEvent(event string, data chan interface{}) (err error) {
 	return
 }
 
-func (c *xContext) File(file string) error {
-	f, err := os.Open(file)
+func (c *xContext) File(file string, fs ...http.FileSystem) (err error) {
+	var f http.File
+	customFS := len(fs) > 0 && fs[0] != nil
+	if customFS {
+		f, err = fs[0].Open(file)
+	} else {
+		f, err = os.Open(file)
+	}
 	if err != nil {
 		return ErrNotFound
 	}
@@ -558,7 +537,11 @@ func (c *xContext) File(file string) error {
 	fi, _ := f.Stat()
 	if fi.IsDir() {
 		file = filepath.Join(file, "index.html")
-		f, err = os.Open(file)
+		if customFS {
+			f, err = fs[0].Open(file)
+		} else {
+			f, err = os.Open(file)
+		}
 		if err != nil {
 			return ErrNotFound
 		}
@@ -571,7 +554,7 @@ func (c *xContext) Attachment(r io.ReadSeeker, name string) (err error) {
 	c.response.Header().Set(HeaderContentType, ContentTypeByExtension(name))
 	c.response.Header().Set(HeaderContentDisposition, "attachment; filename="+name)
 	c.response.WriteHeader(http.StatusOK)
-	c.response.SetKeepBody(false)
+	c.response.KeepBody(false)
 	_, err = io.Copy(c.response, r)
 	return
 }
@@ -633,7 +616,7 @@ func (c *xContext) ServeContent(content io.ReadSeeker, name string, modtime time
 	rs.Header().Set(HeaderContentType, ContentTypeByExtension(name))
 	rs.Header().Set(HeaderLastModified, modtime.UTC().Format(http.TimeFormat))
 	rs.WriteHeader(http.StatusOK)
-	rs.SetKeepBody(false)
+	rs.KeepBody(false)
 	_, err := io.Copy(rs, content)
 	return err
 }
@@ -651,6 +634,7 @@ func (c *xContext) Reset(req engine.Request, res engine.Response) {
 	c.Validator = DefaultNopValidate
 	c.Translator = DefaultNopTranslate
 	c.sessioner = DefaultNopSession
+	c.cookier = NewCookier(c)
 	c.context = context.Background()
 	c.request = req
 	c.response = res
@@ -667,6 +651,7 @@ func (c *xContext) Reset(req engine.Request, res engine.Response) {
 	c.format = ""
 	c.code = 0
 	c.preResponseHook = nil
+	c.dataEngine = NewData(c)
 	// NOTE: Don't reset because it has to have length c.echo.maxParam at all times
 	// c.pvalues = nil
 }
@@ -803,6 +788,10 @@ func (c *xContext) Format() string {
 		c.format = c.ResolveFormat()
 	}
 	return c.format
+}
+
+func (c *xContext) SetFormat(format string) {
+	c.format = format
 }
 
 // IsPost CREATE：在服务器新建一个资源
@@ -991,21 +980,12 @@ func (c *xContext) Code() int {
 	return c.code
 }
 
-func (c *xContext) NewData(args ...interface{}) *Data {
-	length := len(args)
-	if length > 1 {
-		if code, ok := args[0].(int); ok {
-			return NewData(c, code, args[1:]...)
-		}
-	} else if length == 1 {
-		if code, ok := args[0].(int); ok {
-			return NewData(c, code)
-		}
-		if mapd, ok := args[0].(H); ok {
-			return mapd.ToData().SetContext(c)
-		}
-	}
-	return &Data{Code: State(1), context: c}
+func (c *xContext) SetData(data Data) {
+	c.dataEngine = data
+}
+
+func (c *xContext) Data() Data {
+	return c.dataEngine
 }
 
 // MapForm 映射表单数据到结构体
